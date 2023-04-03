@@ -19,15 +19,15 @@ function App() {
   }, []);
 
   const checkAuth = async () => {
-    const data = await axios.post(checkAuthRoute);
+    // const data = await axios.post(checkAuthRoute);
     // console.log(data, 'checkAuthRoute')
-    if (!data.data.success) {
-      setUser(undefined)
-      navigate("/login");
-    } else {
-      setUser(data.data)
-      navigate("/");
-    }
+    // if (!data.data.success) {
+    //   setUser(undefined)
+    //   // navigate("/login");
+    // } else {
+    //   setUser(data.data)
+    //   navigate("/");
+    // }
   }
 
 
