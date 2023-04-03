@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import {searchUserRoute} from '../utils/APIRoutes';
 import axios from 'axios';
-
+import Loader from '../components/Loader';
 
 const SearchUser = (props) => {
   const navigate = useNavigate()
@@ -31,6 +31,7 @@ const SearchUser = (props) => {
     <>
       {props.user && <Navbar user={props.user} handleUserSet={props.handleUserSet} />}
       <SearchUserWrapper>
+
         <SearchPageContainer>
           <SearchBarContainer>
             <SearchInput
@@ -44,6 +45,7 @@ const SearchUser = (props) => {
             </SearchButton>
           </SearchBarContainer>
           <UsersList>
+          <Loader />
             {searchResults.length > 0 ? searchResults.map((user) => (
               <UserItem key={user._id}>
                 <UserName>{user.nickname}</UserName>
@@ -61,6 +63,7 @@ export default SearchUser;
 
 const SearchUserWrapper = styled.div`
   padding-top: 60px;
+  background-color: #131324;
 `;
 
 

@@ -7,7 +7,10 @@ import { logoutRoute } from "../utils/APIRoutes";
 export default function Logout(props) {
   const navigate = useNavigate();
   const handleClick = async () => {
-    const data = await axios.get(`${logoutRoute}`);
+    // const data = await axios.get(`${logoutRoute}`);
+    const response = await fetch(`${logoutRoute}`, {credentials: 'include'});
+    const data = await response.json()
+    
     if (data.status === 200) {
       localStorage.clear();
       props.handleUserSet(undefined)

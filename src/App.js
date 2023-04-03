@@ -20,14 +20,19 @@ function App() {
 
   const checkAuth = async () => {
     // const data = await axios.post(checkAuthRoute);
-    // console.log(data, 'checkAuthRoute')
-    // if (!data.data.success) {
-    //   setUser(undefined)
-    //   // navigate("/login");
-    // } else {
-    //   setUser(data.data)
-    //   navigate("/");
-    // }
+    const response = await fetch(checkAuthRoute, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {'Content-type': 'application/json'}
+    })
+    let data = await response.json()
+    if (!data.success) {
+      setUser(undefined)
+      navigate("/login");
+    } else {
+      setUser(data)
+      navigate("/");
+    }
   }
 
 

@@ -18,7 +18,7 @@ export default function SetAvatar(props) {
   }, [navigate]);
 
   useEffect(() => {
-    if (props.user.image)
+    if (props.user)
       navigate("/login");
   }, [navigate]);
 
@@ -40,9 +40,18 @@ export default function SetAvatar(props) {
     if (selectedAvatar === undefined) {
       toast.error("Выберите аватар", toastOptions);
     } else {
-      const { data } = await axios.post(setAvatarRoute, {
-        avatarImage: avatars[selectedAvatar],
-      });
+      // const { data } = await axios.post(setAvatarRoute, {
+      //   avatarImage: avatars[selectedAvatar],
+      // });
+      const response = await fetch(setAvatarRoute, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ 'avatarImage': avatars[selectedAvatar] })
+      })
+      const data = await response.json()
       if (data.isSet) {
         navigate("/");
       } else {
@@ -57,6 +66,7 @@ export default function SetAvatar(props) {
       const data = [];
       for (let i = 0; i < 4; i++) {
         const image = await axios.get(`${api}/${Math.round(Math.random() * 1000)}`);
+        // const image = await fetch(`${api}/${Math.round(Math.random() * 1000)}`);
         const buffer = new Buffer(image.data);
         data.push(buffer.toString("base64"));
       }

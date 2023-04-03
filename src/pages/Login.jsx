@@ -1,91 +1,104 @@
-import React, {useState, useEffect} from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import { Link, json, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import {toast, ToastContainer} from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css"
 import axios from 'axios';
-import {loginRoute} from '../utils/APIRoutes.js'
+import { loginRoute } from '../utils/APIRoutes.js'
 import TextField from '@mui/material/TextField';
 
 
 
 function Login(props) {
-    const navigate = useNavigate()
-    const [values, setValues] = useState({
-        username: '',
-        password: ''
-    })
+
+  const navigate = useNavigate()
+  const [values, setValues] = useState({
+    username: '',
+    password: ''
+  })
 
 
-    useEffect(() => {
-      if (props.user)
-        navigate("/");
-    }, [navigate]);
+  useEffect(() => {
+    if (props.user)
+      navigate("/");
+  }, [navigate]);
 
 
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (handleValidation()){ 
-            const {password, username, email} = values
-            const {data} = await axios.post(loginRoute, {
-                username,
-                password
-            })
-            if (data.status===false){
-                toast.error(data.msg, toastOptions);
-            }else if (data.status===true) {
-                props.handleUserSet(data.avatar)
-                props.checkAuth()
-                navigate('/')
-            }
-        }else {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (handleValidation()) {
+      // axios.defaults.withCredentials = true;
+      const { password, username } = values
+      // const response = await axios.post(loginRoute, {
+      //     username,
+      //     password
+      // }, {withCredentials: true})
+      // const data = response.data
+      const response = await fetch(loginRoute, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ "username":username, "password":password })
+      })
+      const data = await response.json()
 
-        }
+      if (data.status === false) {
+        toast.error(data.msg, toastOptions);
+      } else if (data.status === true) {
+        props.handleUserSet(data.avatar)
+        props.checkAuth()
+        navigate('/')
+      }
+    } else {
+
     }
+  }
 
-    const handleChange = (e) => {
-        setValues({...values, [e.target.name]:e.target.value})
-    }
+  const handleChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value })
+  }
 
-    const toastOptions = {
-        position: 'bottom-center',
-        autoClose: 8000, 
-        pauseOnHover: true,
-        draggable: true,
-        theme: 'dark'
+  const toastOptions = {
+    position: 'bottom-center',
+    autoClose: 8000,
+    pauseOnHover: true,
+    draggable: true,
+    theme: 'dark'
+  }
+  const handleValidation = () => {
+    const { password, username } = values
+    if (username === '') {
+      toast.error("Логин должен быть заполнен", toastOptions);
+      return false
+    } else if (password === '') {
+      toast.error("Пароль должен быть заполнен", toastOptions);
+      return false
     }
-    const handleValidation = () => {
-        const {password, username} = values
-        if (username===''){
-            toast.error("Логин должен быть заполнен", toastOptions);
-            return false
-        }else if (password===''){
-            toast.error("Пароль должен быть заполнен", toastOptions);
-            return false
-        }
-        return true
-        
-    }
+    return true
 
-    return (
-        <>
-            <FormContainer>
-                <form onSubmit={(e) => handleSubmit(e)}>
-                    <div className="company">
-                        <h1>WebChat</h1>
-                    </div>
-                    {/* <TextField id="outlined-basic" label="Логин" variant="outlined" onChange={(e) => handleChange(e)} />
+  }
+
+  return (
+    <>
+      <FormContainer>
+        <form onSubmit={(e) => handleSubmit(e)}>
+          <div className="company">
+            <h1>WebChat</h1>
+          </div>
+          {/* <TextField id="outlined-basic" label="Логин" variant="outlined" onChange={(e) => handleChange(e)} />
                     <TextField id="outlined-basic" label="Пароль" variant="outlined" onChange={(e) => handleChange(e)} type="password" /> */}
-                    <input min='3' type="text" placeholder='Username' name='username' onChange={(e) => handleChange(e)} />
-                    <input type="password" placeholder='Password' name='password' onChange={(e) => handleChange(e)} />
-                    <button type='submit'>Войти</button>
-                    <span>Нет аккаунта? <Link to="/register">Регистрация</Link></span>
-                </form>
-            </FormContainer>
-            <ToastContainer />
-        </>
-    )
+          <input min='3' type="text" placeholder='Username' name='username' onChange={(e) => handleChange(e)} />
+          <input type="password" placeholder='Password' name='password' onChange={(e) => handleChange(e)} />
+          <button type='submit'>Войти</button>
+          <span>Нет аккаунта? <Link to="/register">Регистрация</Link></span>
+        </form>
+      </FormContainer>
+      <ToastContainer />
+    </>
+  )
 }
 
 

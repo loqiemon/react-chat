@@ -27,12 +27,21 @@ function Register(props) {
         e.preventDefault();
         if (handleValidation()){ 
             const {password, username, email, nickname} = values
-            const {data} = await axios.post(registerRoute, {
-                username,
-                nickname,
-                email,
-                password
+            // const {data} = await axios.post(registerRoute, {
+            //     username,
+            //     nickname,
+            //     email,
+            //     password
+            // })
+            const response = await fetch(registerRoute, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+              },
+              credentials: 'include',
+              body: JSON.stringify({ "username":username, "nickname": nickname, "email": email, "password":password })
             })
+            const data = await response.json()
             console.log(data)
             if (data.status===false){
                 toast.error(data.msg, toastOptions);
