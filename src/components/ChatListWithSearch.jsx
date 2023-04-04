@@ -1,0 +1,107 @@
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import blankProfile from '../assets/blankProfile.png';
+
+
+const ChatListWithSearch = (props) => {
+  const [search, setSearch] = useState('');
+  const [currentSelected, setCurrentSelected] = useState(undefined);
+
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+  };
+
+
+  const filteredChats = props.chats.data.length > 0 ? props.chats.data.filter((chat) =>
+  chat.chatname.toLowerCase().includes(search.toLowerCase())
+) : []
+// console.log(props.chats.data, 'props.chats.data')
+
+  const changeCurrentChat = (chat) => {
+    console.log(chat._id, 'chhose')
+    setCurrentSelected(chat._id);
+    props.changeChat(chat);
+  };
+
+  return (
+    <ChatList>
+      <ChatSearch
+        type="text"
+        placeholder="Поиск..."
+        value={search}
+        onChange={handleSearchChange}
+      />
+      {filteredChats.map((chat) => (
+        <ChatItem key={chat._id} onClick={() => {changeCurrentChat(chat)}}>
+          {chat.avatarImage ? <ChatAvatar src={`data:image/svg+xml;base64,${chat.avatarImage}`} alt={chat.chatname} /> : <ChatAvatar src={blankProfile} alt={chat.chatname} />}
+          <ChatInfo>
+            <ChatName>{chat.chatname}</ChatName>
+            <ChatLastMessage>{chat.lastMessage}</ChatLastMessage>
+          </ChatInfo>
+          <ChatTime>{chat.lastActivity}</ChatTime>
+        </ChatItem>
+      ))}
+    </ChatList>
+  );
+};
+
+const ChatList = styled.div`
+  background-color: #1c1e26;
+  color: #fff;
+  height: 100vh;
+  width: 20rem;
+  padding: 20px;
+  padding-top: 6rem;
+`;
+
+const ChatItem = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  &:hover {
+    background-color: #2d303e;
+  }
+`;
+
+const ChatAvatar = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+`;
+
+const ChatInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const ChatName = styled.span`
+  font-weight: bold;
+`;
+
+const ChatLastMessage = styled.span`
+  font-size: 12px;
+`;
+
+const ChatTime = styled.span`
+  font-size: 12px;
+  margin-left: auto;
+`;
+
+const ChatSearch = styled.input`
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  border-bottom: 2px solid #fff;
+  padding: 5px;
+  width: 100%;
+  margin-bottom: 20px;
+  font-size: 16px;
+  &:focus {
+    outline: none;
+  }
+`;
+
+export default ChatListWithSearch;

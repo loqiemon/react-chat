@@ -2,6 +2,7 @@ import React, { useState, useEffect} from 'react';
 import styled from 'styled-components';
 import Logout from "./Logout";
 import { useNavigate, Link} from 'react-router-dom';
+import blankProfile from '../assets/blankProfile.png';
 
 export default function Navbar(props) {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -21,7 +22,7 @@ export default function Navbar(props) {
   return (
     <Nav>
       <Brand>
-        <h3>WebChat</h3>
+        <CustomLink to="/">WebChat</CustomLink>
       </Brand>
       <Hamburger onClick={toggleNav}>
         <div></div>
@@ -30,15 +31,16 @@ export default function Navbar(props) {
       </Hamburger>
       <NavLinks isNavOpen={isNavOpen}>
         <CustomLink to="/searchUser">Поиск</CustomLink>
-        <NavLink href="#">About</NavLink>
-        <NavLink href="#">Contact</NavLink>
         <div className="current-user">
           <div className="avatar">
             {props.user.image ?
                         <img
                           src={`data:image/svg+xml;base64,${props.user.image}`}
-                          alt=""
-                        /> : <></>
+                          alt="profile avatar"
+                        /> :                        <img
+                        src={blankProfile}
+                        alt="profile avatar"
+                      />
                       }
             </div>
             <div className="username">

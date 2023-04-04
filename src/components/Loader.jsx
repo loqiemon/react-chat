@@ -1,59 +1,17 @@
 import React from 'react'
-import './loader.sass'
+
 import styled from 'styled-components';
 
 export default function Loader() {
 	return (
 		<>
-			<div class="top">
-				<div class="square">
-					<div class="square">
-						<div class="square">
-							<div class="square">
-								<div class="square"><div class="square">
-
-								</div></div>
-							</div>
-						</div>
-					</div>
-				</div>
+		<section>
+			<div className="loader loader-7">
+			<div className="line line1"></div>
+			<div className="line line2"></div>
+			<div className="line line3"></div>
 			</div>
-			<div class="bottom">
-				<div class="square">
-					<div class="square">
-						<div class="square">
-							<div class="square">
-								<div class="square"><div class="square">
-								</div></div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="left">
-				<div class="square">
-					<div class="square">
-						<div class="square">
-							<div class="square">
-								<div class="square"><div class="square">
-								</div></div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="right">
-				<div class="square">
-					<div class="square">
-						<div class="square">
-							<div class="square">
-								<div class="square"><div class="square">
-								</div></div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+		</section>
 		</>
 	)
 }
