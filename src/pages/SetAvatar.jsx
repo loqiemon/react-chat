@@ -7,6 +7,8 @@ import axios from 'axios';
 import Loader from '../components/Loader';
 import { setAvatarRoute } from '../utils/APIRoutes.js'
 import { Buffer } from "buffer";
+import {postRequestCookie} from '../utils/requests'
+
 
 export default function SetAvatar(props) {
   const api = 'https://api.multiavatar.com/45678945';
@@ -40,18 +42,7 @@ export default function SetAvatar(props) {
     if (selectedAvatar === undefined) {
       toast.error("Выберите аватар", toastOptions);
     } else {
-      // const { data } = await axios.post(setAvatarRoute, {
-      //   avatarImage: avatars[selectedAvatar],
-      // });
-      const response = await fetch(setAvatarRoute, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8'
-        },
-        credentials: 'include',
-        body: JSON.stringify({ 'avatarImage': avatars[selectedAvatar] })
-      })
-      const data = await response.json()
+      const data =  await postRequestCookie(setAvatarRoute, { 'avatarImage': avatars[selectedAvatar]  });
       if (data.isSet) {
         navigate("/");
       } else {

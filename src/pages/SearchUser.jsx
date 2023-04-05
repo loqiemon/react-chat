@@ -11,6 +11,8 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {toast, ToastContainer} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css"
+import {postRequestCookie} from '../utils/requests'
+import blankProfile from '../assets/blankProfile.png';
 
 
 const SearchUser = (props) => {
@@ -35,31 +37,13 @@ const SearchUser = (props) => {
   const [searchResults, setSearchResults] = useState([]);
 
   const handleSearch = async (e) => {
-    console.log(searchTerm)
-    // const data = await axios.post(`${searchUserRoute}`, {
-    //   searchInput: searchTerm
-    // })
-    const response = await fetch(searchUserRoute, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-type': 'application/json' },
-      body: JSON.stringify({ 'searchInput': searchTerm })
-    })
-    const data = await response.json();
-    console.log(data, 'search')
+    const data = await postRequestCookie(searchUserRoute, { 'searchInput': searchTerm });
     setSearchResults(data)
   };
 
 
   const handleAddUser = async (user) => {
-    console.log(user, 'sd user')
-    const response = await fetch(createChatIfNotExistRoute, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-type': 'application/json' },
-      body: JSON.stringify({ 'userId':user._id })
-    })
-    const data = await response.json();
+    const data = await postRequestCookie(createChatIfNotExistRoute, { 'userId':user._id  });
     console.log(data)
     if (data.alreadyExist) {
       toast.error("Уже добавлен", toastOptions)
@@ -91,12 +75,10 @@ const SearchUser = (props) => {
             <Loader />
             {searchResults.length > 0 ? searchResults.map((user) => (
               <UserItem key={user._id}>
-                {user.avatarImage ?
                   <img
-                    src={`data:image/svg+xml;base64,${user.avatarImage}`}
+                    src={user.avatarImage ? `data:image/svg+xml;base64,${user.avatarImage}` : blankProfile}
                     alt=""
-                  /> : <></>
-                }
+                  />
                 <UserName>{user.nickname}</UserName>
                 <Button variant="contained" onClick={() => handleAddUser( user)}>
                   Добавить

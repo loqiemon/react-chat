@@ -4,12 +4,14 @@ import { BiLogOut } from "react-icons/bi";
 import styled from "styled-components";
 import axios from "axios";
 import { logoutRoute } from "../utils/APIRoutes";
+import {getRequestCookie} from '../utils/requests'
+
+
 export default function Logout(props) {
   const navigate = useNavigate();
   const handleClick = async () => {
     // const data = await axios.get(`${logoutRoute}`);
-    const response = await fetch(`${logoutRoute}`, {credentials: 'include'});
-    const data = await response.json()
+    const data = await getRequestCookie(logoutRoute);
     
     if (data.status === 200) {
       localStorage.clear();

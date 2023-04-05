@@ -7,7 +7,7 @@ import {getMyChatsRoute, getChatDataRoute, host} from "../utils/APIRoutes"
 import ChatListWithSearch from '../components/ChatListWithSearch';
 import { io } from "socket.io-client";
 import styled from 'styled-components';
-
+import {postRequestCookie} from '../utils/requests'
 
 function Chat(props) {
   const navigate = useNavigate()
@@ -34,13 +34,11 @@ function Chat(props) {
       if (props.user) {
         if (props.user) {
           //get chats
-          const response = await fetch(getMyChatsRoute, {
-            method: 'POST',
-            credentials: 'include'
-          })
-          const data = await response.json()
+          const data = await postRequestCookie(getMyChatsRoute)
           console.log(data, 'chats')
-          setChats(data)
+          console.log(chats)
+          setChats(data.data)
+          console.log(chats)  
         } else {
           // navigate("/setAvatar");
         }
@@ -52,17 +50,8 @@ function Chat(props) {
 
   const handleChatChange = async (chat) => {
     const privateChat = chat.nickname ? true : false
-
     // const response = await axios.post(getChatMessagesRoute, { userId: currentUser._id, chatId: chat._id, privateChat: privateChat});
-    const response = await fetch(getChatDataRoute, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8'
-      },
-      credentials: 'include',
-      body: JSON.stringify({ 'chatId': chat._id })
-    })
-    const data = await response.json();
+    const data = await postRequestCookie(getChatDataRoute, { 'chatId': chat._id })
     console.log(data, 'ifChatExistRoute')
     setCurrentChat(chat);
   };

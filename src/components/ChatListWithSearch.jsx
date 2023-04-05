@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import blankProfile from '../assets/blankProfile.png';
 
@@ -6,16 +6,25 @@ import blankProfile from '../assets/blankProfile.png';
 const ChatListWithSearch = (props) => {
   const [search, setSearch] = useState('');
   const [currentSelected, setCurrentSelected] = useState(undefined);
+  const [filteredChats, setFilteredChats] = useState([]);
 
-
+console.log(props)
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
 
-
-  const filteredChats = props.chats.data.length > 0 ? props.chats.data.filter((chat) =>
-  chat.chatname.toLowerCase().includes(search.toLowerCase())
-) : []
+  useEffect(()=> {
+    if (props.chats.length > 0){
+      const filtered = props.chats.filter((chat) => chat.chatname.toLowerCase().includes(search.toLowerCase()))
+      console.log(filtered, 'filtered')
+      setFilteredChats(filtered)
+    }else {
+      setFilteredChats([])
+    }
+  }, [props.chats])
+//   const filteredChats = props.chats.data.length > 0 ? props.chats.data.filter((chat) =>
+//   chat.chatname.toLowerCase().includes(search.toLowerCase())
+// ) : []
 // console.log(props.chats.data, 'props.chats.data')
 
   const changeCurrentChat = (chat) => {

@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { sendMessageRoute, recieveMessageRoute } from "../utils/APIRoutes";
 import { addTransactionRoute } from "../utils/APIBlochain";
 import ChatInput from './ChatInput';
+import {postRequestCookie} from '../utils/requests'
 
 
 export default function ChatContainer({ currentChat, socket, user}) {
@@ -14,15 +15,7 @@ export default function ChatContainer({ currentChat, socket, user}) {
     console.log(user, 'useruseruseruser')
     useEffect(()=>{
         const func = async () => {
-            const response = await fetch(recieveMessageRoute, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json;charset=utf-8'
-                },
-                credentials: 'include',
-                body: JSON.stringify({ to: currentChat._id })
-              })
-            const data = await response.json();
+            const data = await postRequestCookie(recieveMessageRoute, { to: currentChat._id })
             console.log(data, 'get message')
             setMessages(data);
           }

@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css"
 import axios from 'axios';
 import { loginRoute } from '../utils/APIRoutes.js'
 import TextField from '@mui/material/TextField';
-
+import {postRequestCookie} from '../utils/requests'
 
 
 function Login(props) {
@@ -28,22 +28,8 @@ function Login(props) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (handleValidation()) {
-      // axios.defaults.withCredentials = true;
       const { password, username } = values
-      // const response = await axios.post(loginRoute, {
-      //     username,
-      //     password
-      // }, {withCredentials: true})
-      // const data = response.data
-      const response = await fetch(loginRoute, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8'
-        },
-        credentials: 'include',
-        body: JSON.stringify({ "username":username, "password":password })
-      })
-      const data = await response.json()
+      const data = await postRequestCookie(loginRoute, { "username":username, "password":password })
 
       if (data.status === false) {
         toast.error(data.msg, toastOptions);

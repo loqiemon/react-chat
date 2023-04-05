@@ -5,6 +5,7 @@ import {toast, ToastContainer} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css"
 import axios from 'axios';
 import {registerRoute} from '../utils/APIRoutes.js'
+import {postRequestCookie} from '../utils/requests'
 
 function Register(props) {
     const navigate = useNavigate()
@@ -27,21 +28,7 @@ function Register(props) {
         e.preventDefault();
         if (handleValidation()){ 
             const {password, username, email, nickname} = values
-            // const {data} = await axios.post(registerRoute, {
-            //     username,
-            //     nickname,
-            //     email,
-            //     password
-            // })
-            const response = await fetch(registerRoute, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-              },
-              credentials: 'include',
-              body: JSON.stringify({ "username":username, "nickname": nickname, "email": email, "password":password })
-            })
-            const data = await response.json()
+            const data = await postRequestCookie(registerRoute, { "username":username, "nickname": nickname, "email": email, "password":password })
             console.log(data)
             if (data.status===false){
                 toast.error(data.msg, toastOptions);
