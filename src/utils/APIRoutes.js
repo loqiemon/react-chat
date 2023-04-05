@@ -15,3 +15,4 @@ export const getMyChatsRoute = `${host}/api/messages/getmychats`;
 export const getChatDataRoute = `${host}/api/messages/getChatData`;
 export const createChatIfNotExistRoute = `${host}/api/messages/createChatIfNotExist`;
 export const recieveMessageRoute = `${host}/api/messages/getmsg`;
+export const updateChatRoute = `${host}/api/messages/updateChat`;

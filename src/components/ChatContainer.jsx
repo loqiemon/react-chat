@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
-import { sendMessageRoute, recieveMessageRoute } from "../utils/APIRoutes";
-import { addTransactionRoute } from "../utils/APIBlochain";
+import { sendMessageRoute, recieveMessageRoute, updateChatRoute } from "../utils/APIRoutes";
+import { addTransactionRoute, getShardRoute } from "../utils/APIBlochain";
 import ChatInput from './ChatInput';
 import {postRequestCookie} from '../utils/requests'
 
@@ -12,33 +12,48 @@ export default function ChatContainer({ currentChat, socket, user}) {
     const [messages, setMessages] = useState([]);
     const scrollRef = useRef();
     const [arrivalMessage, setArrivalMessage] = useState(null);
-    console.log(user, 'useruseruseruser')
+    // console.log(user, 'useruseruseruser')
     useEffect(()=>{
         const func = async () => {
-            const data = await postRequestCookie(recieveMessageRoute, { to: currentChat._id })
+            const data = await axios.post(getShardRoute, {
+              "segment_id": currentChat.chatId,
+              "numShard": "-1",
+              "convertMessages": true
+          })
             console.log(data, 'get message')
-            setMessages(data);
+            const chatsData = data.data.blocks.map(msg => {
+              console.log(msg.writer)
+              console.log(user._id)
+              msg.writer === user._id ? msg.fromSelf = true :  msg.fromSelf = false 
+            })
+            console.log(chatsData)
+            setMessages(data.data.blocks);
           }
           func()
     }, [currentChat]);
 ////
 
-
     const handleSendMsg = async (msg) => {
+      currentChat.users.forEach(us => {
+        console.log(currentChat._id)
         socket.current.emit("send-msg", {
-          to: currentChat._id,
+          to: us,
           from: user._id,
           msg,
         });
+      })
         // console.log(currentChat._id, 'currentChat._id')
 
         await axios.post(addTransactionRoute, {
-            "segment_id": currentChat._id,
+            "segment_id": currentChat.chatId,
             "writer": user._id,
-            "reader": currentChat._id,
+            "reader": currentChat.chatId,
             "message": msg,
             "file": 'None'
         }).then(res => console.log(res))
+
+        const resp = await axios.post(updateChatRoute, {chatId: currentChat.chatId})
+        console.log(resp, 'resp')
     
         const msgs = [...messages];
         msgs.push({ fromSelf: true, message: msg });
@@ -49,6 +64,7 @@ export default function ChatContainer({ currentChat, socket, user}) {
     useEffect(() => {
         if (socket.current) {
           socket.current.on("msg-recieve", (msg) => {
+            console.log(msg, 'msg')
             setArrivalMessage({ fromSelf: false, message: msg });
           });
         }
@@ -103,8 +119,10 @@ export default function ChatContainer({ currentChat, socket, user}) {
     
     const Container = styled.div`
     display: grid;
+    height: 100vh;
+    padding-top: 6rem;
     grid-template-rows: 10% 80% 10%;
-    gap: 0.1rem;
+    // gap: 0.1rem;
     overflow: hidden;
     @media screen and (min-width: 720px) and (max-width: 1080px) {
       grid-template-rows: 15% 70% 15%;

@@ -8,10 +8,13 @@ import SearchUser from './pages/SearchUser';
 import axios from "axios";
 import {checkAuthRoute} from './utils/APIRoutes';
 import { useNavigate } from 'react-router-dom';
+import {genAsymKey, decryptWithPrivateKey} from './utils/crypto'
+
 
 
 function App() {
   const [user, setUser] = useState(undefined);
+  const [keys, setKeys] = useState(undefined);
   const navigate = useNavigate()
 
   useEffect(() => {

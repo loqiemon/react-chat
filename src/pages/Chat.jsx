@@ -32,16 +32,10 @@ function Chat(props) {
   useEffect(() => {
     const func = async () => {
       if (props.user) {
-        if (props.user) {
           //get chats
           const data = await postRequestCookie(getMyChatsRoute)
           console.log(data, 'chats')
-          console.log(chats)
           setChats(data.data)
-          console.log(chats)  
-        } else {
-          // navigate("/setAvatar");
-        }
       }
     }
     func();
@@ -79,7 +73,7 @@ const Container = styled.div`
   height: 100vh;
   width: 100vw;
   display: flex;
-  gap: 1rem;
+  // gap: 1rem;
   align-items: center;
   background-color: #131324;
   .container {

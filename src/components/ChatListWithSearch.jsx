@@ -8,7 +8,6 @@ const ChatListWithSearch = (props) => {
   const [currentSelected, setCurrentSelected] = useState(undefined);
   const [filteredChats, setFilteredChats] = useState([]);
 
-console.log(props)
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
@@ -16,19 +15,17 @@ console.log(props)
   useEffect(()=> {
     if (props.chats.length > 0){
       const filtered = props.chats.filter((chat) => chat.chatname.toLowerCase().includes(search.toLowerCase()))
-      console.log(filtered, 'filtered')
       setFilteredChats(filtered)
     }else {
       setFilteredChats([])
     }
-  }, [props.chats])
+  }, [search])
 //   const filteredChats = props.chats.data.length > 0 ? props.chats.data.filter((chat) =>
 //   chat.chatname.toLowerCase().includes(search.toLowerCase())
 // ) : []
 // console.log(props.chats.data, 'props.chats.data')
 
   const changeCurrentChat = (chat) => {
-    console.log(chat._id, 'chhose')
     setCurrentSelected(chat._id);
     props.changeChat(chat);
   };
@@ -59,7 +56,7 @@ const ChatList = styled.div`
   background-color: #1c1e26;
   color: #fff;
   height: 100vh;
-  width: 20rem;
+  width: 25vw;
   padding: 20px;
   padding-top: 6rem;
 `;

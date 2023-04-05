@@ -16,10 +16,13 @@ const Container = styled.div`
   align-items: center;
   color: white;
   flex-direction: column;
+  align-self:center;
+  justify-self:center;
   img {
     height: 20rem;
   }
   span {
     color: #4e0eff;
   }
+  margin: 0 auto;
 `;
