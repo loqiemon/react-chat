@@ -1,61 +1,85 @@
-import crypto from 'crypto';
+import CryptoJS from 'crypto-js';
+import JSEncrypt from 'jsencrypt';
+
+
 
 
 function genSymKey(){
-     const key = crypto.randomBytes(32); // Генерация случайного 256-битного ключа
-     const iv = crypto.randomBytes(16); // Генерация случайного вектора инициализаци
-     return {key, iv}
+    const key = window.crypto.getRandomValues(new Uint8Array(32));
+    console.log(key);
+    return key
 }
 
 
-function symEncrypt(message, key, iv) {
-    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-    let encrypted = cipher.update(message, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return encrypted;
-}
-
-function symDecrypt(encrypted, key, iv) {
-    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
-    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
-}
-
-
-function genAsymKey(){
-    const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
-        modulusLength: 2048,
-        publicKeyEncoding: {
-            type: 'spki',
-            format: 'pem'
-        },
-        privateKeyEncoding: {
-            type: 'pkcs8',
-            format: 'pem'
+function symEncrypt(text, key, iv){
+    // const ciphertext = CryptoJS.AES.encrypt(text, key).toString();
+    // console.log(ciphertext);
+    // return ciphertext
+    console.log(text, key, iv)
+    const encryptedMessage = CryptoJS.AES.encrypt(
+        text,
+        CryptoJS.enc.Utf8.parse(key),
+        {
+          iv: iv,
+          mode: CryptoJS.mode.CBC,
+          padding: CryptoJS.pad.Pkcs7
         }
-    });
-    return { publicKey, privateKey }
-}
-
-// Шифрование сообщения с помощью открытого ключа
-function encryptWithPublicKey(publicKey, message) {
-    const buffer = Buffer.from(message, 'utf8');
-    const encrypted = crypto.publicEncrypt(publicKey, buffer);
-    return encrypted.toString('base64');
-}
-
-// Дешифрование сообщения с помощью закрытого ключа
-function decryptWithPrivateKey(privateKey, encrypted) {
-    const buffer = Buffer.from(encrypted, 'base64');
-    const decrypted = crypto.privateDecrypt(privateKey, buffer);
-    return decrypted.toString('utf8');
+      );
+      console.log(encryptedMessage, 'encryptedMessage symEncrypt')
+      return encryptedMessage
 }
 
 
-export { genSymKey, genAsymKey, encryptWithPublicKey,symEncrypt, decryptWithPrivateKey, symDecrypt };
+function symDecrypt(text, key, iv){
+    // const bytes = CryptoJS.AES.decrypt(text, key);
+    // const decryptedPlaintext = bytes.toString(CryptoJS.enc.Utf8);
+    // console.log(decryptedPlaintext);
+    // return decryptedPlaintext
+    const decryptedMessage = CryptoJS.AES.decrypt(
+        text,
+        CryptoJS.enc.Utf8.parse(key),
+        {
+          iv: iv,
+          mode: CryptoJS.mode.CBC,
+          padding: CryptoJS.pad.Pkcs7
+        }
+      );
+    
+    return decryptedMessage
+}
 
 
 
+function genAsymKeys(){
+    const encryptor = new JSEncrypt();
+    const keySize = 2048; 
+    const keys = encryptor.getKey(keySize);
+    const publicKey = keys.getPublicKey();
+    const privateKey = keys.getPrivateKey();
+    return {publicKey, privateKey}
+}
+
+function asymEncrypt(text, publicKey){
+    const encryptor = new JSEncrypt();
+    encryptor.setPublicKey(publicKey);
+    const encryptedData = encryptor.encrypt(text);
+    return encryptedData
+}
+
+
+function asymDecrypt(text, privateKey){
+    // console.log(privateKey, 'keykeykey')
+    console.log(text, 'text text text text')
+    const decryptor = new JSEncrypt();
+    // decryptor.setPrivateKey(privateKey);
+    decryptor.setPrivateKey(decryptor.getKey(privateKey));
+    console.log(privateKey)
+    const decryptedData = decryptor.decrypt(text);
+    console.log(decryptedData, 'decryptedData')
+    return decryptedData
+}
+
+
+export {genAsymKeys, genSymKey, asymDecrypt, asymEncrypt, symDecrypt, symEncrypt}
 
 

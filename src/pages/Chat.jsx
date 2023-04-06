@@ -8,12 +8,28 @@ import ChatListWithSearch from '../components/ChatListWithSearch';
 import { io } from "socket.io-client";
 import styled from 'styled-components';
 import {postRequestCookie} from '../utils/requests'
+import {asymDecrypt} from '../utils/crypto'
+import {toast, ToastContainer} from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css"
+
 
 function Chat(props) {
   const navigate = useNavigate()
   const [chats, setChats] = useState([]);
   const [currentChat, setCurrentChat] = useState(undefined);
+  const [symKey, setSymKey] = useState();
+  const [symIv, setSymIv] = useState();
   const socket = useRef();
+
+
+  const toastOptions = {
+    position: 'bottom-center',
+    autoClose: 8000, 
+    pauseOnHover: true,
+    draggable: true,
+    theme: 'dark'
+}
+
 
   useEffect(() => {
     if (props.user) {
@@ -46,7 +62,17 @@ function Chat(props) {
     const privateChat = chat.nickname ? true : false
     // const response = await axios.post(getChatMessagesRoute, { userId: currentUser._id, chatId: chat._id, privateChat: privateChat});
     const data = await postRequestCookie(getChatDataRoute, { 'chatId': chat._id })
-    console.log(data, 'ifChatExistRoute')
+    console.log(data, 'getChatDataRoute')
+    if (!data.success){
+      toast.error("Ошибка", toastOptions)
+    }else{
+      console.log(props.privKey, 'props.privKey')
+      const decryptedSymKey = asymDecrypt(data.symKey, props.privKey)
+      const decryptedSymIv = asymDecrypt(data.iv, props.privKey)
+      console.log(data.symKey, data.iv, 'decryptedSymKeyssa')
+      setSymKey(decryptedSymKey)
+      setSymIv(decryptedSymIv)
+    }
     setCurrentChat(chat);
   };
 
@@ -60,10 +86,11 @@ function Chat(props) {
           {currentChat === undefined ? (
                 <Welcome />
               ) : (
-                <ChatContainer currentChat={currentChat} socket={socket} user={props.user} />
+                <ChatContainer currentChat={currentChat} socket={socket} user={props.user} symKey={symKey} symIv={symIv}  />
                 // <></>
               )}
       </Container>
+      <ToastContainer />
     </>
   )
 }

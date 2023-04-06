@@ -8,34 +8,50 @@ import SearchUser from './pages/SearchUser';
 import axios from "axios";
 import {checkAuthRoute} from './utils/APIRoutes';
 import { useNavigate } from 'react-router-dom';
-import {genAsymKey, decryptWithPrivateKey} from './utils/crypto'
-
+import {genAsymKeys, asymDecrypt, symDecrypt, asymEncrypt} from './utils/crypto'
+import {postRequestCookie} from './utils/requests'
 
 
 function App() {
   const [user, setUser] = useState(undefined);
-  const [keys, setKeys] = useState(undefined);
+  const [serverKeys, setServerKeys] = useState(undefined);
+  const [clientKey, setClientKeys] = useState(undefined);
+  const [privKey, setPrivKey] = useState(undefined);
   const navigate = useNavigate()
 
   useEffect(() => {
     checkAuth();
   }, []);
 
-  const checkAuth = async () => {
-    // const data = await axios.post(checkAuthRoute);
-    const response = await fetch(checkAuthRoute, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {'Content-type': 'application/json'}
-    })
-    let data = await response.json()
-    if (!data.success) {
-      setUser(undefined)
-      navigate("/login");
-    } else {
-      setUser(data)
-      navigate("/");
+  useEffect(() => {
+    const func = async () => {
+      // const data = await axios.post(checkAuthRoute);
+      const data = await postRequestCookie(checkAuthRoute, {publicKey: clientKey.publicKey})
+      console.log(data, 'data.privateKey')
+      if (!data.success) {
+        setUser(undefined)
+        navigate("/login");
+      } else {
+        setUser(data)
+        // setPrivKey(asymDecrypt(data.privateKey, clientKey.privateKey))
+        // const e = asymEncrypt('122121', clientKey.publicKey)
+        // console.log(e, 'eeeeeeeeeee')
+        // const ee = asymDecrypt(e, clientKey.privateKey)
+        // console.log(ee, 'вфв')
+        const iv = asymDecrypt(data.encrypteIv, clientKey.privateKey, clientKey.publicKey)
+        const symKey = asymDecrypt(data.encryptedSymKey, clientKey.privateKey, clientKey.publicKey)
+        console.log(iv, symKey, 'symKey da symKeyfsf symKeysymKeysymKeysymKey')
+        setPrivKey(symDecrypt(data.privateKey, iv, symKey))
+        navigate("/");
+      }
     }
+    func()
+  }, [clientKey]);
+
+  const checkAuth = async () => {
+    const asymKeys = genAsymKeys()
+    setClientKeys(asymKeys)
+    console.log(asymKeys, 'asymKeys')
   }
 
 
@@ -47,7 +63,7 @@ function App() {
         <Route path='/login' element={<Login user={user} handleUserSet={setUser} checkAuth={checkAuth}/>} />
         <Route path='/setAvatar' element={<SetAvatar user={user}/>} />
         <Route path='/searchUser' element={<SearchUser user={user}/>} />
-        <Route path='/' element={<Chat user={user} handleUserSet={setUser} />} />
+        <Route path='/' element={<Chat user={user} handleUserSet={setUser} privKey={privKey} />} />
       </Routes>
     </>
   )

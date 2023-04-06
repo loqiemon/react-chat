@@ -5,119 +5,121 @@ import { v4 as uuidv4 } from "uuid";
 import { sendMessageRoute, recieveMessageRoute, updateChatRoute } from "../utils/APIRoutes";
 import { addTransactionRoute, getShardRoute } from "../utils/APIBlochain";
 import ChatInput from './ChatInput';
-import {postRequestCookie} from '../utils/requests'
+import { postRequestCookie } from '../utils/requests'
+import { symDecrypt, symEncrypt } from '../utils/crypto'
 
 
-export default function ChatContainer({ currentChat, socket, user}) {
-    const [messages, setMessages] = useState([]);
-    const scrollRef = useRef();
-    const [arrivalMessage, setArrivalMessage] = useState(null);
-    // console.log(user, 'useruseruseruser')
-    useEffect(()=>{
-        const func = async () => {
-            const data = await axios.post(getShardRoute, {
-              "segment_id": currentChat.chatId,
-              "numShard": "-1",
-              "convertMessages": true
-          })
-            console.log(data, 'get message')
-            const chatsData = data.data.blocks.map(msg => {
-              console.log(msg.writer)
-              console.log(user._id)
-              msg.writer === user._id ? msg.fromSelf = true :  msg.fromSelf = false 
-            })
-            console.log(chatsData)
-            setMessages(data.data.blocks);
-          }
-          func()
-    }, [currentChat]);
-////
-
-    const handleSendMsg = async (msg) => {
-      currentChat.users.forEach(us => {
-        console.log(currentChat._id)
-        socket.current.emit("send-msg", {
-          to: us,
-          from: user._id,
-          msg,
-        });
+export default function ChatContainer({ currentChat, socket, user, symKey, symIv }) {
+  const [messages, setMessages] = useState([]);
+  const scrollRef = useRef();
+  const [arrivalMessage, setArrivalMessage] = useState(null);
+  // console.log(user, 'useruseruseruser')
+  useEffect(() => {
+    const func = async () => {
+      const data = await axios.post(getShardRoute, {
+        "segment_id": currentChat.chatId,
+        "numShard": "-1",
+        "convertMessages": true
       })
-        // console.log(currentChat._id, 'currentChat._id')
+      console.log(data, 'get message')
+      const chatsData = data.data.blocks.map(msg => {
+        console.log(msg.writer)
+        console.log(user._id)
+        msg.writer === user._id ? msg.fromSelf = true : msg.fromSelf = false
+        msg.message = symDecrypt(msg.message, symKey, symIv)
+      })
+      console.log(chatsData)
+      setMessages(data.data.blocks);
+    }
+    func()
+  }, [currentChat]);
+  ////
 
-        await axios.post(addTransactionRoute, {
-            "segment_id": currentChat.chatId,
-            "writer": user._id,
-            "reader": currentChat.chatId,
-            "message": msg,
-            "file": 'None'
-        }).then(res => console.log(res))
+  const handleSendMsg = async (msg) => {
+    currentChat.users.forEach(us => {
+      console.log(currentChat._id)
+      socket.current.emit("send-msg", {
+        to: us,
+        from: user._id,
+        msg: symEncrypt(msg, symKey, symIv),
+      });
+    })
+    // console.log(currentChat._id, 'currentChat._id')
 
-        const resp = await axios.post(updateChatRoute, {chatId: currentChat.chatId})
-        console.log(resp, 'resp')
-    
-        const msgs = [...messages];
-        msgs.push({ fromSelf: true, message: msg });
-        setMessages(msgs);
-      };
+    await axios.post(addTransactionRoute, {
+      "segment_id": currentChat.chatId,
+      "writer": user._id,
+      "reader": currentChat.chatId,
+      "message": symEncrypt(msg, symKey, symIv),
+      "file": 'None'
+    }).then(res => console.log(res))
 
-////
-    useEffect(() => {
-        if (socket.current) {
-          socket.current.on("msg-recieve", (msg) => {
-            console.log(msg, 'msg')
-            setArrivalMessage({ fromSelf: false, message: msg });
-          });
-        }
-      }, []);
-    
-      useEffect(() => {
-        arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
-      }, [arrivalMessage]);
-    
-      useEffect(() => {
-        scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, [messages]);
+    const resp = await postRequestCookie(updateChatRoute, { chatId: currentChat.chatId })
+    console.log(resp, 'resp')
+
+    const msgs = [...messages];
+    msgs.push({ fromSelf: true, message: msg });
+    setMessages(msgs);
+  };
+
+  ////
+  useEffect(() => {
+    if (socket.current) {
+      socket.current.on("msg-recieve", (msg) => {
+        console.log(msg, 'msg')
+
+        setArrivalMessage({ fromSelf: false, message: symDecrypt(msg, symKey, symIv) });
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
+  }, [arrivalMessage]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
 
-    return (
-        <Container>
-          <div className="chat-header">
-            <div className="user-details">
-              <div className="avatar">
-                <img
-                  src={`data:image/svg+xml;base64,${currentChat.avatarImage}`}
-                  alt=""
-                />
-              </div>
-              <div className="username">
-                <h3>{currentChat.nickname}</h3>
+  return (
+    <Container>
+      <div className="chat-header">
+        <div className="user-details">
+          <div className="avatar">
+            <img
+              src={`data:image/svg+xml;base64,${currentChat.avatarImage}`}
+              alt=""
+            />
+          </div>
+          <div className="username">
+            <h3>{currentChat.nickname}</h3>
+          </div>
+        </div>
+        {/* <Logout /> */}
+      </div>
+      <div className="chat-messages">
+        {messages.map((message) => {
+          return (
+            <div ref={scrollRef} key={uuidv4()}>
+              <div
+                className={`message ${message.fromSelf ? "sended" : "recieved"
+                  }`}
+              >
+                <div className="content ">
+                  <p>{message.message}</p>
+                </div>
               </div>
             </div>
-            {/* <Logout /> */}
-          </div>
-          <div className="chat-messages">
-            {messages.map((message) => {
-              return (
-                <div ref={scrollRef} key={uuidv4()}>
-                  <div
-                    className={`message ${
-                      message.fromSelf ? "sended" : "recieved"
-                    }`}
-                  >
-                    <div className="content ">
-                      <p>{message.message}</p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <ChatInput handleSendMsg={handleSendMsg} />
-        </Container>
-      );
-    }
-    
-    const Container = styled.div`
+          );
+        })}
+      </div>
+      <ChatInput handleSendMsg={handleSendMsg} />
+    </Container>
+  );
+}
+
+const Container = styled.div`
     display: grid;
     height: 100vh;
     padding-top: 6rem;
@@ -191,4 +193,3 @@ export default function ChatContainer({ currentChat, socket, user}) {
       }
     }
   `;
-  
