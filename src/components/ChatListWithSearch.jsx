@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import blankProfile from '../assets/blankProfile.png';
+import AddIcon from '@mui/icons-material/Add';
+import IconButton from '@mui/material/IconButton';
+import { postRequestCookie } from '../utils/requests';
+import {getAllFriendsRoute} from "../utils/APIRoutes"
 
 
 const ChatListWithSearch = (props) => {
@@ -13,13 +17,15 @@ const ChatListWithSearch = (props) => {
   };
 
   useEffect(()=> {
-    if (props.chats.length > 0){
+    if (props.chats.length > 0 && search.length > 0 ){
       const filtered = props.chats.filter((chat) => chat.chatname.toLowerCase().includes(search.toLowerCase()))
       setFilteredChats(filtered)
+    }else if (props.chats.length > 0){
+      setFilteredChats(props.chats)
     }else {
       setFilteredChats([])
     }
-  }, [search])
+  }, [search, props.chats])
 //   const filteredChats = props.chats.data.length > 0 ? props.chats.data.filter((chat) =>
 //   chat.chatname.toLowerCase().includes(search.toLowerCase())
 // ) : []
@@ -30,6 +36,13 @@ const ChatListWithSearch = (props) => {
     props.changeChat(chat);
   };
 
+
+  const handleCreateCommonChat = async () => {
+    const myFriends = await postRequestCookie(getAllFriendsRoute)
+    console.log(myFriends)
+    props.setFriendForChat(myFriends.myFriends)
+  }
+
   return (
     <ChatList>
       <ChatSearch
@@ -38,6 +51,9 @@ const ChatListWithSearch = (props) => {
         value={search}
         onChange={handleSearchChange}
       />
+      <IconButton aria-label="delete" onClick={handleCreateCommonChat}>
+        <AddIcon  style={{ color: '#fff' }}/>
+      </IconButton>
       {filteredChats.map((chat) => (
         <ChatItem key={chat._id} onClick={() => {changeCurrentChat(chat)}}>
           {chat.avatarImage ? <ChatAvatar src={`data:image/svg+xml;base64,${chat.avatarImage}`} alt={chat.chatname} /> : <ChatAvatar src={blankProfile} alt={chat.chatname} />}
@@ -102,12 +118,14 @@ const ChatSearch = styled.input`
   border: none;
   border-bottom: 2px solid #fff;
   padding: 5px;
-  width: 100%;
+  width: 90%;
   margin-bottom: 20px;
   font-size: 16px;
   &:focus {
     outline: none;
   }
 `;
+
+
 
 export default ChatListWithSearch;

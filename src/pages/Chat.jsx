@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Welcome from '../components/Welcome';
 import ChatContainer from '../components/ChatContainer';
-import {getMyChatsRoute, getChatDataRoute, host} from "../utils/APIRoutes"
+import FriendsForCommonChat from '../components/FriendsForCommonChat';
+import {getMyChatsRoute, getChatDataRoute, host, saveChatsRoute} from "../utils/APIRoutes"
 import ChatListWithSearch from '../components/ChatListWithSearch';
 import { io } from "socket.io-client";
 import styled from 'styled-components';
@@ -11,6 +12,7 @@ import {postRequestCookie} from '../utils/requests'
 import {asymDecrypt} from '../utils/crypto'
 import {toast, ToastContainer} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css"
+import safe from '../assets/safe.png'
 
 
 function Chat(props) {
@@ -19,7 +21,11 @@ function Chat(props) {
   const [currentChat, setCurrentChat] = useState(undefined);
   const [symKey, setSymKey] = useState();
   // const [symIv, setSymIv] = useState();
+  const [friendForChat, setFriendForChat] = useState([])
+
+
   const socket = useRef();
+
 
 
   const toastOptions = {
@@ -48,9 +54,7 @@ function Chat(props) {
   useEffect(() => {
     const func = async () => {
       if (props.user) {
-          //get chats
           const data = await postRequestCookie(getMyChatsRoute)
-          console.log(data, 'chats')
           setChats(data.data)
       }
     }
@@ -60,20 +64,14 @@ function Chat(props) {
 
   const handleChatChange = async (chat) => {
     const privateChat = chat.nickname ? true : false
-    // const response = await axios.post(getChatMessagesRoute, { userId: currentUser._id, chatId: chat._id, privateChat: privateChat});
+    setFriendForChat([])
+    postRequestCookie(saveChatsRoute);
     const data = await postRequestCookie(getChatDataRoute, { 'chatId': chat._id })
-    console.log(data, 'getChatDataRoute')
     if (!data.success){
       toast.error("Ошибка", toastOptions)
     }else{
-      console.log(props.privKey, 'props.privKey')
-      console.log(data.symKey, 'ata.symKey ata.symKey')
       const decryptedSymKey = asymDecrypt(data.symKey, props.privKey)
-      console.log(decryptedSymKey, 'decryptedSymKey')
-      // const decryptedSymIv = asymDecrypt(data.iv, props.privKey)
-      console.log(data.symKey, 'decryptedSymKeyssa')
       setSymKey(decryptedSymKey)
-      // setSymIv(decryptedSymIv)
     }
     setCurrentChat(chat);
   };
@@ -84,17 +82,23 @@ function Chat(props) {
     <>
       {props.user && <Navbar user={props.user} handleUserSet={props.handleUserSet} />}
       <Container>
-        <ChatListWithSearch chats={chats} changeChat={handleChatChange}/>
-          {currentChat === undefined ? (
-                <Welcome />
-              ) : (
-                <ChatContainer currentChat={currentChat} socket={socket} user={props.user} symKey={symKey}   />
-                // <></>
-              )}
+        <ChatListWithSearch chats={chats} changeChat={handleChatChange} setFriendForChat={setFriendForChat}/>
+        {friendForChat.length > 0 ? (
+          <FriendsForCommonChat friends={friendForChat} setFriendForChat={setFriendForChat} />
+        ) : (
+          <>
+            {currentChat === undefined ? (
+              <Welcome />
+            ) : (
+              <ChatContainer currentChat={currentChat} socket={socket} user={props.user} symKey={symKey} />
+            )}
+          </>
+        )}
       </Container>
       <ToastContainer />
     </>
-  )
+  );
+  
 }
 
 
@@ -105,6 +109,7 @@ const Container = styled.div`
   // gap: 1rem;
   align-items: center;
   background-color: #131324;
+  // background: url(${safe});
   .container {
     height: 85vh;
     width: 85vw;

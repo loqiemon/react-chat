@@ -6,10 +6,11 @@ import Chat from './pages/Chat';
 import Login from './pages/Login';
 import SearchUser from './pages/SearchUser';
 import axios from "axios";
-import {checkAuthRoute} from './utils/APIRoutes';
+import {checkAuthRoute, saveChatsRoute} from './utils/APIRoutes';
 import { useNavigate } from 'react-router-dom';
-import {genAsymKeys, asymDecrypt, symDecrypt, asymEncrypt} from './utils/crypto'
-import {postRequestCookie} from './utils/requests'
+import {genAsymKeys, asymDecrypt, symDecrypt, asymEncrypt} from './utils/crypto';
+import {postRequestCookie} from './utils/requests';
+import { useLocation } from 'react-router-dom';
 
 
 function App() {
@@ -18,10 +19,21 @@ function App() {
   const [clientKey, setClientKeys] = useState(undefined);
   const [privKey, setPrivKey] = useState(undefined);
   const navigate = useNavigate()
+  const location = useLocation();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      postRequestCookie(saveChatsRoute);
+    };
+
+    fetchData();
+  }, [location.pathname]);
+
 
   useEffect(() => {
     checkAuth();
   }, []);
+
 
   useEffect(() => {
     const func = async () => {
