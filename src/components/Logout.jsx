@@ -13,11 +13,11 @@ export default function Logout(props) {
     // const data = await axios.get(`${logoutRoute}`);
     const data = await getRequestCookie(logoutRoute);
     
-    if (data.status === 200) {
+    // if (data.status === 200) {
       localStorage.clear();
       props.handleUserSet(undefined)
       navigate("/login");
-    }
+    // }
   };
   return (
     <Button onClick={handleClick}>

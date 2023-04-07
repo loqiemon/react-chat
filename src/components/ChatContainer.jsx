@@ -9,7 +9,7 @@ import { postRequestCookie } from '../utils/requests'
 import { symDecrypt, symEncrypt } from '../utils/crypto'
 
 
-export default function ChatContainer({ currentChat, socket, user, symKey, symIv }) {
+export default function ChatContainer({ currentChat, socket, user, symKey }) {
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef();
   const [arrivalMessage, setArrivalMessage] = useState(null);
@@ -26,7 +26,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, symIv
         console.log(msg.writer)
         console.log(user._id)
         msg.writer === user._id ? msg.fromSelf = true : msg.fromSelf = false
-        msg.message = symDecrypt(msg.message, symKey, symIv)
+        msg.message = symDecrypt(msg.message, symKey)
       })
       console.log(chatsData)
       setMessages(data.data.blocks);
@@ -34,14 +34,14 @@ export default function ChatContainer({ currentChat, socket, user, symKey, symIv
     func()
   }, [currentChat]);
   ////
-
+  
   const handleSendMsg = async (msg) => {
     currentChat.users.forEach(us => {
       console.log(currentChat._id)
       socket.current.emit("send-msg", {
         to: us,
         from: user._id,
-        msg: symEncrypt(msg, symKey, symIv),
+        msg: symEncrypt(msg, symKey),
       });
     })
     // console.log(currentChat._id, 'currentChat._id')
@@ -50,7 +50,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, symIv
       "segment_id": currentChat.chatId,
       "writer": user._id,
       "reader": currentChat.chatId,
-      "message": symEncrypt(msg, symKey, symIv),
+      "message": symEncrypt(msg, symKey),
       "file": 'None'
     }).then(res => console.log(res))
 
@@ -68,7 +68,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, symIv
       socket.current.on("msg-recieve", (msg) => {
         console.log(msg, 'msg')
 
-        setArrivalMessage({ fromSelf: false, message: symDecrypt(msg, symKey, symIv) });
+        setArrivalMessage({ fromSelf: false, message: symDecrypt(msg, symKey) });
       });
     }
   }, []);

@@ -18,7 +18,7 @@ function Chat(props) {
   const [chats, setChats] = useState([]);
   const [currentChat, setCurrentChat] = useState(undefined);
   const [symKey, setSymKey] = useState();
-  const [symIv, setSymIv] = useState();
+  // const [symIv, setSymIv] = useState();
   const socket = useRef();
 
 
@@ -67,11 +67,13 @@ function Chat(props) {
       toast.error("Ошибка", toastOptions)
     }else{
       console.log(props.privKey, 'props.privKey')
+      console.log(data.symKey, 'ata.symKey ata.symKey')
       const decryptedSymKey = asymDecrypt(data.symKey, props.privKey)
-      const decryptedSymIv = asymDecrypt(data.iv, props.privKey)
-      console.log(data.symKey, data.iv, 'decryptedSymKeyssa')
+      console.log(decryptedSymKey, 'decryptedSymKey')
+      // const decryptedSymIv = asymDecrypt(data.iv, props.privKey)
+      console.log(data.symKey, 'decryptedSymKeyssa')
       setSymKey(decryptedSymKey)
-      setSymIv(decryptedSymIv)
+      // setSymIv(decryptedSymIv)
     }
     setCurrentChat(chat);
   };
@@ -86,7 +88,7 @@ function Chat(props) {
           {currentChat === undefined ? (
                 <Welcome />
               ) : (
-                <ChatContainer currentChat={currentChat} socket={socket} user={props.user} symKey={symKey} symIv={symIv}  />
+                <ChatContainer currentChat={currentChat} socket={socket} user={props.user} symKey={symKey}   />
                 // <></>
               )}
       </Container>

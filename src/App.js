@@ -33,15 +33,17 @@ function App() {
         navigate("/login");
       } else {
         setUser(data)
-        setPrivKey(asymDecrypt(data.privateKey, clientKey.privateKey))
-        const e = asymEncrypt('122121', clientKey.publicKey)
-        console.log(e, 'eeeeeeeeeee')
-        const ee = asymDecrypt(e, clientKey.privateKey)
-        console.log(ee, 'вфв')
-        const iv = asymDecrypt(data.encrypteIv, clientKey.privateKey)
+        // setPrivKey(asymDecrypt(data.privateKey, clientKey.privateKey))
+        // const e = asymEncrypt('122121', clientKey.publicKey)
+        // console.log(e, 'eeeeeeeeeee')
+        // const ee = asymDecrypt(e, clientKey.privateKey)
+        // console.log(ee, 'вфв')
+        // console.log(data.encrypteIv, 'data.encrypteIv')
+  
+        // const iv = asymDecrypt(data.encrypteIv, clientKey.privateKey)
         const symKey = asymDecrypt(data.encryptedSymKey, clientKey.privateKey)
-        console.log(iv, symKey, 'symKey da symKeyfsf symKeysymKeysymKeysymKey')
-        setPrivKey(symDecrypt(data.privateKey, iv, symKey))
+        console.log(symKey, 'decripted symKey')
+        setPrivKey(symDecrypt(data.privateKey, symKey))
         navigate("/");
       }
     }
