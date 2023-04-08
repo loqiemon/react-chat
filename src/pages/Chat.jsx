@@ -74,6 +74,8 @@ function Chat(props) {
       setSymKey(decryptedSymKey)
     }
     setCurrentChat(chat);
+    const resp = await postRequestCookie(getMyChatsRoute)
+    setChats(resp.data)
   };
 
   
@@ -82,16 +84,16 @@ function Chat(props) {
     <>
       {props.user && <Navbar user={props.user} handleUserSet={props.handleUserSet} />}
       <Container>
-        <ChatListWithSearch chats={chats} changeChat={handleChatChange} setFriendForChat={setFriendForChat}/>
+        <ChatListWithSearch chats={chats} changeChat={handleChatChange} setFriendForChat={setFriendForChat} />
         {friendForChat.length > 0 ? (
           <FriendsForCommonChat friends={friendForChat} setFriendForChat={setFriendForChat} />
         ) : (
           <>
-            {currentChat === undefined ? (
+            {/* {currentChat === undefined ? (
               <Welcome />
-            ) : (
-              <ChatContainer currentChat={currentChat} socket={socket} user={props.user} symKey={symKey} />
-            )}
+            ) : ( */}
+              <ChatContainer currentChat={currentChat} socket={socket} user={props.user} symKey={symKey} setChats={setChats} />
+            {/* )} */}
           </>
         )}
       </Container>

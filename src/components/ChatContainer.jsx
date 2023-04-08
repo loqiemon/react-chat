@@ -2,15 +2,19 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
-import { sendMessageRoute, recieveMessageRoute, updateChatRoute } from "../utils/APIRoutes";
+import { getMyChatsRoute, updateChatRoute } from "../utils/APIRoutes";
 import { addTransactionRoute, getShardRoute } from "../utils/APIBlochain";
 import ChatInput from './ChatInput';
 import { postRequestCookie } from '../utils/requests'
 import { symDecrypt, symEncrypt } from '../utils/crypto'
+import Welcome from '../components/Welcome';
+import blankProfile from '../assets/blankProfile.png';
 
 
-export default function ChatContainer({ currentChat, socket, user, symKey }) {
+export default function ChatContainer({ currentChat, socket, user, symKey, setChats }) {
   const [messages, setMessages] = useState([]);
+  const [searchMessage, setSearchMessage] = useState(undefined);
+  const [filteredMessages, setFilteredMessages] = useState([]);
   const scrollRef = useRef();
   const [arrivalMessage, setArrivalMessage] = useState(null);
   // console.log(user, 'useruseruseruser')
@@ -23,8 +27,6 @@ export default function ChatContainer({ currentChat, socket, user, symKey }) {
       })
       console.log(data, 'get message')
       const chatsData = data.data.blocks.map(msg => {
-        console.log(msg.writer)
-        console.log(user._id)
         msg.writer === user._id ? msg.fromSelf = true : msg.fromSelf = false
         msg.message = symDecrypt(msg.message, symKey)
       })
@@ -34,7 +36,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey }) {
     func()
   }, [currentChat]);
   ////
-  
+
   const handleSendMsg = async (msg) => {
     currentChat.users.forEach(us => {
       console.log(currentChat._id)
@@ -60,15 +62,20 @@ export default function ChatContainer({ currentChat, socket, user, symKey }) {
     const msgs = [...messages];
     msgs.push({ fromSelf: true, message: msg });
     setMessages(msgs);
+
+    const data = await postRequestCookie(getMyChatsRoute)
+    setChats(data.data)
   };
 
   ////
   useEffect(() => {
     if (socket.current) {
-      socket.current.on("msg-recieve", (msg) => {
+      socket.current.on("msg-recieve", async (msg) => {
         console.log(msg, 'msg')
-
+        
         setArrivalMessage({ fromSelf: false, message: symDecrypt(msg, symKey) });
+        // const data = await postRequestCookie(getMyChatsRoute)
+        // setChats(data.data)
       });
     }
   }, []);
@@ -82,42 +89,90 @@ export default function ChatContainer({ currentChat, socket, user, symKey }) {
   }, [messages]);
 
 
+  const handleSearchMessageChange = async (e) => {
+    setSearchMessage(e.target.value);
+  }
+
+  // useEffect(()=> {
+  //   console.log(searchMessage, 'searchMessage')
+  //   if (searchMessage){
+  //     const filtered = messages.filter(msg => msg.message.search(searchMessage) > -1)
+  //     setFilteredMessages(filtered)
+  //   }else {
+  //     setFilteredMessages(messages)
+  //   }
+  // }, [searchMessage])
+
+
   return (
     <Container>
-      <div className="chat-header">
-        <div className="user-details">
-          <div className="avatar">
-            <img
-              src={`data:image/svg+xml;base64,${currentChat.avatarImage}`}
-              alt=""
-            />
-          </div>
-          <div className="username">
-            <h3>{currentChat.nickname}</h3>
-          </div>
-        </div>
-        {/* <Logout /> */}
-      </div>
-      <div className="chat-messages">
-        {messages.map((message) => {
-          return (
-            <div ref={scrollRef} key={uuidv4()}>
-              <div
-                className={`message ${message.fromSelf ? "sended" : "recieved"
-                  }`}
-              >
-                <div className="content ">
-                  <p>{message.message}</p>
+      {currentChat ? (
+        <>
+            <div className="chat-header">
+              <div className="user-details">
+                <div className="avatar">
+                  {currentChat.avatarImage.length > 0 ?                   <img
+                    src={`data:image/svg+xml;base64,${currentChat.avatarImage}`}
+                    alt=""
+                  /> : <img
+                  src={blankProfile}
+                  alt=""
+                /> 
+                }
                 </div>
+                <div className="username">
+                  <h3>{currentChat.chatname}</h3>
+                </div>
+                <ChatSearchMessage
+        type="text"
+        placeholder="Поиск..."
+        value={searchMessage}
+        onChange={handleSearchMessageChange}
+      />
+
               </div>
+              {/* <Logout /> */}
             </div>
-          );
-        })}
-      </div>
-      <ChatInput handleSendMsg={handleSendMsg} />
+            <div className="chat-messages">
+              {/* {filteredMessages.map((message) => { */}
+                {messages.map((message) => {
+                return (
+                  <div ref={scrollRef} key={uuidv4()}>
+                    <div
+                      className={`message ${message.fromSelf ? "sended" : "recieved"
+                        }`}
+                    >
+                      <div className="content ">
+                        <p>{message.message}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <ChatInput handleSendMsg={handleSendMsg} />
+        </>
+      ): (
+        <Welcome />
+      )
+      }
     </Container>
   );
 }
+
+const ChatSearchMessage = styled.input`
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  border-bottom: 2px solid #fff;
+  padding: 5px;
+  width: 90%;
+  margin-bottom: 20px;
+  font-size: 16px;
+  &:focus {
+    outline: none;
+  }
+`;
 
 const Container = styled.div`
     display: grid;
