@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
-import { sendMessageRoute, recieveMessageRoute, updateChatRoute } from "../utils/APIRoutes";
+import { getMyChatsRoute, updateChatRoute } from "../utils/APIRoutes";
 import { addTransactionRoute, getShardRoute } from "../utils/APIBlochain";
 import ChatInput from './ChatInput';
 import { postRequestCookie } from '../utils/requests'
 import { symDecrypt, symEncrypt } from '../utils/crypto'
 
 
-export default function ChatContainer({ currentChat, socket, user, symKey }) {
+export default function ChatContainer({ currentChat, socket, user, symKey, setChats }) {
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef();
   const [arrivalMessage, setArrivalMessage] = useState(null);
@@ -60,6 +60,10 @@ export default function ChatContainer({ currentChat, socket, user, symKey }) {
     const msgs = [...messages];
     msgs.push({ fromSelf: true, message: msg });
     setMessages(msgs);
+
+
+    const data = await postRequestCookie(getMyChatsRoute)
+    setChats(data.data)
   };
 
   ////
@@ -69,6 +73,11 @@ export default function ChatContainer({ currentChat, socket, user, symKey }) {
         console.log(msg, 'msg')
 
         setArrivalMessage({ fromSelf: false, message: symDecrypt(msg, symKey) });
+        const func = async () => {
+          const data = await postRequestCookie(getMyChatsRoute)
+          setChats(data.data)
+        }
+        func()
       });
     }
   }, []);

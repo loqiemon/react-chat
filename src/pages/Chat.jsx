@@ -74,6 +74,8 @@ function Chat(props) {
       setSymKey(decryptedSymKey)
     }
     setCurrentChat(chat);
+    const resp = await postRequestCookie(getMyChatsRoute)
+    setChats(resp.data)
   };
 
   
@@ -90,7 +92,7 @@ function Chat(props) {
             {currentChat === undefined ? (
               <Welcome />
             ) : (
-              <ChatContainer currentChat={currentChat} socket={socket} user={props.user} symKey={symKey} />
+              <ChatContainer currentChat={currentChat} socket={socket} user={props.user} symKey={symKey} setChats={setChats} />
             )}
           </>
         )}
