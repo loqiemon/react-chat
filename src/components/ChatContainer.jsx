@@ -21,15 +21,26 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
         "numShard": "-1",
         "convertMessages": true
       })
-      console.log(data, 'get message')
-      const chatsData = data.data.blocks.map(msg => {
-        console.log(msg.writer)
-        console.log(user._id)
+
+      let chatData = [];
+      const shardCount = data.data.listShards.length;
+      for (let i = 0; i < shardCount; i++ ){
+
+        const response = await axios.post(getShardRoute, {
+          "segment_id": currentChat.chatId,
+          "numShard": shardCount,
+          "convertMessages": true
+        })
+        chatData = [...chatData, ...response.data]
+      }
+      console.log(currentChat, 'currentChat for....')
+
+      chatData.map(msg => {
         msg.writer === user._id ? msg.fromSelf = true : msg.fromSelf = false
         msg.message = symDecrypt(msg.message, symKey)
       })
-      console.log(chatsData)
-      setMessages(data.data.blocks);
+      console.log(chatData, 'chatData chatData')
+      setMessages(chatData);
     }
     func()
   }, [currentChat]);
@@ -41,7 +52,8 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
       socket.current.emit("send-msg", {
         to: us,
         from: user._id,
-        msg: symEncrypt(msg, symKey),
+        msg: {chatId: currentChat.chatId, msg: symEncrypt(msg, symKey)},
+        // msg: symEncrypt(msg, symKey),
       });
     })
     // console.log(currentChat._id, 'currentChat._id')
@@ -57,10 +69,12 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
     const resp = await postRequestCookie(updateChatRoute, { chatId: currentChat.chatId })
     console.log(resp, 'resp')
 
+
+
     const msgs = [...messages];
     msgs.push({ fromSelf: true, message: msg });
     setMessages(msgs);
-
+    
 
     const data = await postRequestCookie(getMyChatsRoute)
     setChats(data.data)
@@ -71,8 +85,11 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
     if (socket.current) {
       socket.current.on("msg-recieve", (msg) => {
         console.log(msg, 'msg')
+        console.log(currentChat.chatId, 'currentChat.chatId')
+        if (msg.chatId == currentChat.chatId){
+          setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey) });
+        }
 
-        setArrivalMessage({ fromSelf: false, message: symDecrypt(msg, symKey) });
         const func = async () => {
           const data = await postRequestCookie(getMyChatsRoute)
           setChats(data.data)
@@ -80,7 +97,8 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
         func()
       });
     }
-  }, []);
+    console.log(messages, ' messages messages messages messages')
+  }, [currentChat]);
 
   useEffect(() => {
     arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
@@ -102,7 +120,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
             />
           </div>
           <div className="username">
-            <h3>{currentChat.nickname}</h3>
+            <h3>{currentChat.chatname}</h3>
           </div>
         </div>
         {/* <Logout /> */}

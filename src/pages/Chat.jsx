@@ -5,7 +5,7 @@ import Welcome from '../components/Welcome';
 import ChatContainer from '../components/ChatContainer';
 import FriendsForCommonChat from '../components/FriendsForCommonChat';
 import {getMyChatsRoute, getChatDataRoute, host, saveChatsRoute} from "../utils/APIRoutes"
-import ChatListWithSearch from '../components/ChatListWithSearch';
+import ChatListWithSearch from '../components/ChatListWithSearch/ChatListWithSearch';
 import { io } from "socket.io-client";
 import styled from 'styled-components';
 import {postRequestCookie} from '../utils/requests'
@@ -25,7 +25,6 @@ function Chat(props) {
 
 
   const socket = useRef();
-
 
 
   const toastOptions = {

@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import blankProfile from '../assets/blankProfile.png';
+import blankProfile from '../../assets/blankProfile.png';
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
-import { postRequestCookie } from '../utils/requests';
-import {getAllFriendsRoute} from "../utils/APIRoutes"
+import { postRequestCookie } from '../../utils/requests';
+import {getAllFriendsRoute} from "../../utils/APIRoutes"
+import './style.scss'
 
 
 const ChatListWithSearch = (props) => {
   const [search, setSearch] = useState('');
   const [currentSelected, setCurrentSelected] = useState(undefined);
   const [filteredChats, setFilteredChats] = useState([]);
+
+  
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
@@ -45,15 +48,17 @@ const ChatListWithSearch = (props) => {
 
   return (
     <ChatList>
-      <ChatSearch
-        type="text"
-        placeholder="Поиск..."
-        value={search}
-        onChange={handleSearchChange}
-      />
-      <IconButton aria-label="delete" onClick={handleCreateCommonChat}>
-        <AddIcon  style={{ color: '#fff' }}/>
-      </IconButton>
+      <div className="top-men">
+        <ChatSearch
+          type="text"
+          placeholder="Поиск..."
+          value={search}
+          onChange={handleSearchChange}
+        />
+        <IconButton aria-label="delete" onClick={handleCreateCommonChat}>
+          <AddIcon  style={{ color: '#fff' }}/>
+        </IconButton>
+      </div>
       {filteredChats.map((chat) => (
         <ChatItem key={chat._id} onClick={() => {changeCurrentChat(chat)}}>
           {chat.avatarImage ? <ChatAvatar src={`data:image/svg+xml;base64,${chat.avatarImage}`} alt={chat.chatname} /> : <ChatAvatar src={blankProfile} alt={chat.chatname} />}
