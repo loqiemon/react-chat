@@ -10,7 +10,7 @@ export const checkAuthRoute = `${host}/api/auth/checkAuth`;
 export const setAvatarRoute = `${host}/api/auth/setavatar`;
 export const searchUserRoute = `${host}/api/auth/searchUser`;
 export const getAllFriendsRoute = `${host}/api/auth/getAllFriends`;
-
+export const getSomeUsersRoute = `${host}/api/auth/getSomeUsers`;
 
 //messages
 export const getMyChatsRoute = `${host}/api/messages/getmychats`;

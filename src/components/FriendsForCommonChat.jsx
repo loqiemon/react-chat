@@ -65,7 +65,7 @@ export default function FriendsForCommonChat(props) {
       <SearchUserWrapper>
         <SearchPageContainer>
             <div className="close-common-chat">
-                <IconButton style={{ position: 'absolute', top: '10', right: '10' }} onClick={closeMenu}>
+                <IconButton style={{ position: 'absolute', top: '5rem', right: '2rem'}} onClick={closeMenu}>
                     <CloseIcon style={{ color: 'red' }}/>
                 </IconButton>
             </div>
@@ -96,7 +96,7 @@ export default function FriendsForCommonChat(props) {
                   Добавить
                 </Button>
               </UserItem>
-            )) : <h2>Нет подходящих пользователей</h2>}
+            )) : <h2 style={{color: 'white'}}>Нет подходящих пользователей</h2>}
           </UsersList>
           <div className="create-common-chat">
                 <Button style={{ position: 'absolute', bottom: '0' }} onClick={createCommonChat}>
@@ -133,6 +133,7 @@ const SearchBarContainer = styled.div`
   width: 100%;
   max-width: 500px;
   margin-bottom: 20px;
+  gap: 1rem;
 `;
 
 const SearchInput = styled.input`

@@ -2,16 +2,19 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
-import { getMyChatsRoute, updateChatRoute } from "../utils/APIRoutes";
+import { getMyChatsRoute, updateChatRoute, getSomeUsersRoute} from "../utils/APIRoutes";
 import { addTransactionRoute, getShardRoute } from "../utils/APIBlochain";
 import ChatInput from './ChatInput';
 import { postRequestCookie } from '../utils/requests'
 import { symDecrypt, symEncrypt } from '../utils/crypto'
+import './ChatContainer.scss'
 
 
 export default function ChatContainer({ currentChat, socket, user, symKey, setChats }) {
   const [messages, setMessages] = useState([]);
+
   const scrollRef = useRef();
+  const [usersInfo, setUsersInfo] = useState([])
   const [arrivalMessage, setArrivalMessage] = useState(null);
   // console.log(user, 'useruseruseruser')
   useEffect(() => {
@@ -21,19 +24,23 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
         "numShard": "-1",
         "convertMessages": true
       })
-
+      console.log(data, 'data data data')
       let chatData = [];
       const shardCount = data.data.listShards.length;
-      for (let i = 0; i < shardCount; i++ ){
 
-        const response = await axios.post(getShardRoute, {
-          "segment_id": currentChat.chatId,
-          "numShard": shardCount,
-          "convertMessages": true
-        })
-        chatData = [...chatData, ...response.data]
+      for (let i = 0; i < shardCount; i++ ){
+        for (let j = 0; j < data.data.listShards[i].length; j++){
+          const response = await axios.post(getShardRoute, {
+            "segment_id": currentChat.chatId,
+            "numShard": j,
+            "convertMessages": true
+          })
+          chatData = [...chatData, ...response.data]
+        }
       }
       console.log(currentChat, 'currentChat for....')
+
+
 
       chatData.map(msg => {
         msg.writer === user._id ? msg.fromSelf = true : msg.fromSelf = false
@@ -41,6 +48,13 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
       })
       console.log(chatData, 'chatData chatData')
       setMessages(chatData);
+
+
+      if (currentChat.users.length > 1){
+        const response = await postRequestCookie(getSomeUsersRoute, {usersToFind: currentChat.users})
+        response.success ?  setUsersInfo(response) : console.log()
+      }
+
     }
     func()
   }, [currentChat]);
@@ -122,6 +136,12 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
           <div className="username">
             <h3>{currentChat.chatname}</h3>
           </div>
+          <ChatSearchMessage className="search_messsage"
+              type="text"
+              placeholder="Поиск..."
+              // value={search}
+              // onChange={handleSearchChange}
+            />
         </div>
         {/* <Logout /> */}
       </div>
@@ -129,10 +149,8 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
         {messages.map((message) => {
           return (
             <div ref={scrollRef} key={uuidv4()}>
-              <div
-                className={`message ${message.fromSelf ? "sended" : "recieved"
-                  }`}
-              >
+              <div className={`message ${message.fromSelf ? "sended" : "recieved"}`}>
+                {message.fromSelf ? <></> : <div className="message_nickname"></div>}
                 <div className="content ">
                   <p>{message.message}</p>
                 </div>
@@ -175,6 +193,7 @@ const Container = styled.div`
             color: white;
           }
         }
+
       }
     }
     .chat-messages {
@@ -220,3 +239,18 @@ const Container = styled.div`
       }
     }
   `;
+
+  const ChatSearchMessage = styled.input`
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  border-bottom: 2px solid #fff;
+  padding: 5px;
+  width: 90%;
+  margin-bottom: 20px;
+  font-size: 16px;
+  &:focus {
+    outline: none;
+  }
+  self-justify: center;
+`;

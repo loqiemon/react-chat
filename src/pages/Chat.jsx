@@ -13,7 +13,8 @@ import {asymDecrypt} from '../utils/crypto'
 import {toast, ToastContainer} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css"
 import safe from '../assets/safe.png'
-
+import axios from 'axios'
+import {addBlockRoute} from "../utils/APIBlochain"
 
 function Chat(props) {
   const navigate = useNavigate()
@@ -75,6 +76,9 @@ function Chat(props) {
     setCurrentChat(chat);
     const resp = await postRequestCookie(getMyChatsRoute)
     setChats(resp.data)
+    //
+    axios.post(addBlockRoute, {"segment_id": chat.chatId}
+    )
   };
 
   
