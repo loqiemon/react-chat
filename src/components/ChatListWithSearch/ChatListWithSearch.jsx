@@ -12,7 +12,7 @@ const ChatListWithSearch = (props) => {
   const [search, setSearch] = useState('');
   const [currentSelected, setCurrentSelected] = useState(undefined);
   const [filteredChats, setFilteredChats] = useState([]);
-
+  
 
 
   const handleSearchChange = (e) => {

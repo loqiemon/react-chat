@@ -12,7 +12,8 @@ import './ChatContainer.scss'
 
 export default function ChatContainer({ currentChat, socket, user, symKey, setChats }) {
   const [messages, setMessages] = useState([]);
-
+  const [filteredMessages, setFilteredMessages] = useState([]);
+  const [searchForMessage, setSearchForMessage] = useState('');
   const scrollRef = useRef();
   const [usersInfo, setUsersInfo] = useState([])
   const [arrivalMessage, setArrivalMessage] = useState(null);
@@ -39,22 +40,24 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
         }
       }
       console.log(currentChat, 'currentChat for....')
-
+      if (currentChat.users.length > 1) {
+        const response = await postRequestCookie(getSomeUsersRoute, { usersToFind: [...currentChat.users, user._id] })
+        console.log(response, 'response response')
+        response.success ? setUsersInfo(response.foundUsers) : console.log()
+      }
 
 
       chatData.map(msg => {
+        // msg.nickname = usersInfo.length > 0 ? usersInfo.find(nick => nick._id == msg.writer)
         msg.writer === user._id ? msg.fromSelf = true : msg.fromSelf = false
         msg.message = symDecrypt(msg.message, symKey)
       })
       console.log(chatData, 'chatData chatData')
       setMessages(chatData);
+      setFilteredMessages(chatData)
 
 
-      if (currentChat.users.length > 1) {
-        const response = await postRequestCookie(getSomeUsersRoute, { usersToFind: currentChat.users })
-        console.log(response, 'response response')
-        response.success ? setUsersInfo(response.foundUsers) : console.log()
-      }
+
 
     }
     func()
@@ -87,7 +90,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
     const msgs = [...messages];
     msgs.push({ fromSelf: true, message: msg });
     setMessages(msgs);
-
+    setFilteredMessages(msgs)
 
     const data = await postRequestCookie(getMyChatsRoute)
     setChats(data.data)
@@ -120,12 +123,27 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
   useEffect(() => {
     console.log('arrivalMessage && setMessages')
     arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
+    arrivalMessage && setFilteredMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+
+  const handleSearchMessage = (e) => {
+    setSearchForMessage(e.target.value)
+  }
+
+  useEffect(() => {
+    if (searchForMessage.length > 0){
+      let data = messages.filter(msg => msg.message.search(searchForMessage) > -1)
+      setFilteredMessages(data)
+    }else {
+      setFilteredMessages(messages)
+    }
+
+  }, [searchForMessage])
 
   return (
     <Container>
@@ -144,14 +162,15 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
         <ChatSearchMessage className="search_messsage"
             type="text"
             placeholder="Поиск..."
-          // value={search}
-          // onChange={handleSearchChange}
+            value={searchForMessage}
+          onChange={handleSearchMessage}
           />
       </div>
       <div className="chat-messages">
-        {messages.map((message) => {
+        {filteredMessages.map((message) => {
           return (
             <div ref={scrollRef} key={uuidv4()}>
+              {/* {currentChat.users.length > 1 && user._id !== message.writer && message.nickname.nickname } */}
               <div className={`message bubble ${message.fromSelf ? "sended" : "recieved"} `}>
                 {message.fromSelf ? <></> : <div className="message_nickname"></div>}
                 <div className="content ">
