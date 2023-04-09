@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
-import { getMyChatsRoute, updateChatRoute, getSomeUsersRoute} from "../utils/APIRoutes";
+import { getMyChatsRoute, updateChatRoute, getSomeUsersRoute } from "../utils/APIRoutes";
 import { addTransactionRoute, getShardRoute } from "../utils/APIBlochain";
 import ChatInput from './ChatInput';
 import { postRequestCookie } from '../utils/requests'
@@ -28,8 +28,8 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
       let chatData = [];
       const shardCount = data.data.listShards.length;
 
-      for (let i = 0; i < shardCount; i++ ){
-        for (let j = 0; j < data.data.listShards[i].length; j++){
+      for (let i = 0; i < shardCount; i++) {
+        for (let j = 0; j < data.data.listShards[i].length; j++) {
           const response = await axios.post(getShardRoute, {
             "segment_id": currentChat.chatId,
             "numShard": j,
@@ -50,23 +50,23 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
       setMessages(chatData);
 
 
-      if (currentChat.users.length > 1){
-        const response = await postRequestCookie(getSomeUsersRoute, {usersToFind: currentChat.users})
-        response.success ?  setUsersInfo(response) : console.log()
+      if (currentChat.users.length > 1) {
+        const response = await postRequestCookie(getSomeUsersRoute, { usersToFind: currentChat.users })
+        response.success ? setUsersInfo(response) : console.log()
       }
 
     }
     func()
   }, [currentChat]);
   ////
-  
+
   const handleSendMsg = async (msg) => {
     currentChat.users.forEach(us => {
       console.log(currentChat._id)
       socket.current.emit("send-msg", {
         to: us,
         from: user._id,
-        msg: {chatId: currentChat.chatId, msg: symEncrypt(msg, symKey)},
+        msg: { chatId: currentChat.chatId, msg: symEncrypt(msg, symKey) },
         // msg: symEncrypt(msg, symKey),
       });
     })
@@ -81,14 +81,12 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
     }).then(res => console.log(res))
 
     const resp = await postRequestCookie(updateChatRoute, { chatId: currentChat.chatId })
-    console.log(resp, 'resp')
-
 
 
     const msgs = [...messages];
     msgs.push({ fromSelf: true, message: msg });
     setMessages(msgs);
-    
+
 
     const data = await postRequestCookie(getMyChatsRoute)
     setChats(data.data)
@@ -98,10 +96,14 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
   useEffect(() => {
     if (socket.current) {
       socket.current.on("msg-recieve", (msg) => {
-        console.log(msg, 'msg')
+        console.log(msg.chatId, 'msg.chatId')
         console.log(currentChat.chatId, 'currentChat.chatId')
-        if (msg.chatId == currentChat.chatId){
+        // debugger
+        if (msg.chatId === currentChat.chatId) {
+          console.log('tre true rue');
+          console.log('setArrivalMessage setArrivalMessage setArrivalMessage');
           setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey) });
+          console.log('setArrivalMessage setArrivalMessage setArrivalMessage')
         }
 
         const func = async () => {
@@ -115,6 +117,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
   }, [currentChat]);
 
   useEffect(() => {
+    console.log('arrivalMessage && setMessages')
     arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage]);
 
@@ -137,11 +140,11 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
             <h3>{currentChat.chatname}</h3>
           </div>
           <ChatSearchMessage className="search_messsage"
-              type="text"
-              placeholder="Поиск..."
-              // value={search}
-              // onChange={handleSearchChange}
-            />
+            type="text"
+            placeholder="Поиск..."
+          // value={search}
+          // onChange={handleSearchChange}
+          />
         </div>
         {/* <Logout /> */}
       </div>
@@ -240,7 +243,7 @@ const Container = styled.div`
     }
   `;
 
-  const ChatSearchMessage = styled.input`
+const ChatSearchMessage = styled.input`
   background-color: transparent;
   color: #fff;
   border: none;
