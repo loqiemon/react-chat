@@ -17,6 +17,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
   const scrollRef = useRef();
   const [usersInfo, setUsersInfo] = useState([])
   const [arrivalMessage, setArrivalMessage] = useState(null);
+  
   // console.log(user, 'useruseruseruser')
   useEffect(() => {
     const func = async () => {
@@ -137,13 +138,20 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
 
   useEffect(() => {
     if (searchForMessage.length > 0){
-      let data = messages.filter(msg => msg.message.search(searchForMessage) > -1)
+      let data = messages.filter(msg => msg.message.includes(searchForMessage))
       setFilteredMessages(data)
     }else {
       setFilteredMessages(messages)
     }
 
   }, [searchForMessage])
+
+
+  const goToMessage = async (e) => {
+      setSearchForMessage('')
+      e.target.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+  }
+
 
   return (
     <Container>
@@ -171,7 +179,8 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
           return (
             <div ref={scrollRef} key={uuidv4()}>
               {/* {currentChat.users.length > 1 && user._id !== message.writer && message.nickname.nickname } */}
-              <div className={`message bubble ${message.fromSelf ? "sended" : "recieved"} `}>
+              
+              <div className={`message bubble ${message.fromSelf ? "sended" : "recieved"} `} onClick={goToMessage}>
                 {message.fromSelf ? <></> : <div className="message_nickname"></div>}
                 <div className="content ">
                   <p>{message.message}</p>
