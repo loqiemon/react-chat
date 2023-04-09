@@ -56,7 +56,7 @@ const ChatListWithSearch = (props) => {
           onChange={handleSearchChange}
         />
         <IconButton aria-label="delete" onClick={handleCreateCommonChat}>
-          <AddIcon  style={{ color: '#fff' }}/>
+          <AddIcon  style={{ color: '#d1d1d1' }}/>
         </IconButton>
       </div>
       {filteredChats.map((chat) => (
@@ -74,12 +74,15 @@ const ChatListWithSearch = (props) => {
 };
 
 const ChatList = styled.div`
-  background-color: #1c1e26;
-  color: #fff;
+  // background-color: #1c1e26;
+  background-color: #F9FBFF;
+  // color: #fff;
+  color: #000;
   height: 100vh;
   width: 25vw;
   padding: 20px;
   padding-top: 6rem;
+  border-radius: 1.3rem;
 `;
 
 const ChatItem = styled.div`
@@ -87,8 +90,10 @@ const ChatItem = styled.div`
   align-items: center;
   padding: 10px;
   cursor: pointer;
+  border-radius: 1rem;
   &:hover {
-    background-color: #2d303e;
+    // background-color: #2d303e;
+    background-color: #A1E2D9;
   }
 `;
 
@@ -119,9 +124,11 @@ const ChatTime = styled.span`
 
 const ChatSearch = styled.input`
   background-color: transparent;
-  color: #fff;
+  // color: #fff;
+  color: #000;
   border: none;
-  border-bottom: 2px solid #fff;
+  // border-bottom: 2px solid #fff;
+  border-bottom: 2px solid #d1d1d1;
   padding: 5px;
   width: 90%;
   margin-bottom: 20px;

@@ -52,7 +52,8 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
 
       if (currentChat.users.length > 1) {
         const response = await postRequestCookie(getSomeUsersRoute, { usersToFind: currentChat.users })
-        response.success ? setUsersInfo(response) : console.log()
+        console.log(response, 'response response')
+        response.success ? setUsersInfo(response.foundUsers) : console.log()
       }
 
     }
@@ -97,7 +98,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
     if (socket.current) {
       socket.current.on("msg-recieve", (msg) => {
         console.log(msg.chatId, 'msg.chatId')
-        console.log(currentChat.chatId, 'currentChat.chatId')
+        console.log(currentChat, 'currentChat.chatId')
         // debugger
         if (msg.chatId === currentChat.chatId) {
           console.log('tre true rue');
@@ -139,20 +140,19 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
           <div className="username">
             <h3>{currentChat.chatname}</h3>
           </div>
-          <ChatSearchMessage className="search_messsage"
+        </div>
+        <ChatSearchMessage className="search_messsage"
             type="text"
             placeholder="Поиск..."
           // value={search}
           // onChange={handleSearchChange}
           />
-        </div>
-        {/* <Logout /> */}
       </div>
       <div className="chat-messages">
         {messages.map((message) => {
           return (
             <div ref={scrollRef} key={uuidv4()}>
-              <div className={`message ${message.fromSelf ? "sended" : "recieved"}`}>
+              <div className={`message bubble ${message.fromSelf ? "sended" : "recieved"} `}>
                 {message.fromSelf ? <></> : <div className="message_nickname"></div>}
                 <div className="content ">
                   <p>{message.message}</p>
@@ -170,7 +170,9 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
 const Container = styled.div`
     display: grid;
     height: 100vh;
+    // padding: 0 1rem;
     padding-top: 6rem;
+    background-color: rgba(121, 199, 197, 0.8) ;
     grid-template-rows: 10% 80% 10%;
     // gap: 0.1rem;
     overflow: hidden;
@@ -193,7 +195,8 @@ const Container = styled.div`
         }
         .username {
           h3 {
-            color: white;
+            // color: white;
+            color: black;
           }
         }
 
@@ -208,7 +211,8 @@ const Container = styled.div`
       &::-webkit-scrollbar {
         width: 0.2rem;
         &-thumb {
-          background-color: #ffffff39;
+          // background-color: #ffffff39;
+          background-color: black;
           width: 0.1rem;
           border-radius: 1rem;
         }
@@ -222,7 +226,8 @@ const Container = styled.div`
           padding: 1rem;
           font-size: 1.1rem;
           border-radius: 1rem;
-          color: #d1d1d1;
+          // color: #d1d1d1;
+          color: #fff;
           @media screen and (min-width: 720px) and (max-width: 1080px) {
             max-width: 70%;
           }
@@ -231,12 +236,14 @@ const Container = styled.div`
       .sended {
         justify-content: flex-end;
         .content {
-          background-color: #4f04ff21;
+          // background-color: #4f04ff21;
+          background-color: #A1E2D9;
         }
       }
       .recieved {
         justify-content: flex-start;
         .content {
+          // background-color: #9900ff20;
           background-color: #9900ff20;
         }
       }
@@ -246,14 +253,15 @@ const Container = styled.div`
 const ChatSearchMessage = styled.input`
   background-color: transparent;
   color: #fff;
+  // color: #000;
   border: none;
   border-bottom: 2px solid #fff;
   padding: 5px;
-  width: 90%;
+  width: 50%;
   margin-bottom: 20px;
   font-size: 16px;
   &:focus {
     outline: none;
   }
-  self-justify: center;
+  margin: 0 auto;
 `;

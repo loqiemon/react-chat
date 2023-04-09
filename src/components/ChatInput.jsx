@@ -52,7 +52,9 @@ const Container = styled.div`
   display: grid;
   align-items: center;
   grid-template-columns: 5% 95%;
-  background-color: #080420;
+  // background-color: #080420;
+  background-color: rgba(119, 119, 119, 0.3);
+  border-radius: 1.2rem;
   padding: 0 2rem;
   width: 75vw;
   @media screen and (min-width: 720px) and (max-width: 1080px) {

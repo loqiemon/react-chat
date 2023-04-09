@@ -14,6 +14,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  // color: white;
   color: white;
   flex-direction: column;
   align-self:center;
@@ -21,8 +22,10 @@ const Container = styled.div`
   img {
     height: 20rem;
   }
+  border-radius: 1.3rem;
   span {
-    color: #4e0eff;
+    // color: #4e0eff;
+    color: #79C7C5;
   }
   margin: 0 auto;
 `;

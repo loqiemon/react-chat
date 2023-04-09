@@ -113,7 +113,7 @@ const Container = styled.div`
   display: flex;
   // gap: 1rem;
   align-items: center;
-  background-color: #131324;
+  background-color: #79C7C5;
   // background: url(${safe});
   .container {
     height: 85vh;
