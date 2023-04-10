@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import blankProfile from '../../assets/blankProfile.png';
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
+
+import blankProfile from '../../assets/blankProfile.png';
 import { postRequestCookie } from '../../utils/requests';
-import {getAllFriendsRoute} from "../../utils/APIRoutes"
+import { getAllFriendsRoute } from "../../utils/APIRoutes"
 import './style.scss'
 
 
@@ -12,29 +12,27 @@ const ChatListWithSearch = (props) => {
   const [search, setSearch] = useState('');
   const [currentSelected, setCurrentSelected] = useState(undefined);
   const [filteredChats, setFilteredChats] = useState([]);
-  
 
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
 
-  useEffect(()=> {
-    if (props.chats.length > 0 && search.length > 0 ){
+
+  useEffect(() => {
+    if (props.chats.length > 0 && search.length > 0) {
       const filtered = props.chats.filter((chat) => chat.chatname.toLowerCase().includes(search.toLowerCase()))
       setFilteredChats(filtered)
-    }else if (props.chats.length > 0){
+    } else if (props.chats.length > 0) {
       setFilteredChats(props.chats)
-    }else {
+    } else {
       setFilteredChats([])
     }
   }, [search, props.chats])
-//   const filteredChats = props.chats.data.length > 0 ? props.chats.data.filter((chat) =>
-//   chat.chatname.toLowerCase().includes(search.toLowerCase())
-// ) : []
-// console.log(props.chats.data, 'props.chats.data')
+
 
   const changeCurrentChat = (chat) => {
+    //Добавить подсветку выбранного чата
     setCurrentSelected(chat._id);
     props.changeChat(chat);
   };
@@ -42,102 +40,38 @@ const ChatListWithSearch = (props) => {
 
   const handleCreateCommonChat = async () => {
     const myFriends = await postRequestCookie(getAllFriendsRoute)
-    console.log(myFriends)
     props.setFriendForChat(myFriends.myFriends)
   }
 
   return (
-    <ChatList>
-      <div className="top-men">
-        <ChatSearch
+    <div className='chat_page-chatlist'>
+      <div className="chatlist_search">
+        <input
+          className='chatlist_search-input'
           type="text"
           placeholder="Поиск..."
           value={search}
           onChange={handleSearchChange}
         />
         <IconButton aria-label="delete" onClick={handleCreateCommonChat}>
-          <AddIcon  style={{ color: '#d1d1d1' }}/>
+          <AddIcon className='chatlist_search-createicon' />
         </IconButton>
       </div>
       {filteredChats.map((chat) => (
-        <ChatItem key={chat._id} onClick={() => {changeCurrentChat(chat)}}>
-          {chat.avatarImage ? <ChatAvatar src={`data:image/svg+xml;base64,${chat.avatarImage}`} alt={chat.chatname} /> : <ChatAvatar src={blankProfile} alt={chat.chatname} />}
-          <ChatInfo>
-            <ChatName>{chat.chatname}</ChatName>
-            <ChatLastMessage>{chat.lastMessage}</ChatLastMessage>
-          </ChatInfo>
-          <ChatTime>{chat.lastActivity}</ChatTime>
-        </ChatItem>
+        <div className='chatlist_item' key={chat._id} onClick={() => { changeCurrentChat(chat) }}>
+          {chat.avatarImage ?
+            <img className='chatlist_item-img' src={`data:image/svg+xml;base64,${chat.avatarImage}`} alt={chat.chatname} />
+            : <img className='chatlist_item-img' src={blankProfile} alt={chat.chatname} />}
+          <div className='chatlist_item-info'>
+            <span className='chatlist_item-chatname'>{chat.chatname}</span>
+            {/* <div className='chatlist_item-lastMessage'>{chat.lastMessage}</div> */}
+          </div>
+          <div className='chatlist_item-time'>{chat.lastActivity}</div>
+        </div>
       ))}
-    </ChatList>
+    </div>
   );
 };
-
-const ChatList = styled.div`
-  // background-color: #1c1e26;
-  background-color: #F9FBFF;
-  // color: #fff;
-  color: #000;
-  height: 100vh;
-  width: 25vw;
-  padding: 20px;
-  padding-top: 6rem;
-  border-radius: 1.3rem;
-`;
-
-const ChatItem = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 1rem;
-  &:hover {
-    // background-color: #2d303e;
-    background-color: #A1E2D9;
-  }
-`;
-
-const ChatAvatar = styled.img`
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 10px;
-`;
-
-const ChatInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const ChatName = styled.span`
-  font-weight: bold;
-`;
-
-const ChatLastMessage = styled.span`
-  font-size: 12px;
-`;
-
-const ChatTime = styled.span`
-  font-size: 12px;
-  margin-left: auto;
-`;
-
-const ChatSearch = styled.input`
-  background-color: transparent;
-  // color: #fff;
-  color: #000;
-  border: none;
-  // border-bottom: 2px solid #fff;
-  border-bottom: 2px solid #d1d1d1;
-  padding: 5px;
-  width: 90%;
-  margin-bottom: 20px;
-  font-size: 16px;
-  &:focus {
-    outline: none;
-  }
-`;
-
 
 
 export default ChatListWithSearch;

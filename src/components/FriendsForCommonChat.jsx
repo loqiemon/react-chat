@@ -56,7 +56,7 @@ export default function FriendsForCommonChat(props) {
             userIds: usersToAdd,
             chatName: chatName
         })
-        response.success ? props.setFriendForChat([]) : toast.error('Не удалось создать чат...')
+        // response.success ? props.setFriendForChat([]) : toast.error('Не удалось создать чат...')
 
       }
 

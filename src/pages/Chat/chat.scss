@@ -1,0 +1,22 @@
+@import '../../../style/variables.scss';
+
+
+.chat_page {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    // gap: 1rem;
+    align-items: center;
+    background-color: $chat-background-color;
+    // background: url(${backd}) ;
+    .container {
+      height: 85vh;
+      width: 85vw;
+      background-color: #00000076;
+      display: grid;
+      grid-template-columns: 25% 75%;
+      @media screen and (min-width: 720px) and (max-width: 1080px) {
+        grid-template-columns: 35% 65%;
+      }
+    }
+}

@@ -57,9 +57,6 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
       setMessages(chatData);
       setFilteredMessages(chatData)
 
-
-
-
     }
     func()
   }, [currentChat]);
@@ -139,6 +136,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
   useEffect(() => {
     if (searchForMessage.length > 0){
       let data = messages.filter(msg => msg.message.includes(searchForMessage))
+      // let data = messages.filter(msg => msg.message.search(searchForMessage) > -1)
       setFilteredMessages(data)
     }else {
       setFilteredMessages(messages)
@@ -147,11 +145,19 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
   }, [searchForMessage])
 
 
-  const goToMessage = async (e) => {
+  const goToMessage = (e) => {
       setSearchForMessage('')
       e.target.scrollIntoView( { behavior: 'smooth', block: 'start' } );
   }
+  // const goToMessage = (e) => {
+  //   setSearchForMessage('');
+  //   const messageBubble = e.currentTarget.closest('.message.bubble');
+  //   if (messageBubble) {
+  //     messageBubble.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  //   }
+  // };
 
+  
 
   return (
     <Container>
@@ -179,8 +185,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
           return (
             <div ref={scrollRef} key={uuidv4()}>
               {/* {currentChat.users.length > 1 && user._id !== message.writer && message.nickname.nickname } */}
-              
-              <div className={`message bubble ${message.fromSelf ? "sended" : "recieved"} `} onClick={goToMessage}>
+              <div className={`message bubble ${message.fromSelf ? "sended" : "recieved"} `} onClick={goToMessage} id={uuidv4()}>
                 {message.fromSelf ? <></> : <div className="message_nickname"></div>}
                 <div className="content ">
                   <p>{message.message}</p>
@@ -200,7 +205,7 @@ const Container = styled.div`
     height: 100vh;
     // padding: 0 1rem;
     padding-top: 6rem;
-    background-color: rgba(121, 199, 197, 0.8) ;
+    // background-color: rgba(121, 199, 197, 1) ;
     grid-template-rows: 10% 80% 10%;
     // gap: 0.1rem;
     overflow: hidden;
@@ -255,7 +260,7 @@ const Container = styled.div`
           font-size: 1.1rem;
           border-radius: 1rem;
           // color: #d1d1d1;
-          color: #fff;
+          color: black;
           @media screen and (min-width: 720px) and (max-width: 1080px) {
             max-width: 70%;
           }
