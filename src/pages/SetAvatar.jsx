@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css"
 import axios from 'axios';
-import Loader from '../components/Loader';
 import { setAvatarRoute } from '../utils/APIRoutes.js'
 import { Buffer } from "buffer";
 import {postRequestCookie} from '../utils/requests'

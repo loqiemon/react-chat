@@ -6,25 +6,21 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { searchUserRoute, createChatIfNotExistRoute } from '../utils/APIRoutes';
 import axios from 'axios';
-import Loader from '../components/Loader';
+import Loader from '../components/Loader/Loader';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {toast, ToastContainer} from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css"
-import {postRequestCookie} from '../utils/requests'
+import { postRequestCookie } from '../utils/requests'
 import blankProfile from '../assets/blankProfile.png';
-
+import { toastOptions } from '../utils/toastOptions'
 
 const SearchUser = (props) => {
+  const [loading, setLoading] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate()
-  // console.log('chat', props.user)
-  const toastOptions = {
-    position: 'bottom-center',
-    autoClose: 8000, 
-    pauseOnHover: true,
-    draggable: true,
-    theme: 'dark'
-}
+
 
   useEffect(() => {
     if (!props.user) {
@@ -33,21 +29,20 @@ const SearchUser = (props) => {
   }, [props.user])
 
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-
   const handleSearch = async (e) => {
+    setLoading(true)
     const data = await postRequestCookie(searchUserRoute, { 'searchInput': searchTerm });
+    setLoading(false)
     setSearchResults(data)
   };
 
 
   const handleAddUser = async (user) => {
-    const data = await postRequestCookie(createChatIfNotExistRoute, { 'userId':user._id  });
+    const data = await postRequestCookie(createChatIfNotExistRoute, { 'userId': user._id });
     console.log(data)
     if (data.alreadyExist) {
       toast.error("Уже добавлен", toastOptions)
-    }else if (data.success) {
+    } else if (data.success) {
       toast.success("Успешно", toastOptions)
     } else {
       toast.error("Ошибка", toastOptions)
@@ -58,7 +53,6 @@ const SearchUser = (props) => {
     <>
       {props.user && <Navbar user={props.user} handleUserSet={props.handleUserSet} />}
       <SearchUserWrapper>
-
         <SearchPageContainer>
           <SearchBarContainer>
             <SearchInput
@@ -67,24 +61,24 @@ const SearchUser = (props) => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <SearchButton onClick={handleSearch}>
+            <SearchButton onClick={() => handleSearch()}>
               <FaSearch />
             </SearchButton>
           </SearchBarContainer>
           <UsersList>
-            <Loader />
-            {searchResults.length > 0 ? searchResults.map((user) => (
+            {loading ? <Loader /> : <>          {searchResults.length > 0 ? searchResults.map((user) => (
               <UserItem key={user._id}>
-                  <img
-                    src={user.avatarImage ? `data:image/svg+xml;base64,${user.avatarImage}` : blankProfile}
-                    alt=""
-                  />
+                <img
+                  src={user.avatarImage ? `data:image/svg+xml;base64,${user.avatarImage}` : blankProfile}
+                  alt=""
+                />
                 <UserName>{user.nickname}</UserName>
-                <Button variant="contained" onClick={() => handleAddUser( user)}>
+                <Button variant="contained" onClick={() => handleAddUser(user)} id={user._id}>
                   Добавить
                 </Button>
               </UserItem>
-            )) : <h2>Нет подходящих пользователей</h2>}
+            )) : <h2>Нет подходящих пользователей</h2>}</>}
+
           </UsersList>
         </SearchPageContainer>
         <ToastContainer />

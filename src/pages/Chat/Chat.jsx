@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Welcome from '../../components/Welcome';
-import ChatContainer from '../../components/ChatContainer';
-import FriendsForCommonChat from '../../components/FriendsForCommonChat';
+import ChatContainer from '../../components/ChatContainer/ChatContainer';
+import FriendsForCommonChat from '../../components/FriendsForCommonChat/FriendsForCommonChat';
 import { getMyChatsRoute, getChatDataRoute, host, saveChatsRoute } from "../../utils/APIRoutes"
 import ChatListWithSearch from '../../components/ChatListWithSearch/ChatListWithSearch';
 import { io } from "socket.io-client";
@@ -27,7 +27,7 @@ function Chat(props) {
   const [symKey, setSymKey] = useState();
   // const [symIv, setSymIv] = useState();
   const [friendForChat, setFriendForChat] = useState([])
-
+  const [loading, setLoading] = useState(false)
 
   const socket = useRef();
 
@@ -71,9 +71,9 @@ function Chat(props) {
     <>
       {props.user && <Navbar user={props.user} handleUserSet={props.handleUserSet} />}
       <div className="chat_page">
-        <ChatListWithSearch chats={chats} changeChat={handleChatChange} setFriendForChat={setFriendForChat}/>
-        {/* {friendForChat.length > 0 ? (
-          <FriendsForCommonChat friends={friendForChat} setFriendForChat={setFriendForChat} />
+        <ChatListWithSearch chats={chats} changeChat={handleChatChange} setFriendForChat={setFriendForChat} />
+        {friendForChat.length > 0 ? (
+          <FriendsForCommonChat friends={friendForChat} setFriendForChat={setFriendForChat} setChats={setChats} />
         ) : (
           <>
             {currentChat === undefined ? (
@@ -82,7 +82,7 @@ function Chat(props) {
               <ChatContainer currentChat={currentChat} socket={socket} user={props.user} symKey={symKey} setChats={setChats} />
             )}
           </>
-        )} */}
+        )}
       </div>
       <ToastContainer />
     </>

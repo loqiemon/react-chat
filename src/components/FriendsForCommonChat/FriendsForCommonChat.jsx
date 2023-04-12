@@ -7,10 +7,12 @@ import Button from '@mui/material/Button';
 import "react-toastify/dist/ReactToastify.css"; 
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
-import Loader from '../components/Loader';
-import { createCommonChatRoute } from '../utils/APIRoutes';
-import {postRequestCookie} from '../utils/requests'
-import blankProfile from '../assets/blankProfile.png';
+
+import Loader from '../Loader/Loader';
+import { createCommonChatRoute, getMyChatsRoute } from '../../utils/APIRoutes';
+import {postRequestCookie} from '../../utils/requests'
+import blankProfile from '../../assets/blankProfile.png';
+import {toastOptions} from '../../utils/toastOptions';
 
 
 export default function FriendsForCommonChat(props) {
@@ -19,16 +21,8 @@ export default function FriendsForCommonChat(props) {
     const [usersToAdd, setUsersToAdd] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
 
-    const toastOptions = {
-        position: 'bottom-center',
-        autoClose: 8000, 
-        pauseOnHover: true,
-        draggable: true,
-        theme: 'dark'
-    }
 
     useEffect(()=> {
-        console.log(props.friends, 'props.friends')
         if (props.friends.length > 0 && searchTerm.length > 0 ){
           const filtered = props.friends.filter((user) => user.nickname.toLowerCase().includes(searchTerm.toLowerCase()))
             setFilteredUsers(filtered)
@@ -40,7 +34,6 @@ export default function FriendsForCommonChat(props) {
       }, [searchTerm, props.friends])
 
       const handleAddUser = async (user) => {
-        console.log(user)
         setUsersToAdd([...usersToAdd, user])
       }
 
@@ -51,13 +44,21 @@ export default function FriendsForCommonChat(props) {
 
 
       const createCommonChat = async () => {
-        console.log(usersToAdd, 'usersToAdd')
-        const response = postRequestCookie(createCommonChatRoute, {
-            userIds: usersToAdd,
-            chatName: chatName
-        })
-        // response.success ? props.setFriendForChat([]) : toast.error('Не удалось создать чат...')
-
+        const func = async () => {
+          console.log(usersToAdd, 'usersToAdd')
+          const response = await postRequestCookie(createCommonChatRoute, {
+              userIds: usersToAdd,
+              chatName: chatName
+          })
+          if (response.success) {
+            props.setFriendForChat([])
+            const resp = await postRequestCookie(getMyChatsRoute);
+            props.setChats(resp.data);
+          }else {
+            toast.error('Не удалось создать чат...', toastOptions)
+          }
+        }
+        func()
       }
 
   return (
@@ -114,8 +115,8 @@ export default function FriendsForCommonChat(props) {
 const SearchUserWrapper = styled.div`
   padding-top: 60px;
   // background-color: #131324;
-  width: 75vw;
-height: 90vh;
+    width: 75vw;
+  height: 90vh;
 `;
 
 

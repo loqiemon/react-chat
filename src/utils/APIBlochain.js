@@ -1,4 +1,5 @@
-export const host = "http://127.0.0.1:8084";
+// export const host = "http://127.0.0.1:8084";
+export const host = "http://localhost:8084";
 
 export const addSegmentRoute = `${host}/add_segment`;
 export const addTransactionRoute = `${host}/add_transaction`;
