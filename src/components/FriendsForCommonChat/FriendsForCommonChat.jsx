@@ -20,6 +20,7 @@ export default function FriendsForCommonChat(props) {
     const [chatName, setchatName] = useState('');
     const [usersToAdd, setUsersToAdd] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
+    const [loading, setLoading] = useState(false);
 
 
     useEffect(()=> {
@@ -45,11 +46,12 @@ export default function FriendsForCommonChat(props) {
 
       const createCommonChat = async () => {
         const func = async () => {
-          console.log(usersToAdd, 'usersToAdd')
+          setLoading(true)
           const response = await postRequestCookie(createCommonChatRoute, {
               userIds: usersToAdd,
               chatName: chatName
           })
+          setLoading(false)
           if (response.success) {
             props.setFriendForChat([])
             const resp = await postRequestCookie(getMyChatsRoute);
@@ -84,8 +86,8 @@ export default function FriendsForCommonChat(props) {
               onChange={(e) => setchatName(e.target.value)}
             />
           </SearchBarContainer>
-          <UsersList>
-            <Loader />
+          {loading ? <Loader /> : (<>          <UsersList>
+            
             {filteredUsers.length > 0 ? filteredUsers.map((user) => (
               <UserItem key={user._id}>
                   <img
@@ -103,7 +105,8 @@ export default function FriendsForCommonChat(props) {
                 <Button style={{ position: 'absolute', bottom: '0' }} onClick={createCommonChat}>
                     Создать
                 </Button>
-            </div>
+            </div></>) }
+
         </SearchPageContainer>
         <ToastContainer />
       </SearchUserWrapper>

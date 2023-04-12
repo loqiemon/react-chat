@@ -33,6 +33,7 @@ const ChatListWithSearch = (props) => {
 
   const changeCurrentChat = (chat) => {
     //Добавить подсветку выбранного чата
+    console.log('list with search 1424234')
     setCurrentSelected(chat._id);
     props.changeChat(chat);
   };

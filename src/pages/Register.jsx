@@ -1,14 +1,17 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {toast, ToastContainer} from 'react-toastify';
-import "react-toastify/dist/ReactToastify.css"
-import axios from 'axios';
-import {registerRoute} from '../utils/APIRoutes.js'
-import {postRequestCookie} from '../utils/requests'
+import "react-toastify/dist/ReactToastify.css";
+import {registerRoute} from '../utils/APIRoutes.js';
+import {postRequestCookie} from '../utils/requests';
+import Loader from '../components/Loader/Loader.jsx';
+import {toastOptions} from '../utils/toastOptions.js';
+
 
 function Register(props) {
     const navigate = useNavigate()
+    const [loading, setLoading] = useState(false);
     const [values, setValues] = useState({
         username: '',
         nickname: '',
@@ -27,9 +30,10 @@ function Register(props) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (handleValidation()){ 
-            const {password, username, email, nickname} = values
+            const {password, username, email, nickname} = values;
+            setLoading(true);
             const data = await postRequestCookie(registerRoute, { "username":username, "nickname": nickname, "email": email, "password":password })
-            console.log(data)
+            setLoading(false);
             if (data.status===false){
                 toast.error(data.msg, toastOptions);
             }else if (data.status===true) {
@@ -46,13 +50,7 @@ function Register(props) {
     const handleChange = (e) => {
         setValues({...values, [e.target.name]:e.target.value})
     }
-    const toastOptions = {
-        position: 'bottom-center',
-        autoClose: 8000, 
-        pauseOnHover: true,
-        draggable: true,
-        theme: 'dark'
-    }
+
     const handleValidation = () => {
         const {password, confirmPassword, username, email, nickname} = values
         if (password!==confirmPassword){
@@ -78,7 +76,7 @@ function Register(props) {
     return (
         <>
             <FormContainer>
-                <form onSubmit={(e) => handleSubmit(e)}>
+                {loading ? <Loader/> :                 <form onSubmit={(e) => handleSubmit(e)}>
                     <div className="company">
                         <h1>WebChat</h1>
                     </div>
@@ -89,7 +87,7 @@ function Register(props) {
                     <input type="password" placeholder='Confirm password' name='confirmPassword' onChange={(e) => handleChange(e)} />
                     <button type='submit'>Зарегистрироваться</button>
                     <span>Уже зарегистрированы? <Link to="/login">Войти</Link></span>
-                </form>
+                </form>}
             </FormContainer>
             <ToastContainer />
         </>

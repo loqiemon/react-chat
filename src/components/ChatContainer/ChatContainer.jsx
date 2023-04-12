@@ -20,9 +20,13 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
   const [usersInfo, setUsersInfo] = useState([])
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [curChat, setCurChat] = useState(undefined);
+
+
 
 
   useEffect(() => {
+    setCurChat(currentChat)
     const func = async () => {
       setLoading(true)
       const data = await axios.post(getShardRoute, {
@@ -69,6 +73,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
   ////
 
   const handleSendMsg = async (msg) => {
+    console.log(currentChat, 'currentChat send')
     currentChat.users.forEach(us => {
       console.log(currentChat._id)
       socket.current.emit("send-msg", {
@@ -99,9 +104,12 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
   };
 
   ////
-  useEffect(() => {
+  // useEffect(() => {
     if (socket.current) {
       socket.current.on("msg-recieve", (msg) => {
+        console.log(currentChat, 'currentChat receive')
+        console.log(msg.chatId, 'msg.chatId')
+        console.log(currentChat.chatId, 'currentChat.chatId')
         if (msg.chatId === currentChat.chatId) {
           setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
         }
@@ -112,7 +120,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
         func()
       });
     }
-  }, [currentChat]);
+  // }, [currentChat]);
 
 
   useEffect(() => {

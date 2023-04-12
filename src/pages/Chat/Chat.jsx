@@ -42,6 +42,10 @@ function Chat(props) {
           setChats(data.data)
         }
       }
+      socket.current.on("msg-recieve", async (msg) => {
+          const data = await postRequestCookie(getMyChatsRoute)
+          setChats(data.data)
+      });
       func();
     } else {
       navigate('/login')
@@ -49,7 +53,11 @@ function Chat(props) {
   }, [props.user]);
 
 
+
+
+
   const handleChatChange = async (chat) => {
+    console.log(chat, 'selected chat')
     setFriendForChat([]);
     await postRequestCookie(saveChatsRoute);
     const resp = await postRequestCookie(getMyChatsRoute);
@@ -61,6 +69,7 @@ function Chat(props) {
       const decryptedSymKey = asymDecrypt(data.symKey, props.privKey);
       setSymKey(decryptedSymKey);
     }
+    console.log(currentChat, 'currentChat before')
     setCurrentChat(chat);
     await postRequestCookie(saveChatsRoute);
   };

@@ -3,10 +3,17 @@ import { BsEmojiSmileFill } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
 import styled from "styled-components";
 import Picker from "emoji-picker-react";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import IconButton from '@mui/material/IconButton';
+
 
 export default function ChatInput({ handleSendMsg }) {
   const [msg, setMsg] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [imageUrl, setImageUrl] = useState(null);
+
+
   const handleEmojiPickerhideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
   };
@@ -25,12 +32,42 @@ export default function ChatInput({ handleSendMsg }) {
     }
   };
 
+
+  const handleAttachFile = async (event) => {
+    setSelectedFile(event.target.files[0]);
+    setImageUrl(URL.createObjectURL(event.target.files[0]));
+    const reader = new FileReader();
+    reader.readAsDataURL(selectedFile);
+    reader.onload = () => {
+      // const encryptedData = CryptoJS.AES.encrypt(reader.result, "secret-key");
+      // console.log(encryptedData, 'encryptedData img')
+      // здесь вы можете отправить зашифрованные данные на сервер
+    };
+  }
+
   return (
     <Container>
       <div className="button-container">
         <div className="emoji">
           <BsEmojiSmileFill onClick={handleEmojiPickerhideShow} />
           {showEmojiPicker &&<Picker onEmojiClick={handleEmojiClick} />}
+        </div>
+        <div className="pin">
+        <div>
+          <input
+            accept="image/*"
+            style={{ display: "none" }}
+            id="upload-file"
+            type="file"
+            onChange={handleAttachFile}
+          />
+          <label htmlFor="upload-file">
+            <IconButton color="primary" component="span">
+              <AttachFileIcon />
+            </IconButton>
+      </label>
+
+    </div>
         </div>
       </div>
       <form className="input-container" onSubmit={(event) => sendChat(event)}>
@@ -44,6 +81,9 @@ export default function ChatInput({ handleSendMsg }) {
           <IoMdSend />
         </button>
       </form>
+      {imageUrl && (
+        <img src={imageUrl} alt="uploaded-file" style={{ maxWidth: "100%" }} />
+      )}
     </Container>
   );
 }

@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import { Link, json, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { toast, ToastContainer } from 'react-toastify';
-import "react-toastify/dist/ReactToastify.css"
-import axios from 'axios';
-import { loginRoute } from '../utils/APIRoutes.js'
+import "react-toastify/dist/ReactToastify.css";
+import { loginRoute } from '../utils/APIRoutes.js';
 import TextField from '@mui/material/TextField';
-import {postRequestCookie} from '../utils/requests'
+import {postRequestCookie} from '../utils/requests';
+import {toastOptions} from '../utils/toastOptions.js';
+import Loader from '../components/Loader/Loader.jsx';
 
 
 function Login(props) {
-
   const navigate = useNavigate()
+  const [loading, setLoading] = useState();
   const [values, setValues] = useState({
     username: '',
     password: ''
@@ -24,13 +25,13 @@ function Login(props) {
   }, [navigate]);
 
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (handleValidation()) {
       const { password, username } = values
+      setLoading(true);
       const data = await postRequestCookie(loginRoute, { "username":username, "password":password })
-
+      setLoading(false);
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       } else if (data.status === true) {
@@ -43,17 +44,12 @@ function Login(props) {
     }
   }
 
+
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value })
   }
 
-  const toastOptions = {
-    position: 'bottom-center',
-    autoClose: 8000,
-    pauseOnHover: true,
-    draggable: true,
-    theme: 'dark'
-  }
+
   const handleValidation = () => {
     const { password, username } = values
     if (username === '') {
@@ -70,7 +66,7 @@ function Login(props) {
   return (
     <>
       <FormContainer>
-        <form onSubmit={(e) => handleSubmit(e)}>
+        {loading ? <Loader/> :         <form onSubmit={(e) => handleSubmit(e)}>
           <div className="company">
             <h1>WebChat</h1>
           </div>
@@ -80,7 +76,7 @@ function Login(props) {
           <input type="password" placeholder='Password' name='password' onChange={(e) => handleChange(e)} />
           <button type='submit'>Войти</button>
           <span>Нет аккаунта? <Link to="/register">Регистрация</Link></span>
-        </form>
+        </form>}
       </FormContainer>
       <ToastContainer />
     </>

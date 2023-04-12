@@ -1,40 +1,31 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { toast, ToastContainer } from 'react-toastify';
-import "react-toastify/dist/ReactToastify.css"
+import "react-toastify/dist/ReactToastify.css";
 import axios from 'axios';
-import { setAvatarRoute } from '../utils/APIRoutes.js'
+import { setAvatarRoute } from '../utils/APIRoutes.js';
 import { Buffer } from "buffer";
-import {postRequestCookie} from '../utils/requests'
+import {postRequestCookie} from '../utils/requests';
+import {toastOptions} from '../utils/toastOptions.js';
+import Loader from '../components/Loader/Loader.jsx';
 
 
 export default function SetAvatar(props) {
   const api = 'https://api.multiavatar.com/45678945';
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!props.user)
-      navigate("/login");
-  }, [navigate]);
 
   useEffect(() => {
-    if (props.user)
+    // if (!props.user){
       navigate("/login");
-  }, [navigate]);
+    // }
+  });
 
 
   const [avatars, setAvatars] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedAvatar, setSelectedAvatar] = useState(undefined)
-
-  const toastOptions = {
-    position: 'bottom-center',
-    autoClose: 8000,
-    pauseOnHover: true,
-    draggable: true,
-    theme: 'dark'
-  }
 
 
   const setProfilePicture = async () => {
