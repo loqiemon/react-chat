@@ -90,6 +90,21 @@ function asymDecrypt(text, privateKey) {
 }
 
 
-export { genAsymKeys, genSymKey, asymDecrypt, asymEncrypt, symDecrypt, symEncrypt }
+// Функция для создания цифровой подписи
+function createSignature(message, privateKey) {
+  const sign = new JSEncrypt();
+  sign.setPrivateKey(privateKey);
+  return sign.sign(message, CryptoJS.SHA256, 'sha256');
+}
+
+// Функция для проверки цифровой подписи
+function verifySignature(message, signature, publicKey) {
+  const verify = new JSEncrypt();
+  verify.setPublicKey(publicKey);
+  return verify.verify(message, signature, CryptoJS.SHA256);
+}
+
+
+export { genAsymKeys, genSymKey, asymDecrypt, asymEncrypt, symDecrypt, symEncrypt, createSignature,  verifySignature}
 
 

@@ -7,12 +7,12 @@ import { getMyChatsRoute, updateChatRoute, getSomeUsersRoute } from "../../utils
 import { addTransactionRoute, getShardRoute } from "../../utils/APIBlochain";
 import ChatInput from '../ChatInput';
 import { postRequestCookie } from '../../utils/requests'
-import { symDecrypt, symEncrypt } from '../../utils/crypto'
+import { symDecrypt, symEncrypt, createSignature,  verifySignature } from '../../utils/crypto'
 import './ChatContainer.scss'
 import Loader from '../Loader/Loader'
 
 
-export default function ChatContainer({ currentChat, socket, user, symKey, setChats }) {
+export default function ChatContainer({ currentChat, socket, user, symKey, setChats, clientKeys }) {
   const [messages, setMessages] = useState([]);
   const [filteredMessages, setFilteredMessages] = useState([]);
   const [searchForMessage, setSearchForMessage] = useState('');
@@ -73,13 +73,15 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
   ////
 
   const handleSendMsg = async (msg) => {
-    console.log(currentChat, 'currentChat send')
     currentChat.users.forEach(us => {
       console.log(currentChat._id)
+      const encryptedMsg = symEncrypt(msg, symKey)
+      const sign = createSignature(encryptedMsg, clientKeys.privateKey)
+      const publicKey = symEncrypt(clientKeys.publicKey, symKey)
       socket.current.emit("send-msg", {
         to: us,
         from: user._id,
-        msg: { chatId: currentChat.chatId, msg: symEncrypt(msg, symKey) },
+        msg: { chatId: currentChat.chatId, msg: encryptedMsg, sign: sign, publicKey: publicKey },
       });
     })
     const msgs = [...messages];
@@ -106,12 +108,17 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
   ////
   // useEffect(() => {
     if (socket.current) {
+      // console.log(currentChat, 'currentChat')
       socket.current.on("msg-recieve", (msg) => {
-        console.log(currentChat, 'currentChat receive')
-        console.log(msg.chatId, 'msg.chatId')
-        console.log(currentChat.chatId, 'currentChat.chatId')
+        // console.log(msg.chatId, 'msg.chatId')
+        // console.log(currentChat.chatId, 'currentChat.chatId')
         if (msg.chatId === currentChat.chatId) {
-          setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
+          const msgText = msg.msg;
+          const decryptedPub = symDecrypt(msg.publicKey, symKey);
+          const isValid = verifySignature(msgText, msg.sign, decryptedPub)
+          if (isValid) {
+            setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
+          }
         }
         const func = async () => {
           const data = await postRequestCookie(getMyChatsRoute)
@@ -138,6 +145,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
     setSearchForMessage(e.target.value)
   }
 
+  
   useEffect(() => {
     if (searchForMessage.length > 0){
       let data = messages.filter(msg => msg.message.toLowerCase().search(searchForMessage.toLowerCase()) > -1)
@@ -150,7 +158,10 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
 
   const goToMessage = (id) => {
       setSearchForMessage('')
-      document.getElementById(id).scrollIntoView( { behavior: 'smooth', block: 'start' } );
+      const timeoutId = setTimeout(() => {
+        document.getElementById(id).scrollIntoView( { behavior: 'smooth', block: 'start' } );
+      }, 150);
+      return () => clearTimeout(timeoutId);
   }
 
 

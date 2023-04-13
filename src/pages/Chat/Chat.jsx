@@ -88,7 +88,7 @@ function Chat(props) {
             {currentChat === undefined ? (
               <Welcome />
             ) : (
-              <ChatContainer currentChat={currentChat} socket={socket} user={props.user} symKey={symKey} setChats={setChats} />
+              <ChatContainer currentChat={currentChat} socket={socket} user={props.user} symKey={symKey} setChats={setChats} clientKeys={props.clientKeys} />
             )}
           </>
         )}
@@ -96,7 +96,6 @@ function Chat(props) {
       <ToastContainer />
     </>
   );
-
 }
 
 

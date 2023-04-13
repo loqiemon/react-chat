@@ -11,6 +11,7 @@ export const setAvatarRoute = `${host}/api/auth/setavatar`;
 export const searchUserRoute = `${host}/api/auth/searchUser`;
 export const getAllFriendsRoute = `${host}/api/auth/getAllFriends`;
 export const getSomeUsersRoute = `${host}/api/auth/getSomeUsers`;
+export const getPublicKeyRoute = `${host}/api/auth/getPublicKey`;
 
 //messages
 export const getMyChatsRoute = `${host}/api/messages/getmychats`;
@@ -20,3 +21,4 @@ export const recieveMessageRoute = `${host}/api/messages/getmsg`;
 export const updateChatRoute = `${host}/api/messages/updateChat`;
 export const saveChatsRoute = `${host}/api/messages/saveChats`;
 export const createCommonChatRoute = `${host}/api/messages/createCommonChat`;
+

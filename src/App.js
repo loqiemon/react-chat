@@ -16,7 +16,7 @@ import { useLocation } from 'react-router-dom';
 function App() {
   const [user, setUser] = useState(undefined);
   const [serverKeys, setServerKeys] = useState(undefined);
-  const [clientKey, setClientKeys] = useState(undefined);
+  const [clientKey, setClientKeys] = useState({publicKey: '', privateKey: ''});
   const [privKey, setPrivKey] = useState(undefined);
   const navigate = useNavigate()
   const location = useLocation();
@@ -77,7 +77,7 @@ function App() {
         <Route path='/login' element={<Login user={user} handleUserSet={setUser} checkAuth={checkAuth}/>} />
         <Route path='/setAvatar' element={<SetAvatar user={user}/>} />
         <Route path='/searchUser' element={<SearchUser user={user}/>} />
-        <Route path='/' element={<Chat user={user} handleUserSet={setUser} privKey={privKey} />} />
+        <Route path='/' element={<Chat user={user} handleUserSet={setUser} privKey={privKey} clientKeys={clientKey} />} />
       </Routes>
     </>
   )

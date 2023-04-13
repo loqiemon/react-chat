@@ -11,9 +11,6 @@ export default function ChatInput({ handleSendMsg }) {
   const [msg, setMsg] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [imageUrl, setImageUrl] = useState(null);
-
-
   const handleEmojiPickerhideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
   };
@@ -35,14 +32,6 @@ export default function ChatInput({ handleSendMsg }) {
 
   const handleAttachFile = async (event) => {
     setSelectedFile(event.target.files[0]);
-    setImageUrl(URL.createObjectURL(event.target.files[0]));
-    const reader = new FileReader();
-    reader.readAsDataURL(selectedFile);
-    reader.onload = () => {
-      // const encryptedData = CryptoJS.AES.encrypt(reader.result, "secret-key");
-      // console.log(encryptedData, 'encryptedData img')
-      // здесь вы можете отправить зашифрованные данные на сервер
-    };
   }
 
   return (
@@ -63,10 +52,9 @@ export default function ChatInput({ handleSendMsg }) {
           />
           <label htmlFor="upload-file">
             <IconButton color="primary" component="span">
-              <AttachFileIcon />
+              <AttachFileIcon/>
             </IconButton>
       </label>
-
     </div>
         </div>
       </div>
@@ -81,9 +69,6 @@ export default function ChatInput({ handleSendMsg }) {
           <IoMdSend />
         </button>
       </form>
-      {imageUrl && (
-        <img src={imageUrl} alt="uploaded-file" style={{ maxWidth: "100%" }} />
-      )}
     </Container>
   );
 }
@@ -91,7 +76,7 @@ export default function ChatInput({ handleSendMsg }) {
 const Container = styled.div`
   display: grid;
   align-items: center;
-  grid-template-columns: 5% 95%;
+  grid-template-columns: 6% 94%;
   // background-color: #080420;
   background-color: rgba(119, 119, 119, 0.3);
   border-radius: 1.2rem;
@@ -106,6 +91,11 @@ const Container = styled.div`
     align-items: center;
     color: white;
     gap: 1rem;
+    .pin {
+      svg {
+        color: black;
+      }
+    }
     .emoji {
       position: relative;
       svg {
