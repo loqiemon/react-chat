@@ -58,7 +58,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
       setLoading(false)
 
       chatData.map(msg => {
-        // msg.nickname = usersInfo.length > 0 ? usersInfo.find(nick => nick._id == msg.writer)
+        msg.nickname = usersInfo.length > 0 ? usersInfo.find(nick => nick._id == msg.writer).nickname : ''
         msg.writer === user._id ? msg.fromSelf = true : msg.fromSelf = false
         msg.message = symDecrypt(msg.message, symKey)
         msg.id = uuidv4()
@@ -81,7 +81,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
       socket.current.emit("send-msg", {
         to: us,
         from: user._id,
-        msg: { chatId: currentChat.chatId, msg: encryptedMsg, sign: sign, publicKey: publicKey },
+        msg: { chatId: currentChat.chatId, msg: encryptedMsg, sign: sign, publicKey: publicKey, sender: user._id },
       });
     })
     const msgs = [...messages];
@@ -105,29 +105,37 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
     setChats(data.data)
   };
 
-  ////
-  // useEffect(() => {
-    if (socket.current) {
-      // console.log(currentChat, 'currentChat')
-      socket.current.on("msg-recieve", (msg) => {
-        // console.log(msg.chatId, 'msg.chatId')
-        // console.log(currentChat.chatId, 'currentChat.chatId')
-        if (msg.chatId === currentChat.chatId) {
-          const msgText = msg.msg;
-          const decryptedPub = symDecrypt(msg.publicKey, symKey);
-          const isValid = verifySignature(msgText, msg.sign, decryptedPub)
-          if (isValid) {
-            setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
-          }
+
+  useEffect(() => {
+    const messages = filteredMessages.map(message => {
+      message.nickname = usersInfo.find(userd => userd._id == message.writer).nickname
+      return message
+    })
+    console.log(messages, 'messages')
+    setFilteredMessages(messages)
+  }, [usersInfo])
+
+
+  if (socket.current) {
+    socket.current.on("msg-recieve", (msg) => {
+      if (msg.chatId === currentChat.chatId) {
+        const msgText = msg.msg;
+        const decryptedPub = symDecrypt(msg.publicKey, symKey);
+        const isValid = verifySignature(msgText, msg.sign, decryptedPub)
+        // const nick = usersInfo.find(sender => sender._id == msg.sender)
+        if (isValid) {
+          setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
+          // setArrivalMessage({ nickname: nick.nickname, fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
         }
-        const func = async () => {
-          const data = await postRequestCookie(getMyChatsRoute)
-          setChats(data.data)
-        }
-        func()
-      });
-    }
-  // }, [currentChat]);
+      }
+      const func = async () => {
+        const data = await postRequestCookie(getMyChatsRoute)
+        setChats(data.data)
+      }
+      func()
+    });
+  }
+
 
 
   useEffect(() => {
@@ -190,10 +198,9 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
           {filteredMessages.map((message) => {
           return (
             <div ref={scrollRef} key={uuidv4()}>
-              {/* {currentChat.users.length > 1 && user._id !== message.writer && message.nickname.nickname } */}
+              {currentChat.users.length > 1 && user._id !== message.writer && message.nickname }
               <div className={`message bubble ${message.fromSelf ? "sended" : "recieved"} `} onClick={() => goToMessage(message.id)} id={message.id}>
                 {message.fromSelf ? <></> : <div className="message_nickname"></div>}
-                {/* <div className="message_nickname">Никнейм</div> */}
                 <div className="content">
                   <p>{message.message}</p>
                 </div>
