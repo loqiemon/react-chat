@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaSearch } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Navbar/Navbar';
 import { searchUserRoute, createChatIfNotExistRoute } from '../utils/APIRoutes';
 import axios from 'axios';
 import Loader from '../components/Loader/Loader';

@@ -1,14 +1,15 @@
 @import '../../../style/variables.scss';
 
 
+
 .chat_page {
     height: 100vh;
     width: 100vw;
     display: flex;
     // gap: 1rem;
     align-items: center;
-    background-color: $chat-background-color;
-    // background: url(${backd}) ;
+    // background-color: $chat-background-color;
+    background: url(../../assets/backd.jpg  ) ;
     .container {
       height: 85vh;
       width: 85vw;

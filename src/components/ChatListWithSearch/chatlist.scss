@@ -1,6 +1,18 @@
 @import '../../../style/variables.scss';
 
 
+.chatlist {
+    position: relative;
+    width: 40vw;
+    height: 100vh;
+    background-color: $chatlist_background;
+    padding: 0.3rem;
+    border-radius: 15px;
+    margin-left: 16vw;
+    z-index: 200;
+}
+
+
 .chatlist_search {
     display: flex;
     justify-content: space-between;

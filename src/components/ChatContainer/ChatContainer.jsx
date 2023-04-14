@@ -74,7 +74,8 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
 
   const handleSendMsg = async (msg) => {
     currentChat.users.forEach(us => {
-      console.log(currentChat._id)
+      console.log(us, 'to who sended')
+      console.log(currentChat._id, 'handleSendMsg currentChat._id')
       const encryptedMsg = symEncrypt(msg, symKey)
       const sign = createSignature(encryptedMsg, clientKeys.privateKey)
       const publicKey = symEncrypt(clientKeys.publicKey, symKey)
@@ -115,16 +116,12 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
     setFilteredMessages(messages)
   }, [usersInfo])
 
-
-
-  useEffect(() => {
-
-  })
-
   
+useEffect(()=>{
   if (socket.current) {
     socket.current.on("msg-recieve", (msg) => {
-      console.log(currentChat.chatId, 'currentChat.chatId currentChat.chatId currentChat.chatId')
+      console.log(currentChat, 'msg-recieve  currentChat.chatId')
+      console.log(msg, 'msg msg-recieve')
       if (msg.chatId === currentChat.chatId) {
         const msgText = msg.msg;
         const decryptedPub = symDecrypt(msg.publicKey, symKey);
@@ -142,6 +139,7 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
       func()
     });
   }
+}, [currentChat])
 
 
 

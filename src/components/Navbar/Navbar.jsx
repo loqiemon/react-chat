@@ -1,55 +1,49 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Logout from "./Logout";
-import { useNavigate, Link} from 'react-router-dom';
-import blankProfile from '../assets/blankProfile.png';
+import { useNavigate, Link } from 'react-router-dom';
+import SearchIcon from '@mui/icons-material/Search';
+import ChatIcon from '@mui/icons-material/Chat';
+import Logout from "../Logout/Logout";
+import blankProfile from '../../assets/blankProfile.png';
+import './navbar.scss'
 
 export default function Navbar(props) {
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const navigate = useNavigate()
-
-
-  useEffect(() => {
-    if (!props.user)
-      navigate("/login");
-  }, [navigate]);
 
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
   };
-  
+
   return (
-    <Nav>
-      <Brand>
+    <nav className='navbar'>
+      <div className="navbar_header">
         <CustomLink to="/">WebChat</CustomLink>
-      </Brand>
-      <Hamburger onClick={toggleNav}>
-        <div></div>
-        <div></div>
-        <div></div>
-      </Hamburger>
-      <NavLinks isNavOpen={isNavOpen}>
-        <CustomLink to="/searchUser">Поиск</CustomLink>
-        <div className="current-user">
-          <div className="avatar">
-            {props.user.image ?
-                        <img
-                          src={`data:image/svg+xml;base64,${props.user.image}`}
-                          alt="profile avatar"
-                        /> :                        <img
-                        src={blankProfile}
-                        alt="profile avatar"
-                      />
-                      }
-            </div>
-            <div className="username">
-              <h2>{props.user.nickname}</h2>
-            </div>
+        <div className="navbar_middle">
+          <CustomLink to="/searchUser" className='navbar_middle_item'><SearchIcon/>Поиск</CustomLink>
+          <CustomLink to="/searchUser" className='navbar_middle_item'><ChatIcon/>Чаты</CustomLink>
         </div>
-        <Logout handleUserSet={props.handleUserSet}/>
-      </NavLinks>
-    </Nav>
+      </div>
+      <div className="navbar_footer">
+        <div className="navbar_user">
+          <div className="navbar_user_avatar">
+            {props.user.image ?
+              <img
+                src={`data:image/svg+xml;base64,${props.user.image}`}
+                alt="profile avatar"
+              /> : <img
+                src={blankProfile}
+                alt="profile avatar"
+              />
+            }
+          </div>
+          <div className="navbar_user_name">
+            <h2>{props.user.nickname}</h2>
+          </div>
+        </div>
+        <Logout handleUserSet={props.handleUserSet} />
+      </div>
+    </nav>
   );
 }
 
