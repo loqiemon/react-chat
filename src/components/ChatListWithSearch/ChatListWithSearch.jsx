@@ -59,7 +59,7 @@ const ChatListWithSearch = (props) => {
         </IconButton>
       </div>
       {filteredChats.map((chat) => (
-        <div className='chatlist_item' key={chat._id} onClick={() => { changeCurrentChat(chat) }}>
+        <div className='chatlist_item' key={chat._id} onClick={() => { changeCurrentChat(chat) }}  >
           {chat.avatarImage ?
             <img className='chatlist_item-img' src={`data:image/svg+xml;base64,${chat.avatarImage}`} alt={chat.chatname} />
             : <img className='chatlist_item-img' src={blankProfile} alt={chat.chatname} />}

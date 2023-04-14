@@ -116,8 +116,15 @@ export default function ChatContainer({ currentChat, socket, user, symKey, setCh
   }, [usersInfo])
 
 
+
+  useEffect(() => {
+
+  })
+
+  
   if (socket.current) {
     socket.current.on("msg-recieve", (msg) => {
+      console.log(currentChat.chatId, 'currentChat.chatId currentChat.chatId currentChat.chatId')
       if (msg.chatId === currentChat.chatId) {
         const msgText = msg.msg;
         const decryptedPub = symDecrypt(msg.publicKey, symKey);

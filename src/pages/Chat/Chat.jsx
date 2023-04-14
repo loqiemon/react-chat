@@ -44,7 +44,7 @@ function Chat(props) {
       }
       socket.current.on("msg-recieve", async (msg) => {
           const data = await postRequestCookie(getMyChatsRoute)
-          setChats(data.data)
+          // setChats(data.data)
       });
       func();
     } else {
