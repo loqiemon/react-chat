@@ -7,7 +7,8 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import IconButton from '@mui/material/IconButton';
 
 
-export default function ChatInput({ handleSendMsg }) {
+
+export default function ChatInput(props) {
   const [msg, setMsg] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -24,7 +25,7 @@ export default function ChatInput({ handleSendMsg }) {
   const sendChat = (event) => {
     event.preventDefault();
     if (msg.length > 0) {
-      handleSendMsg(msg);
+      props.sendMessage(msg)
       setMsg("");
     }
   };
@@ -33,6 +34,8 @@ export default function ChatInput({ handleSendMsg }) {
   const handleAttachFile = async (event) => {
     setSelectedFile(event.target.files[0]);
   }
+
+
 
   return (
     <Container>
@@ -74,14 +77,15 @@ export default function ChatInput({ handleSendMsg }) {
 }
 
 const Container = styled.div`
-  display: grid;
+  // display: grid;
   align-items: center;
-  grid-template-columns: 7% 92%;
+  // grid-template-columns: 7% 92%;
   // background-color: #080420;
   background-color: rgba(119, 119, 119, 0.3);
   border-radius: 1.2rem;
   padding: 0 2rem;
-  width: 75vw;
+  width: 100%;
+  height: 10rem;
   @media screen and (min-width: 720px) and (max-width: 1080px) {
     padding: 0 1rem;
     gap: 1rem;

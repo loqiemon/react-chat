@@ -20,8 +20,8 @@ export default function Navbar(props) {
       <div className="navbar_header">
         <CustomLink to="/">WebChat</CustomLink>
         <div className="navbar_middle">
-          <CustomLink to="/searchUser" className='navbar_middle_item'><SearchIcon/>Поиск</CustomLink>
-          <CustomLink to="/searchUser" className='navbar_middle_item'><ChatIcon/>Чаты</CustomLink>
+          <CustomLink to="/searchUser" className='navbar_middle_item'><SearchIcon/></CustomLink>
+          <CustomLink to="/" className='navbar_middle_item'><ChatIcon/></CustomLink>
         </div>
       </div>
       <div className="navbar_footer">
@@ -38,7 +38,7 @@ export default function Navbar(props) {
             }
           </div>
           <div className="navbar_user_name">
-            <h2>{props.user.nickname}</h2>
+            <h4>{props.user.nickname}</h4>
           </div>
         </div>
         <Logout handleUserSet={props.handleUserSet} />
@@ -151,6 +151,7 @@ const CustomLink = styled(Link)`
   color: #fff;
   padding: 0.5rem;
   margin-right: 1rem;
+  font-size: 20px;
 
   &:hover {
     border-bottom: 2px solid #fff;

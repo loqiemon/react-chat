@@ -1,222 +1,108 @@
 import React, { useState, useEffect, useRef } from "react";
-import styled from 'styled-components';
 import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
 
-import { getMyChatsRoute, updateChatRoute, getSomeUsersRoute } from "../../utils/APIRoutes";
-import { addTransactionRoute, getShardRoute } from "../../utils/APIBlochain";
-import ChatInput from '../ChatInput';
-import { postRequestCookie } from '../../utils/requests'
-import { symDecrypt, symEncrypt, createSignature,  verifySignature } from '../../utils/crypto'
-import './ChatContainer.scss'
-import Loader from '../Loader/Loader'
 
+import './ChatContainer.scss';
+import Loader from '../Loader/Loader';
+import blankProfile from '../../assets/blankProfile.png';
+import ChatInput from "../ChatInput";
+import { updateChatRoute } from "../../utils/APIRoutes";
+import {getMessages, addTransaction, postRequestCookie, getSomeUsers} from '../../utils/requests';
+import { symDecrypt, symEncrypt } from "../../utils/crypto";
 
-export default function ChatContainer({ currentChat, socket, user, symKey, setChats, clientKeys }) {
+export default function ChatContainer(props) {
+  const [search, setSearch] = useState('');
+  const [filteresMessages, setFilteresMessages] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [filteredMessages, setFilteredMessages] = useState([]);
-  const [searchForMessage, setSearchForMessage] = useState('');
+  const [usersInfo, setUsersInfo] = useState([]);
+  const [loading, setloading] = useState(false);
   const scrollRef = useRef();
-  const [usersInfo, setUsersInfo] = useState([])
-  const [arrivalMessage, setArrivalMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [curChat, setCurChat] = useState(undefined);
 
-
-
-
-  useEffect(() => {
-    setCurChat(currentChat)
+  useEffect(()=> {
     const func = async () => {
-      setLoading(true)
-      const data = await axios.post(getShardRoute, {
-        "segment_id": currentChat.chatId,
-        "numShard": "-1",
-        "convertMessages": true
+      setloading(true)
+      const response = await getMessages(props.chat.chatId);
+      getSomeUsers(props.chat.chatId).then((res)=>{
+        const decryptedMessages = response.map(msg => {
+          msg.writer === props.user._id ? msg.fromSelf = true : msg.fromSelf = false
+          msg.nickname = res.foundUsers.find(user => user._id === msg.writer).nickname
+          msg.timestamp = new Date(msg.timestamp).toDateString()
+          msg.message = symDecrypt(msg.message, props.symChatKey)
+          return msg
+        })
+        setMessages(decryptedMessages);
+        setUsersInfo(res.foundUsers)
       })
-
-      let chatData = [];
-      const shardCount = data.data.listShards.length;
-
-      for (let i = 0; i < shardCount; i++) {
-        for (let j = 0; j < data.data.listShards[i].length; j++) {
-          const response = await axios.post(getShardRoute, {
-            "segment_id": currentChat.chatId,
-            "numShard": j,
-            "convertMessages": true
-          })
-          chatData = [...chatData, ...response.data]
-        }
-      }
-
-
-      if (currentChat.users.length > 1) {
-        const response = await postRequestCookie(getSomeUsersRoute, { usersToFind: [...currentChat.users, user._id] })
-        response.success ? setUsersInfo(response.foundUsers) : console.log()
-      }
-
-      setLoading(false)
-
-      chatData.map(msg => {
-        msg.nickname = usersInfo.length > 0 ? usersInfo.find(nick => nick._id == msg.writer).nickname : ''
-        msg.writer === user._id ? msg.fromSelf = true : msg.fromSelf = false
-        msg.message = symDecrypt(msg.message, symKey)
-        msg.id = uuidv4()
-      })
-
-      setMessages(chatData);
-      setFilteredMessages(chatData)
+      setloading(false)
 
     }
     func()
-  }, [currentChat]);
-  ////
 
-  const handleSendMsg = async (msg) => {
-    currentChat.users.forEach(us => {
-      console.log(us, 'to who sended')
-      console.log(currentChat._id, 'handleSendMsg currentChat._id')
-      const encryptedMsg = symEncrypt(msg, symKey)
-      const sign = createSignature(encryptedMsg, clientKeys.privateKey)
-      const publicKey = symEncrypt(clientKeys.publicKey, symKey)
-      socket.current.emit("send-msg", {
-        to: us,
-        from: user._id,
-        msg: { chatId: currentChat.chatId, msg: encryptedMsg, sign: sign, publicKey: publicKey, sender: user._id },
-      });
-    })
-    const msgs = [...messages];
-    msgs.push({ fromSelf: true, message: msg });
-    setMessages(msgs);
-    setFilteredMessages(msgs)
-
-    
-    await axios.post(addTransactionRoute, {
-      "segment_id": currentChat.chatId,
-      "writer": user._id,
-      "reader": currentChat.chatId,
-      "message": symEncrypt(msg, symKey),
-      "file": 'None'
-    }).then(res => console.log(res))
-
-    postRequestCookie(updateChatRoute, { chatId: currentChat.chatId })
-
-
-    const data = await postRequestCookie(getMyChatsRoute)
-    setChats(data.data)
-  };
+  }, [props.chat])
 
 
   useEffect(() => {
-    const messages = filteredMessages.map(message => {
-      message.nickname = usersInfo.find(userd => userd._id == message.writer).nickname
-      return message
-    })
-    console.log(messages, 'messages')
-    setFilteredMessages(messages)
-  }, [usersInfo])
+    if (search.length < 1) {
+      setFilteresMessages(messages);
+    } else {
+      const searchedMessages = messages.filter(msg => msg.message.toLowerCase().includes(search.toLowerCase()))
+      setFilteresMessages(searchedMessages)
+    }
+  }, [messages, search])
 
-  
-useEffect(()=>{
-  if (socket.current) {
-    socket.current.on("msg-recieve", (msg) => {
-      console.log(currentChat, 'msg-recieve  currentChat.chatId')
-      console.log(msg, 'msg msg-recieve')
-      if (msg.chatId === currentChat.chatId) {
-        const msgText = msg.msg;
-        const decryptedPub = symDecrypt(msg.publicKey, symKey);
-        const isValid = verifySignature(msgText, msg.sign, decryptedPub)
-        // const nick = usersInfo.find(sender => sender._id == msg.sender)
-        if (isValid) {
-          setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
-          // setArrivalMessage({ nickname: nick.nickname, fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
-        }
-      }
-      const func = async () => {
-        const data = await postRequestCookie(getMyChatsRoute)
-        setChats(data.data)
-      }
-      func()
+
+  useEffect(()=> {
+    props.socket.current.on("msg-receive", async (msg) => {
+      const messageReceived = { fromSelf: false, message: symDecrypt(msg.message, props.symChatKey) , writer: msg.writer, timestamp: msg.timestamp, nickname: usersInfo.find(user => user._id === msg.writer).nickname}
+      setMessages([...messages, messageReceived])
     });
-  }
-}, [currentChat])
-
-
+  })
 
   useEffect(() => {
-    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
-    arrivalMessage && setFilteredMessages((prev) => [...prev, arrivalMessage]);
-  }, [arrivalMessage]);
-
-
-  useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    scrollRef.current?.scrollIntoView({ behavior: "smooth", block: 'start'});
   }, [messages]);
 
 
-  const handleSearchMessage = (e) => {
-    setSearchForMessage(e.target.value)
-  }
-
-  
-  useEffect(() => {
-    if (searchForMessage.length > 0){
-      let data = messages.filter(msg => msg.message.toLowerCase().search(searchForMessage.toLowerCase()) > -1)
-      setFilteredMessages(data)
-    }else {
-      setFilteredMessages(messages)
-    }
-  }, [searchForMessage])
-
-
-  const goToMessage = (id) => {
-      setSearchForMessage('')
-      const timeoutId = setTimeout(() => {
-        document.getElementById(id).scrollIntoView( { behavior: 'smooth', block: 'start' } );
-      }, 150);
-      return () => clearTimeout(timeoutId);
+  const sendMessage = async (text) => {
+    postRequestCookie(updateChatRoute, { chatId: props.chat.chatId })
+    addTransaction(props.user._id, props.chat.chatId, text, props.symChatKey)
+    setMessages([...messages, {message: text, writer: props.user._id, timestamp: new Date().toDateString(), nickname: props.user.nickname}])
+    props.sendMessage({message: symEncrypt(text, props.symChatKey), writer: props.user._id, timestamp: new Date().toDateString()})
   }
 
 
   return (
-    <div className="chat_container">
-      <div className="chat-header">
-        <div className="user-details">
-          <div className="avatar">
-            <img
-              src={`data:image/svg+xml;base64,${currentChat.avatarImage}`}
-              alt=""
-            />
-          </div>
-          <div className="username">
-            <h3>{currentChat.chatname}</h3>
-          </div>
-        </div>
-        <input className="search_messsage"
-            type="text"
-            placeholder="Поиск..."
-            value={searchForMessage}
-          onChange={handleSearchMessage}
-          />
-      </div>
-      {loading ? <Loader /> : <div className="chat-messages">
-          {filteredMessages.map((message) => {
-          return (
-            <div ref={scrollRef} key={uuidv4()}>
-              {currentChat.users.length > 1 && user._id !== message.writer && message.nickname }
-              <div className={`message bubble ${message.fromSelf ? "sended" : "recieved"} `} onClick={() => goToMessage(message.id)} id={message.id}>
-                {message.fromSelf ? <></> : <div className="message_nickname"></div>}
-                <div className="content">
-                  <p>{message.message}</p>
+    <>
+      {props.chat ? <>
+        {loading ? <Loader/> :         <div className="chat_messages_container">
+          <div className="messages">
+            {filteresMessages.map(message => {
+              return (
+                <div ref={scrollRef} className={message.writer === props.user._id ? 'message sended' : 'message recieved'} key={uuidv4()}>
+                  <div className="message_left">
+                    <img
+                      src={props.chat.avatarImage ? `data:image/svg+xml;base64,${props.chat.avatarImage}` : blankProfile}
+                      alt=""
+                    />
+                  </div>
+                  <div className="message_right">
+                    <span className="message_nickname">{message.nickname}</span>
+                    <div className="message_right_content">
+                      {message.message}
+                    </div>
+                    <div className="message_right_footer">
+                      {message.timestamp}
+                    </div>
+                  </div>
                 </div>
-                <p className="message-time">13:20</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>}
-      <ChatInput handleSendMsg={handleSendMsg} />
-    </div>
+              )
+            })}
+          </div>
+          <ChatInput sendMessage={sendMessage} />
+        </div>}
+      </> : null}
+    </>
   );
 }
 

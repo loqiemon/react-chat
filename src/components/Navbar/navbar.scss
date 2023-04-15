@@ -1,11 +1,14 @@
 @import '../../../style/variables.scss';
+
+
 .navbar {
+    font-size: 26px;
     padding: 0.4rem;
     z-index: 1;
     background-color: $navbar_background;
     color: $navbar_text;
     height: 100vh;
-    width: 17vw;
+    width: 8vw;
     position: fixed;
     top: 0;
     left: 0;
@@ -23,12 +26,13 @@
     &_user {
         display: flex;
         gap: 1rem;
-        justify-content: space-between;
-        font-size: 14px;
+        justify-content: center;
+        flex-direction: column;
+        font-size: 18px;
         align-items: center;
         img {
-            width: 2rem;
-            height: 2rem;
+            width: 3rem;
+            height: 3rem;
         }
         &_name {
             overflow:hidden !important;
@@ -42,9 +46,15 @@
     }
     &_middle {
         &_item {
+            font-size: 30px;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 0.4rem;
+            svg {
+                width: 2.4rem;
+                height: 2.4rem;
+            }
         }
     }
   }
