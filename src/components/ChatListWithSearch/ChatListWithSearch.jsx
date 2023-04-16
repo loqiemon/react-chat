@@ -9,6 +9,7 @@ import './chatlist.scss';
 import blankProfile from '../../assets/blankProfile.png';
 import { getChats } from '../../utils/requests';
 import { addBlockRoute } from '../../utils/APIBlochain';
+import { createSignature } from '../../utils/crypto';
 
 
 const ChatListWithSearch = (props) => {
@@ -16,11 +17,6 @@ const ChatListWithSearch = (props) => {
   const [filteredChats, setFilteredChats] = useState([]);
   const [search, setSearch] = useState('');
   const [selectedChatId, setSelectedChatId] = useState(null);
-
-  useEffect(() => {
-    getSetChats()
-  }, [])
-
 
 
   useEffect(() => {
@@ -34,8 +30,13 @@ const ChatListWithSearch = (props) => {
   }, [search, chats])
 
 
+  useEffect(()=>{
+    getSetChats()
+  },[props.updateChats])
+
+
   const getSetChats = async () => {
-    const response = await getChats(props.user._id);
+    const response = await getChats(createSignature(props.user._id, props.privKey));
     setChats(response.data);
   }
 
@@ -46,10 +47,12 @@ const ChatListWithSearch = (props) => {
 
 
   const handleCreateCommonChat = async () => {
-
+    props.createCommonChat(true)
   }
 
   const handleChatClick = (chat) => {
+    getSetChats()
+    props.createCommonChat(false)
     axios.post(addBlockRoute, {segment_id: chat.chatId, block: null})
     setSelectedChatId(chat.chatId);
     props.changeChat(chat);

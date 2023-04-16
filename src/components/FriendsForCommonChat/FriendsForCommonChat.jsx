@@ -10,7 +10,7 @@ import IconButton from '@mui/material/IconButton';
 
 import Loader from '../Loader/Loader';
 import { createCommonChatRoute, getMyChatsRoute } from '../../utils/APIRoutes';
-import {postRequestCookie} from '../../utils/requests'
+import {postRequestCookie, getAllFriends} from '../../utils/requests'
 import blankProfile from '../../assets/blankProfile.png';
 import {toastOptions} from '../../utils/toastOptions';
 
@@ -21,18 +21,28 @@ export default function FriendsForCommonChat(props) {
     const [usersToAdd, setUsersToAdd] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [friends, setFriends] = useState([]);
 
 
     useEffect(()=> {
-        if (props.friends.length > 0 && searchTerm.length > 0 ){
-          const filtered = props.friends.filter((user) => user.nickname.toLowerCase().includes(searchTerm.toLowerCase()))
+      const func = async () => {
+        const response = await getAllFriends();
+        setFriends(response.myFriends)
+      }
+      func()
+    }, [])
+
+
+    useEffect(()=> {
+        if (friends.length > 0 && searchTerm.length > 0 ){
+          const filtered = friends.filter((user) => user.nickname.toLowerCase().includes(searchTerm.toLowerCase()))
             setFilteredUsers(filtered)
-        }else if (props.friends.length > 0){
-            setFilteredUsers(props.friends)
+        }else if (friends.length > 0){
+            setFilteredUsers(friends)
         }else {
             setFilteredUsers([])
         }
-      }, [searchTerm, props.friends])
+      }, [searchTerm, friends])
 
       const handleAddUser = async (user) => {
         setUsersToAdd([...usersToAdd, user])
@@ -40,7 +50,7 @@ export default function FriendsForCommonChat(props) {
 
 
       const closeMenu = () => {
-        props.setFriendForChat([])
+
       }
 
 
@@ -52,10 +62,11 @@ export default function FriendsForCommonChat(props) {
               chatName: chatName
           })
           setLoading(false)
+          props.setCreateCommonChat(false)
           if (response.success) {
-            props.setFriendForChat([])
+            // props.setFriendForChat([])
             const resp = await postRequestCookie(getMyChatsRoute);
-            props.setChats(resp.data);
+            // props.setChats(resp.data);
           }else {
             toast.error('Не удалось создать чат...', toastOptions)
           }

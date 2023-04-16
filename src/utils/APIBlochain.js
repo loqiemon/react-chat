@@ -5,3 +5,9 @@ export const addSegmentRoute = `${host}/add_segment`;
 export const addTransactionRoute = `${host}/add_transaction`;
 export const addBlockRoute = `${host}/add_block`;
 export const getShardRoute = `${host}/get_segment_shard`;
+export const getBlockchainPublicKeyRoute  = `${host}/ping`;
+
+
+
+export const hostNodes = "http://localhost:4021";
+// export const getBlockchainPublicKeyRoute  = `${host}/ping`;

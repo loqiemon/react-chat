@@ -11,9 +11,10 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css"
-import { postRequestCookie } from '../utils/requests'
+import { addSegmentBlockchain, postRequestCookie, postSearchUser } from '../utils/requests'
 import blankProfile from '../assets/blankProfile.png';
 import { toastOptions } from '../utils/toastOptions'
+import { createSignature, asymDecrypt, asymEncrypt } from '../utils/crypto';
 
 const SearchUser = (props) => {
   const [loading, setLoading] = useState(false)
@@ -31,18 +32,23 @@ const SearchUser = (props) => {
 
   const handleSearch = async (e) => {
     setLoading(true)
-    const data = await postRequestCookie(searchUserRoute, { 'searchInput': searchTerm });
+    // const data = await postRequestCookie(searchUserRoute, { 'searchInput': searchTerm });
+    const data = await postSearchUser(createSignature(props.user._id, props.privKey), searchTerm);
     setLoading(false)
     setSearchResults(data)
   };
 
 
   const handleAddUser = async (user) => {
-    const data = await postRequestCookie(createChatIfNotExistRoute, { 'userId': user._id });
-    console.log(data)
+    const data = await postRequestCookie(createChatIfNotExistRoute, { 'userId': user._id, 'sign': createSignature(props.user._id, props.privKey) });
     if (data.alreadyExist) {
       toast.error("Уже добавлен", toastOptions)
     } else if (data.success) {
+      const sign = createSignature(data.chatId, props.privKey)
+      const chatKey = asymDecrypt(data.chatSymKey,props.privKey)
+      const encryptedChatKey = asymEncrypt(chatKey, props.blockchainKey)
+
+      addSegmentBlockchain(sign, data.chatId, encryptedChatKey)
       toast.success("Успешно", toastOptions)
     } else {
       toast.error("Ошибка", toastOptions)

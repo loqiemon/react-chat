@@ -17,6 +17,7 @@ export default function ChatContainer(props) {
   const [messages, setMessages] = useState([]);
   const [usersInfo, setUsersInfo] = useState([]);
   const [loading, setloading] = useState(false);
+  
   const scrollRef = useRef();
 
   useEffect(()=> {
@@ -29,6 +30,7 @@ export default function ChatContainer(props) {
           msg.nickname = res.foundUsers.find(user => user._id === msg.writer).nickname
           msg.timestamp = new Date(msg.timestamp).toDateString()
           msg.message = symDecrypt(msg.message, props.symChatKey)
+          msg.id = uuidv4()
           return msg
         })
         setMessages(decryptedMessages);
@@ -49,12 +51,13 @@ export default function ChatContainer(props) {
       const searchedMessages = messages.filter(msg => msg.message.toLowerCase().includes(search.toLowerCase()))
       setFilteresMessages(searchedMessages)
     }
+    scrollRef.current?.scrollIntoView({ behavior: "smooth", block: 'start'});
   }, [messages, search])
 
 
   useEffect(()=> {
     props.socket.current.on("msg-receive", async (msg) => {
-      const messageReceived = { fromSelf: false, message: symDecrypt(msg.message, props.symChatKey) , writer: msg.writer, timestamp: msg.timestamp, nickname: usersInfo.find(user => user._id === msg.writer).nickname}
+      const messageReceived = { fromSelf: false, message: symDecrypt(msg.message, props.symChatKey) , writer: msg.writer, timestamp: msg.timestamp, id:uuidv4(), nickname: usersInfo.find(user => user._id === msg.writer).nickname}
       setMessages([...messages, messageReceived])
     });
   })
@@ -67,19 +70,37 @@ export default function ChatContainer(props) {
   const sendMessage = async (text) => {
     postRequestCookie(updateChatRoute, { chatId: props.chat.chatId })
     addTransaction(props.user._id, props.chat.chatId, text, props.symChatKey)
-    setMessages([...messages, {message: text, writer: props.user._id, timestamp: new Date().toDateString(), nickname: props.user.nickname}])
+    setMessages([...messages, {message: text, writer: props.user._id, timestamp: new Date().toDateString(), nickname: props.user.nickname, id:uuidv4()}])
     props.sendMessage({message: symEncrypt(text, props.symChatKey), writer: props.user._id, timestamp: new Date().toDateString()})
+  
   }
 
+  const handleSearchChange = async (e) => {
+    setSearch(e.target.value)
+  }
+
+  const goToMessage = (id) => {
+    setSearch('')
+    const timeoutId = setTimeout(() => {
+      document.getElementById(id).scrollIntoView( { behavior: 'smooth', block: 'start' } );
+    }, 150);
+    return () => clearTimeout(timeoutId);
+}
 
   return (
     <>
       {props.chat ? <>
         {loading ? <Loader/> :         <div className="chat_messages_container">
+        <input
+            type="text"
+            placeholder="Поиск..."
+            value={search}
+            onChange={handleSearchChange}
+          />
           <div className="messages">
             {filteresMessages.map(message => {
               return (
-                <div ref={scrollRef} className={message.writer === props.user._id ? 'message sended' : 'message recieved'} key={uuidv4()}>
+                <div ref={scrollRef} className={message.writer === props.user._id ? 'message sended' : 'message recieved'} key={uuidv4()} onClick={() => goToMessage(message.id)} id={message.id}>
                   <div className="message_left">
                     <img
                       src={props.chat.avatarImage ? `data:image/svg+xml;base64,${props.chat.avatarImage}` : blankProfile}

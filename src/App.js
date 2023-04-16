@@ -9,15 +9,17 @@ import axios from "axios";
 import {checkAuthRoute, saveChatsRoute} from './utils/APIRoutes';
 import { useNavigate } from 'react-router-dom';
 import {genAsymKeys, asymDecrypt, symDecrypt, asymEncrypt} from './utils/crypto';
-import {postRequestCookie} from './utils/requests';
+import {postRequestCookie, getBlockchainPublicKey} from './utils/requests';
 import { useLocation } from 'react-router-dom';
 
 
 function App() {
   const [user, setUser] = useState(undefined);
   const [serverKeys, setServerKeys] = useState(undefined);
+  const [blockchainKey, setBlockchainKey] = useState(undefined);
   const [clientKey, setClientKeys] = useState({publicKey: '', privateKey: ''});
   const [privKey, setPrivKey] = useState(undefined);
+  const [loadingAuth, setLoadingAuth] = useState(false)
   const navigate = useNavigate()
   const location = useLocation();
 
@@ -32,14 +34,19 @@ function App() {
 
   useEffect(() => {
     checkAuth();
+    const getBlockchainKey = async () => {
+      const response = await getBlockchainPublicKey();
+      setBlockchainKey(response)
+    };
+    getBlockchainKey()
   }, []);
 
 
   useEffect(() => {
     const func = async () => {
-      // const data = await axios.post(checkAuthRoute);
+      setLoadingAuth(true)
       const data = await postRequestCookie(checkAuthRoute, {publicKey: clientKey.publicKey})
-      console.log(data, 'data.privateKey')
+      setLoadingAuth(false)
       if (!data.success) {
         setUser(undefined)
         navigate("/login");
@@ -69,8 +76,8 @@ function App() {
         {/* <Route path='/register' element={<Register user={user} handleUserSet={handleUserSet} />} /> */}
         <Route path='/login' element={<Login user={user} handleUserSet={setUser} checkAuth={checkAuth}/>} />
         <Route path='/setAvatar' element={<SetAvatar user={user}/>} />
-        <Route path='/searchUser' element={<SearchUser user={user}/>} />
-        <Route path='/' element={<Chat user={user} handleUserSet={setUser} privKey={privKey} clientKeys={clientKey} />} />
+        <Route path='/searchUser' element={<SearchUser user={user} blockchainKey={blockchainKey} privKey={privKey}/>} />
+        <Route path='/' element={<Chat user={user} handleUserSet={setUser} privKey={privKey} clientKeys={clientKey} loadingAuth={loadingAuth} blockchainKey={blockchainKey}/>} />
       </Routes>
     </>
   )

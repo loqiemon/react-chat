@@ -1,5 +1,5 @@
-import { getPublicKeyRoute, getMyChatsRoute, getSomeUsersRoute } from "./APIRoutes"; 
-import {getShardRoute, addTransactionRoute} from '../utils/APIBlochain';
+import { getPublicKeyRoute, getMyChatsRoute, getSomeUsersRoute, getAllFriendsRoute } from "./APIRoutes"; 
+import {getShardRoute, addTransactionRoute, getBlockchainPublicKeyRoute, addSegmentRoute} from '../utils/APIBlochain';
 import { symEncrypt } from "./crypto";
 import axios from 'axios'
 
@@ -37,13 +37,14 @@ return responseJson;
 
 
 
-export const getChats = async () => {
+export const getChats = async (sign) => {
   const response = await fetch(getMyChatsRoute, {
     method: 'POST',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json;charset=utf-8'
     },
+    body: JSON.stringify({'sign': sign})
   })
   const responseJson = await response.json();
   return responseJson;
@@ -58,6 +59,19 @@ export const getSomeUsers = async (chatId) => {
       'Content-Type': 'application/json;charset=utf-8'
     },
     body: JSON.stringify({'chatId': chatId})
+  })
+  const responseJson = await response.json();
+  return responseJson;
+}
+
+
+export const getAllFriends = async (chatId) => {
+  const response = await fetch(getAllFriendsRoute, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    }
   })
   const responseJson = await response.json();
   return responseJson;
@@ -97,3 +111,22 @@ export const addTransaction = async (userId, chatId, msg, symKey) => {
     "file": 'None'
   }).then(res => console.log(res))
 }
+
+
+export const getBlockchainPublicKey = async () => {
+  const response = await axios.get(getBlockchainPublicKeyRoute)
+  return response.pubkey
+}
+
+
+export const postSearchUser = async (sign, searchTerm) => {
+  const response = await postRequestCookie(searchUserRoute, {'sign': sign, 'searchInput': searchTerm})
+  return response;
+}
+
+
+export const addSegmentBlockchain = async (sign, chatId, skey) => {
+  const response = await postRequestCookie(addSegmentRoute, {'sign': sign, 'segment_id': chatId, "owner": false, "timestamp": "", 'skey': skey})
+  return response;
+}
+

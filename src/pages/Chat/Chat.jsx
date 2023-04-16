@@ -12,7 +12,7 @@ import {toastOptions} from '../../utils/toastOptions';
 import {asymDecrypt} from '../../utils/crypto';
 import { postRequestCookie } from '../../utils/requests';
 import { symEncrypt, createSignature } from "../../utils/crypto";
-
+import FriendsForCommonChat from '../../components/FriendsForCommonChat/FriendsForCommonChat'
 import './chat.scss'
 
 
@@ -20,7 +20,8 @@ export default function Chat (props) {
   const [selectedChat, setSelectedChat] = useState(undefined);
   const [symChatKey, setSymChatKey] = useState();
   const [loading, setLoading] = useState(false)
-
+  const [createCommonChat, setCreateCommonChat] = useState(false)
+  const [updateChats, setUpdateChats] = useState(0)
 
   const socket = useRef();
   const navigate = useNavigate()
@@ -32,6 +33,9 @@ export default function Chat (props) {
     }else {
       socket.current = io(host);
       socket.current.emit("add-user", props.user._id);
+      socket.current.on("update-chats", async () => {
+        setUpdateChats(updateChats+1)
+      });
     }
   }, [props.user])
 
@@ -43,7 +47,7 @@ export default function Chat (props) {
     setSelectedChat(chat)
     socket.current.emit("connect-to-chat", chat.chatId);
     setLoading(true)
-    const data = await postRequestCookie(getChatDataRoute, { 'chatId': chat._id })
+    const data = await postRequestCookie(getChatDataRoute, { 'chatId': chat._id, sign: createSignature(chat._id, props.privKey) })
     setLoading(false)
     if (!data.success){
       toast.error("Ошибка", toastOptions)
@@ -60,6 +64,7 @@ export default function Chat (props) {
       sign: createSignature(message, props.privKey),
       message: message
     });
+    socket.current.emit('update-chats', selectedChat.users)
   }
 
 
@@ -69,9 +74,8 @@ export default function Chat (props) {
         props.user ? <>
         <Navbar user={props.user}/>
         <div className="main">
-          <ChatListWithSearch changeChat={changeChat} user={props.user} selectedChat={selectedChat}/>
-          {selectedChat ?  loading ? <Loader/> : <ChatContainer chat={selectedChat} sendMessage={sendMessage} symChatKey={symChatKey} user={props.user} socket={socket}/> : <></>}
-
+          <ChatListWithSearch changeChat={changeChat} user={props.user} selectedChat={selectedChat} createCommonChat={setCreateCommonChat} updateChats={updateChats} privKey={props.privKey}/>
+          {createCommonChat ? <FriendsForCommonChat setCreateCommonChat={setCreateCommonChat}/> : selectedChat ?  loading ? <Loader/> : <ChatContainer chat={selectedChat} sendMessage={sendMessage} symChatKey={symChatKey} user={props.user} socket={socket}/> : <></>}
         </div>
         </> : <Loader/>
       }
