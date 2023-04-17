@@ -1,4 +1,4 @@
-import { getPublicKeyRoute, getMyChatsRoute, getSomeUsersRoute, getAllFriendsRoute } from "./APIRoutes"; 
+import { getPublicKeyRoute, getMyChatsRoute, getSomeUsersRoute, getAllFriendsRoute, searchUserRoute } from "./APIRoutes"; 
 import {getShardRoute, addTransactionRoute, getBlockchainPublicKeyRoute, addSegmentRoute} from '../utils/APIBlochain';
 import { symEncrypt } from "./crypto";
 import axios from 'axios'
@@ -102,13 +102,17 @@ export const getMessages = async (chatId) => {
 }
 
 
-export const addTransaction = async (userId, chatId, msg, symKey) => {
+export const addTransaction = async (userId, chatId, msg, symKey, sign) => {
+  console.log(chatId)
   await axios.post(addTransactionRoute, {
     "segment_id": chatId,
     "writer": userId,
     "reader": chatId,
     "message": symEncrypt(msg, symKey),
-    "file": 'None'
+    "file": 'None',
+    'eds': sign,
+    "owner": false,
+    "timestamp": ''
   }).then(res => console.log(res))
 }
 
@@ -126,7 +130,22 @@ export const postSearchUser = async (sign, searchTerm) => {
 
 
 export const addSegmentBlockchain = async (sign, chatId, skey) => {
-  const response = await postRequestCookie(addSegmentRoute, {'sign': sign, 'segment_id': chatId, "owner": false, "timestamp": "", 'skey': skey})
+  // {
+  //   // 'sign': sign,
+  //  'segment_id': chatId,
+  //   "owner": false,
+  //    "timestamp": "", 
+  //   //  'skey': skey
+  //   }
+  const response = await axios.post(addSegmentRoute, 
+        {
+        "segment_id": chatId,
+        "owner": false,
+        "timestamp": ""
+        }
+      )
   return response;
 }
+
+
 

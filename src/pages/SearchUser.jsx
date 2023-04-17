@@ -45,10 +45,10 @@ const SearchUser = (props) => {
       toast.error("Уже добавлен", toastOptions)
     } else if (data.success) {
       const sign = createSignature(data.chatId, props.privKey)
-      const chatKey = asymDecrypt(data.chatSymKey,props.privKey)
-      const encryptedChatKey = asymEncrypt(chatKey, props.blockchainKey)
+      // const chatKey = asymDecrypt(data.chatSymKey,props.privKey)
+      // const encryptedChatKey = asymEncrypt(chatKey, props.blockchainKey)
 
-      addSegmentBlockchain(sign, data.chatId, encryptedChatKey)
+      addSegmentBlockchain(sign, data.chatId, '')
       toast.success("Успешно", toastOptions)
     } else {
       toast.error("Ошибка", toastOptions)

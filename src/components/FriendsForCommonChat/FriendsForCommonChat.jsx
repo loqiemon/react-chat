@@ -10,9 +10,10 @@ import IconButton from '@mui/material/IconButton';
 
 import Loader from '../Loader/Loader';
 import { createCommonChatRoute, getMyChatsRoute } from '../../utils/APIRoutes';
-import {postRequestCookie, getAllFriends} from '../../utils/requests'
+import {postRequestCookie, getAllFriends, addSegmentBlockchain} from '../../utils/requests'
 import blankProfile from '../../assets/blankProfile.png';
 import {toastOptions} from '../../utils/toastOptions';
+import { createSignature } from '../../utils/crypto';
 
 
 export default function FriendsForCommonChat(props) {
@@ -61,10 +62,16 @@ export default function FriendsForCommonChat(props) {
               userIds: usersToAdd,
               chatName: chatName
           })
+
           setLoading(false)
           props.setCreateCommonChat(false)
           if (response.success) {
             // props.setFriendForChat([])
+            const sign = createSignature(response.chatId, props.privKey)
+            // const chatKey = asymDecrypt(data.chatSymKey,props.privKey)
+            // const encryptedChatKey = asymEncrypt(chatKey, props.blockchainKey)
+      
+            addSegmentBlockchain(sign, response.chatId, '')
             const resp = await postRequestCookie(getMyChatsRoute);
             // props.setChats(resp.data);
           }else {

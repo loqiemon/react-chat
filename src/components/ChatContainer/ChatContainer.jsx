@@ -8,8 +8,8 @@ import Loader from '../Loader/Loader';
 import blankProfile from '../../assets/blankProfile.png';
 import ChatInput from "../ChatInput";
 import { updateChatRoute } from "../../utils/APIRoutes";
-import {getMessages, addTransaction, postRequestCookie, getSomeUsers} from '../../utils/requests';
-import { symDecrypt, symEncrypt } from "../../utils/crypto";
+import {getMessages, addTransaction, postRequestCookie, getSomeUsers, getPublicKey} from '../../utils/requests';
+import { createSignature, symDecrypt, symEncrypt, verifySignature } from "../../utils/crypto";
 
 export default function ChatContainer(props) {
   const [search, setSearch] = useState('');
@@ -24,10 +24,12 @@ export default function ChatContainer(props) {
     const func = async () => {
       setloading(true)
       const response = await getMessages(props.chat.chatId);
+      console.log(response)
       getSomeUsers(props.chat.chatId).then((res)=>{
         const decryptedMessages = response.map(msg => {
           msg.writer === props.user._id ? msg.fromSelf = true : msg.fromSelf = false
-          msg.nickname = res.foundUsers.find(user => user._id === msg.writer).nickname
+          // msg.nickname = res.foundUsers.find(user => user._id === msg.writer).nickname
+          msg.nickname = props.myFriends.find(user => user._id === msg.writer).nickname
           msg.timestamp = new Date(msg.timestamp).toDateString()
           msg.message = symDecrypt(msg.message, props.symChatKey)
           msg.id = uuidv4()
@@ -35,8 +37,9 @@ export default function ChatContainer(props) {
         })
         setMessages(decryptedMessages);
         setUsersInfo(res.foundUsers)
+        setloading(false)
       })
-      setloading(false)
+
 
     }
     func()
@@ -57,8 +60,14 @@ export default function ChatContainer(props) {
 
   useEffect(()=> {
     props.socket.current.on("msg-receive", async (msg) => {
-      const messageReceived = { fromSelf: false, message: symDecrypt(msg.message, props.symChatKey) , writer: msg.writer, timestamp: msg.timestamp, id:uuidv4(), nickname: usersInfo.find(user => user._id === msg.writer).nickname}
-      setMessages([...messages, messageReceived])
+
+      const messageReceived = { fromSelf: false, message: symDecrypt(msg.message, props.symChatKey) , writer: msg.writer, timestamp: msg.timestamp, id:uuidv4(),
+         nickname: props.myFriends.find(user => user._id === msg.writer).nickname}
+      const otherUserKey = await getPublicKey(msg.writer);
+      const ifThisUser = verifySignature(msg.writer, msg.sign, otherUserKey.publicKey)
+      if (ifThisUser) {
+        setMessages([...messages, messageReceived])
+      }
     });
   })
 
@@ -68,11 +77,12 @@ export default function ChatContainer(props) {
 
 
   const sendMessage = async (text) => {
+    const encryptedMsg = symEncrypt(text, props.symChatKey)
     postRequestCookie(updateChatRoute, { chatId: props.chat.chatId })
-    addTransaction(props.user._id, props.chat.chatId, text, props.symChatKey)
+    addTransaction(props.user._id, props.chat.chatId, text, props.symChatKey, createSignature(encryptedMsg, props.privKey))
     setMessages([...messages, {message: text, writer: props.user._id, timestamp: new Date().toDateString(), nickname: props.user.nickname, id:uuidv4()}])
-    props.sendMessage({message: symEncrypt(text, props.symChatKey), writer: props.user._id, timestamp: new Date().toDateString()})
-  
+    props.sendMessage({message: encryptedMsg, writer: props.user._id, timestamp: new Date().toDateString()})
+ 
   }
 
   const handleSearchChange = async (e) => {

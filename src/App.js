@@ -16,7 +16,7 @@ import { useLocation } from 'react-router-dom';
 function App() {
   const [user, setUser] = useState(undefined);
   const [serverKeys, setServerKeys] = useState(undefined);
-  const [blockchainKey, setBlockchainKey] = useState(undefined);
+  // const [blockchainKey, setBlockchainKey] = useState(undefined);
   const [clientKey, setClientKeys] = useState({publicKey: '', privateKey: ''});
   const [privKey, setPrivKey] = useState(undefined);
   const [loadingAuth, setLoadingAuth] = useState(false)
@@ -34,11 +34,11 @@ function App() {
 
   useEffect(() => {
     checkAuth();
-    const getBlockchainKey = async () => {
-      const response = await getBlockchainPublicKey();
-      setBlockchainKey(response)
-    };
-    getBlockchainKey()
+    // const getBlockchainKey = async () => {
+    //   const response = await getBlockchainPublicKey();
+    //   setBlockchainKey(response)
+    // };
+    // getBlockchainKey()
   }, []);
 
 
@@ -54,7 +54,6 @@ function App() {
         setUser(data)
 
         const symKey = asymDecrypt(data.encryptedSymKey, clientKey.privateKey)
-        console.log(symKey, 'decripted symKey')
         setPrivKey(symDecrypt(data.privateKey, symKey))
         navigate("/");
       }
@@ -65,7 +64,6 @@ function App() {
   const checkAuth = async () => {
     const asymKeys = genAsymKeys()
     setClientKeys(asymKeys)
-    console.log(asymKeys, 'asymKeys')
   }
 
 
@@ -76,8 +74,8 @@ function App() {
         {/* <Route path='/register' element={<Register user={user} handleUserSet={handleUserSet} />} /> */}
         <Route path='/login' element={<Login user={user} handleUserSet={setUser} checkAuth={checkAuth}/>} />
         <Route path='/setAvatar' element={<SetAvatar user={user}/>} />
-        <Route path='/searchUser' element={<SearchUser user={user} blockchainKey={blockchainKey} privKey={privKey}/>} />
-        <Route path='/' element={<Chat user={user} handleUserSet={setUser} privKey={privKey} clientKeys={clientKey} loadingAuth={loadingAuth} blockchainKey={blockchainKey}/>} />
+        <Route path='/searchUser' element={<SearchUser user={user} privKey={privKey}/>} />
+        <Route path='/' element={<Chat user={user} handleUserSet={setUser} privKey={privKey} clientKeys={clientKey} loadingAuth={loadingAuth}/>} />
       </Routes>
     </>
   )
