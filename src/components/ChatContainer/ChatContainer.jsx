@@ -51,10 +51,9 @@ export default function ChatContainer(props) {
       // });
 
     const msgs = [...messages];
-    msgs.push({ fromSelf: true, message: msg, nickname: props.user.nickname });
+    msgs.push({ fromSelf: true, message: msg, nickname: props.user.nickname, timestamp: new Date().toDateString() });
     setMessages(msgs);
     setFilteresMessages(msgs)
-    console.log('send')
     props.sendMessage({message: encryptedMsg, writer: props.user._id, timestamp: new Date().toDateString()})
     addTransaction(props.user._id, props.chat.chatId, msg, props.symChatKey, createSignature(encryptedMsg, props.privKey))
     postRequestCookie(updateChatRoute, { chatId: props.chat.chatId })
@@ -72,7 +71,7 @@ export default function ChatContainer(props) {
           const nick = props.myFriends.find(sender => sender._id == msg.writer).nickname
           if (isValid) {
             // setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
-            setArrivalMessage({ nickname: nick, fromSelf: false, message: symDecrypt(msg.message, props.symChatKey), id: uuidv4()});
+            setArrivalMessage({ nickname: nick, fromSelf: false, message: symDecrypt(msg.message, props.symChatKey), id: uuidv4(), timestamp: msg.timestamp});
           }
         }
       );
