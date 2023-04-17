@@ -35,8 +35,7 @@ export default function Chat(props) {
       socket.current = io(host);
       socket.current.emit("add-user", props.user._id);
       socket.current.on("update-chats", async () => {
-        console.log('update', updateChats + 1)
-        setUpdateChats(updateChats + 1)
+        setUpdateChats(prevCount => prevCount + 1)
       });
 
       const func = async () => {
@@ -46,6 +45,8 @@ export default function Chat(props) {
       func()
     }
   }, [props.user])
+
+  
 
 
   const changeChat = async (chat) => {
@@ -69,7 +70,7 @@ export default function Chat(props) {
   const sendMessage = async (message) => {
     socket.current.emit("send-msg", {
       to: selectedChat.chatId,
-      message: { ...message, sign: createSignature(props.user._id, props.privKey) }
+      message: { ...message, sign: createSignature(message.message, props.privKey) }
     });
     socket.current.emit('update-chats', selectedChat.users)
   }
