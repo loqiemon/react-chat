@@ -1,9 +1,10 @@
 .navbar_quit {
-    font-size: 20px;
+    font-size: 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     :hover {
         cursor: pointer;
     }
+    margin-left: -1rem;
 }

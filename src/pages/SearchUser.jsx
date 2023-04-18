@@ -57,9 +57,10 @@ const SearchUser = (props) => {
 
   return (
     <>
-      {props.user && <Navbar user={props.user} handleUserSet={props.handleUserSet} />}
+      {props.user && <Navbar user={props.user} handleUserSet={props.handleUserSet} setDarkTheme={props.setDarkTheme} theme={props.theme} />}
       <SearchUserWrapper>
         <SearchPageContainer>
+        <h2 className='header_text' style={props.theme === "light" ? {color: "black"} : {color: "white"}} >Поиск сотрудников</h2>
           <SearchBarContainer>
             <SearchInput
               type="text"
@@ -98,6 +99,10 @@ export default SearchUser;
 const SearchUserWrapper = styled.div`
   padding-top: 60px;
   // background-color: #131324;
+  width: 94vw;
+  position: relative;
+  margin-left: 6vw;
+  z-index: 200;
 `;
 
 
@@ -115,28 +120,36 @@ const SearchBarContainer = styled.div`
   width: 100%;
   max-width: 500px;
   margin-bottom: 20px;
+  margin-top: 1.5rem;
 `;
 
 const SearchInput = styled.input`
+  outline: none;
   flex: 1;
   border: none;
-  border-bottom: 2px solid #ccc;
+  // border-bottom: 2px solid #ccc;
   padding: 10px;
   font-size: 16px;
-  &:focus {
-    outline: none;
-    border-bottom-color: #2ecc71;
-  }
+  // &:focus {
+  //   outline: none;
+  //   border-bottom-color: #2ecc71;
+  // }
+  background-color: #3e393d;
+  color: white;
+  height: 3rem;
 `;
 
 const SearchButton = styled.button`
   border: none;
-  background-color: #2ecc71;
+  // background-color: #2ecc71;
+    background-color: #3e393d;
   color: white;
+  height: 3rem;
   padding: 10px 20px;
   font-size: 16px;
-  margin-left: 10px;
+  // margin-left: 10px;
   cursor: pointer;
+
 `;
 
 const UsersList = styled.ul`

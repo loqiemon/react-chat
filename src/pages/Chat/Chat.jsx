@@ -80,21 +80,28 @@ export default function Chat(props) {
     <>
       {
         props.user ? <>
-          <Navbar user={props.user} />
-          <div className="main">
-            <ChatListWithSearch changeChat={changeChat} user={props.user} selectedChat={selectedChat} createCommonChat={setCreateCommonChat} updateChats={updateChats} privKey={props.privKey} />
-            {createCommonChat ? <FriendsForCommonChat
-            privKey={props.privKey}
-              setCreateCommonChat={setCreateCommonChat} /> : selectedChat ? loading ? <Loader /> :
-               <ChatContainer
-                chat={selectedChat}
-                sendMessage={sendMessage}
-                symChatKey={symChatKey}
-                user={props.user}
-                socket={socket}
+          <Navbar user={props.user}  setDarkTheme={props.setDarkTheme} theme={props.theme} />
+          <div className={props.theme === "light" ? "main light" : "main dark"} >
+            <ChatListWithSearch changeChat={changeChat} user={props.user} selectedChat={selectedChat} createCommonChat={setCreateCommonChat} updateChats={updateChats} privKey={props.privKey} theme={props.theme}/>
+            {/* <Loader /> */}
+            {createCommonChat ? 
+              <FriendsForCommonChat
                 privKey={props.privKey}
-                myFriends={myFriends} /> 
-                : <></>}
+                setCreateCommonChat={setCreateCommonChat} />    
+              : selectedChat ? 
+                    loading ? 
+                        <Loader /> :
+                    <ChatContainer
+                      chat={selectedChat}
+                      sendMessage={sendMessage}
+                      symChatKey={symChatKey}
+                      user={props.user}
+                      socket={socket}
+                      privKey={props.privKey}
+                      theme={props.theme}
+                      myFriends={myFriends} />       
+                      : null
+                }
           </div>
         </> : <Loader />
       }

@@ -83,9 +83,10 @@ const Container = styled.div`
   // background-color: #080420;
   background-color: rgba(119, 119, 119, 0.3);
   border-radius: 1.2rem;
+  display: flex;
   padding: 0 2rem;
   width: 100%;
-  height: 10rem;
+  height: 6rem;
   @media screen and (min-width: 720px) and (max-width: 1080px) {
     padding: 0 1rem;
     gap: 1rem;
@@ -101,6 +102,7 @@ const Container = styled.div`
       }
     }
     .emoji {
+      width: 1rem;
       position: relative;
       svg {
         font-size: 1.5rem;
@@ -136,21 +138,21 @@ const Container = styled.div`
     }
   }
   .input-container {
-    width: 100%;
+    width: 95%;
     border-radius: 2rem;
     display: flex;
     align-items: center;
-    gap: 2rem;
+    // gap: 2rem;
     background-color: #ffffff34;
     input {
       width: 90%;
-      height: 60%;
+      // height: 60%;
       background-color: transparent;
       color: white;
       border: none;
       padding-left: 1rem;
-      font-size: 1.2rem;
-
+      font-size: 1.2rem;  
+      align-self: center;
       &::selection {
         background-color: #9a86f3;
       }
@@ -159,6 +161,8 @@ const Container = styled.div`
       }
     }
     button {
+      width: 10%;
+      height: 3rem;
       padding: 0.3rem 2rem;
       border-radius: 2rem;
       display: flex;

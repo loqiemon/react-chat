@@ -3,7 +3,7 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 import axios from 'axios';
-
+import RateReviewIcon from '@mui/icons-material/RateReview';
 
 import './chatlist.scss';
 import blankProfile from '../../assets/blankProfile.png';
@@ -62,17 +62,24 @@ const ChatListWithSearch = (props) => {
 
   return (
     <>
-      <div className="chatlist">
+      <div className={props.theme === "light" ? "chatlist chatlist-light" : "chatlist chatlist-dark"} >
         <div className="chatlist_header">
-          <input
-            type="text"
-            placeholder="Поиск..."
-            value={search}
-            onChange={handleSearchChange}
-          />
-          <IconButton aria-label="delete" onClick={handleCreateCommonChat}>
-            <AddIcon style={{ color: '#fff' }} />
-          </IconButton>
+          <div className="chatlist_header_name">
+            <h2 className="chatlist_header_name_text">
+              Сообщения
+            </h2>
+            <IconButton aria-label="delete" onClick={handleCreateCommonChat}>
+              <RateReviewIcon style={props.theme === "light" ? {color: "#268b62"} : {color: "#268b62"}} />
+            </IconButton>
+          </div>
+          <div className="chat-search-input">
+            <input
+              type="text"
+              placeholder="Поиск..."
+              value={search}
+              onChange={handleSearchChange}
+            />
+          </div>
         </div>
         {filteredChats.map(chat => {
           return (
@@ -88,13 +95,15 @@ const ChatListWithSearch = (props) => {
                 <div className="chatlist_item_name">{chat.chatname}</div>
                 <div className="chatlist_item_time">{chat.lastActivity}</div>
               </div>
-              <div className="descr_footer">
-                <div className="chatlist_last">last message...</div>
-                <div className="descr_footer_end">
-                  {/* <div className="chatlist_count">5</div> */}
-                  {/* <PushPinIcon /> */}
-                </div>
-              </div>
+              <div className="chatlist_last">Последнее сообще...</div>
+              {/* <div className="descr_footer">
+                <div className="chatlist_last">Последнее сообщение...</div> */}
+                {/* Последнее сообщение... */}
+                {/* <div className="descr_footer_end">
+                  <div className="chatlist_count">5</div>
+                  <PushPinIcon />
+                </div> */}
+              {/* </div> */}
             </div>
           </div>
           )

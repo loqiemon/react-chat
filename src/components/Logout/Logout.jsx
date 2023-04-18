@@ -21,7 +21,7 @@ export default function Logout(props) {
   };
   return (
     <div className="navbar_quit" onClick={handleClick}>
-      <span>Выход</span>
+      {/* <span>Выход</span> */}
       <ExitToAppIcon />
     </div>
   );

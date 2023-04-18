@@ -1,12 +1,16 @@
 @import '../../../style/variables.scss';
 
+
+
+
 .main{
   display: flex;
-  width: 83vw;
+  width: 94vw;
   position: relative;
-  margin-left: 8vw;
+  margin-left: 6vw;
   z-index: 200;
 }
+
 
 .chat_page {
     height: 100vh;

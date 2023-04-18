@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
-
+import SearchIcon from '@mui/icons-material/Search';
+import ddddd  from '../../assets/ddddd.png'
 
 import './ChatContainer.scss';
 import Loader from '../Loader/Loader';
 import blankProfile from '../../assets/blankProfile.png';
 import ChatInput from "../ChatInput";
 import { updateChatRoute } from "../../utils/APIRoutes";
-import {getMessages, addTransaction, postRequestCookie, getSomeUsers, getPublicKey} from '../../utils/requests';
+import { getMessages, addTransaction, postRequestCookie, getSomeUsers, getPublicKey } from '../../utils/requests';
 import { createSignature, symDecrypt, symEncrypt, verifySignature } from "../../utils/crypto";
 
 export default function ChatContainer(props) {
@@ -18,7 +19,7 @@ export default function ChatContainer(props) {
   const [usersInfo, setUsersInfo] = useState([]);
   const [loading, setloading] = useState(false);
   const [arrivalMessage, setArrivalMessage] = useState(null);
-  
+  const [searchMessageState, setSearchMessageState] = useState(false)
 
   const scrollRef = useRef();
 
@@ -30,13 +31,15 @@ export default function ChatContainer(props) {
       setloading(false)
 
       chatData.map(msg => {
-          msg.writer === props.user._id ? msg.fromSelf = true : msg.fromSelf = false
-          msg.nickname = props.myFriends.find(user => user._id === msg.writer).nickname
-          msg.timestamp = new Date(msg.timestamp).toDateString()
-          msg.message = symDecrypt(msg.message, props.symChatKey)
-          msg.id = uuidv4()
+        msg.writer === props.user._id ? msg.fromSelf = true : msg.fromSelf = false
+        msg.nickname = props.myFriends.find(user => user._id === msg.writer).nickname
+        msg.timestamp = new Date(msg.timestamp).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5);
+        msg.message = symDecrypt(msg.message, props.symChatKey)
+        msg.time = Math.round(parseFloat(msg.timestamp.slice(3))/5)*5 
+        msg.id = uuidv4()
       })
       setMessages(chatData);
+      console.log(chatData)
       setFilteresMessages(chatData)
     }
     func()
@@ -44,90 +47,38 @@ export default function ChatContainer(props) {
 
 
   const sendMessage = async (msg) => {
-      const encryptedMsg = symEncrypt(msg, props.symChatKey)
-      // props.socket.current.emit("send-msg", {
-      //   to: props.chat.chatId,
-      //   message: { chatId: props.chat.chatId, msg: encryptedMsg, sender: props.user._id, writer: props.user._id },
-      // });
-
+    const encryptedMsg = symEncrypt(msg, props.symChatKey)
     const msgs = [...messages];
-    msgs.push({ fromSelf: true, message: msg, nickname: props.user.nickname, timestamp: new Date().toDateString() });
+    msgs.push({ fromSelf: true, message: msg, nickname: props.user.nickname, timestamp: new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5), id: uuidv4()});
     setMessages(msgs);
     setFilteresMessages(msgs)
-    props.sendMessage({message: encryptedMsg, writer: props.user._id, timestamp: new Date().toDateString()})
+    props.sendMessage({ message: encryptedMsg, writer: props.user._id, timestamp: new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5) })
     addTransaction(props.user._id, props.chat.chatId, msg, props.symChatKey, createSignature(encryptedMsg, props.privKey))
     postRequestCookie(updateChatRoute, { chatId: props.chat.chatId })
-    
-    
+
+
   };
 
 
   useEffect(() => {
     props.socket.current.off("msg-receive")
-      props.socket.current.on("msg-receive", async (msg) => {
-        console.log('receive')
-          const decryptedPub = await getPublicKey(msg.writer)
-          const isValid = verifySignature(msg.message, msg.sign, decryptedPub.publicKey)
-          const nick = props.myFriends.find(sender => sender._id == msg.writer).nickname
-          if (isValid) {
-            // setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
-            setArrivalMessage({ nickname: nick, fromSelf: false, message: symDecrypt(msg.message, props.symChatKey), id: uuidv4(), timestamp: msg.timestamp});
-          }
-        }
-      );
+    props.socket.current.on("msg-receive", async (msg) => {
+      console.log('receive')
+      const decryptedPub = await getPublicKey(msg.writer)
+      const isValid = verifySignature(msg.message, msg.sign, decryptedPub.publicKey)
+      const nick = props.myFriends.find(sender => sender._id == msg.writer).nickname
+      if (isValid) {
+        // setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
+        setArrivalMessage({ nickname: nick, fromSelf: false, message: symDecrypt(msg.message, props.symChatKey), id: uuidv4(), timestamp: msg.timestamp,
+          time:Math.round(parseFloat(msg.timestamp.slice(3))/5)*5 
+        });
+      }
+    }
+    );
   }, [])
 
-  // useEffect(()=> {
-  //   const func = async () => {
-  //     setloading(true)
-  //     const response = await getMessages(props.chat.chatId);
-  //     console.log(response)
-  //     // getSomeUsers(props.chat.chatId).then((res)=>{
-  //       const decryptedMessages = response.map(msg => {
-  //         msg.writer === props.user._id ? msg.fromSelf = true : msg.fromSelf = false
-  //         // msg.nickname = res.foundUsers.find(user => user._id === msg.writer).nickname
-  //         msg.nickname = props.myFriends.find(user => user._id === msg.writer).nickname
-  //         msg.timestamp = new Date(msg.timestamp).toDateString()
-  //         msg.message = symDecrypt(msg.message, props.symChatKey)
-  //         msg.id = uuidv4()
-  //         return msg
-  //       })
-  //       setMessages(decryptedMessages);
-  //       // setUsersInfo(res.foundUsers)
-  //       setloading(false)
-  //     // })
-  //   }
-  //   func()
-  // }, [props.chat])
 
-
-  // useEffect(()=> {
-  //   props.socket.current.on("msg-receive", async (msg) => {
-
-  //     const messageReceived = { fromSelf: false, message: symDecrypt(msg.message, props.symChatKey) , writer: msg.writer, timestamp: msg.timestamp, id:uuidv4(),
-  //        nickname: props.myFriends.find(user => user._id === msg.writer).nickname}
-  //     const otherUserKey = await getPublicKey(msg.writer);
-  //     const ifThisUser = verifySignature(msg.writer, msg.sign, otherUserKey.publicKey)
-  //     if (ifThisUser) {
-  //       // setMessages([...messages, messageReceived])
-  //       setArrivalMessage(messageReceived);
-  //     }
-  //   });
-  // })
-
-
-
-  // const sendMessage = async (text) => {
-  //   const encryptedMsg = symEncrypt(text, props.symChatKey)
-  //   postRequestCookie(updateChatRoute, { chatId: props.chat.chatId })
-  //   addTransaction(props.user._id, props.chat.chatId, text, props.symChatKey, createSignature(encryptedMsg, props.privKey))
-  //   setMessages([...messages, {message: text, writer: props.user._id, timestamp: new Date().toDateString(), nickname: props.user.nickname, id:uuidv4()}])
-  //   props.sendMessage({message: encryptedMsg, writer: props.user._id, timestamp: new Date().toDateString()})
-  // }
-
-
-
-    useEffect(() => {
+  useEffect(() => {
     if (search.length < 1) {
       setFilteresMessages(messages);
     } else {
@@ -154,41 +105,60 @@ export default function ChatContainer(props) {
   const goToMessage = (id) => {
     setSearch('')
     const timeoutId = setTimeout(() => {
-      document.getElementById(id).scrollIntoView( { behavior: 'smooth', block: 'start' } );
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 150);
     return () => clearTimeout(timeoutId);
-}
+  }
+
+  const handleSearchShow = () => {
+    setSearchMessageState(prev => prev == false ? true : false)
+  }
 
   return (
     <>
       {props.chat ? <>
-        {loading ? <Loader/> :         <div className="chat_messages_container">
-        <input
-            type="text"
-            placeholder="Поиск..."
-            value={search}
-            onChange={handleSearchChange}
-          />
+        {loading ? <Loader /> : 
+        <div className={props.theme === "light" ? "chat_messages_container chat_messages_container_light" : "chat_messages_container chat_messages_container_dark"}>
+          <div className="input_div">
+            <span className="chatname">
+              {props.chat.chatname}
+            </span>
+            {searchMessageState ? <>            <input
+              type="text"
+              placeholder="Поиск..."
+              value={search}
+              onChange={handleSearchChange}
+              className="search_message"
+            /></> : null}
+            <SearchIcon style={props.theme === "light" ? { color: 'black' } : { color: 'white' }} onClick={handleSearchShow}/>
+          </div>
           <div className="messages">
-            {filteresMessages.map(message => {
+            {filteresMessages.map((message, index) => {
               return (
-                <div ref={scrollRef} className={message.fromSelf? 'message sended' : 'message recieved'} key={uuidv4()} onClick={() => goToMessage(message.id)} id={message.id}>
-                {/* <div ref={scrollRef} className={message.writer === props.user._id ? 'message sended' : 'message recieved'} key={uuidv4()} onClick={() => goToMessage(message.id)} id={message.id}> */}
-                  <div className="message_left">
-                    <img
-                      src={props.chat.avatarImage ? `data:image/svg+xml;base64,${props.chat.avatarImage}` : blankProfile}
-                      alt=""
-                    />
+                <div ref={scrollRef}  onClick={() => goToMessage(message.id)} id={message.id} className={message.fromSelf ? 'message sended' : 'message recieved'} key={uuidv4()} >
+                  {index > 1 ? <>
+                    <div className="message_avatar">
+                    {filteresMessages[index-1].writer !== message.writer ?
+                      <img
+                        src={props.chat.avatarImage ? `data:image/svg+xml;base64, ${props.chat.avatarImage}` : blankProfile}
+                        alt="message avatar"
+                      /> : 
+                      <div style={{width: "3rem", height: "3rem"}}></div>} 
                   </div>
-                  <div className="message_right">
-                    <span className="message_nickname">{message.nickname}</span>
-                    <div className="message_right_content">
-                      {message.message}
+                  <div className="message_description">
+                    <div className="message_description_header">
+                      {/* {filteresMessages[index-1].writer} */}
+                      <span className="message_nickname">{message.fromSelf ? 'Вы' : message.nickname}</span>
+                      <span className="message_time">{message.timestamp}</span>
                     </div>
-                    <div className="message_right_footer">
-                      {message.timestamp}
+                    <div className="message_description_content">
+                      <span className="message_description_content_text">
+                        {message.message}
+                      </span>
                     </div>
                   </div>
+                  </> : null}
+
                 </div>
               )
             })}

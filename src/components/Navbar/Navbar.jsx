@@ -4,7 +4,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatIcon from '@mui/icons-material/Chat';
 import Logout from "../Logout/Logout";
-import blankProfile from '../../assets/blankProfile.png';
+
+// import blankProfile from '../../assets/blankProfile.png';
+import blankProfile from '../../assets/blankprofile1.png';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import ThemeSwitch from '../ThemeSwitch.jsx'
 import './navbar.scss'
 
 export default function Navbar(props) {
@@ -16,12 +20,12 @@ export default function Navbar(props) {
   };
 
   return (
-    <nav className='navbar'>
+    <nav className={props.theme === "light" ? "navbar light-navbar" : "navbar dark-navbar"}>
       <div className="navbar_header">
-        <CustomLink to="/">WebChat</CustomLink>
+        <CustomLink to="/" style={{color: props.theme === "light" ? 'black' : '#ababab'}}>WebChat</CustomLink>
         <div className="navbar_middle">
-          <CustomLink to="/searchUser" className='navbar_middle_item'><SearchIcon/></CustomLink>
-          <CustomLink to="/" className='navbar_middle_item'><ChatIcon/></CustomLink>
+          <CustomLink to="/searchUser" className='navbar_middle_item'><SearchIcon style={{color: props.theme === "light" ? 'black' : '#ababab'}} /></CustomLink>
+          <CustomLink to="/" className='navbar_middle_item'><ChatIcon style={{color: props.theme === "light" ? 'black' : '#ababab'}}/></CustomLink>
         </div>
       </div>
       <div className="navbar_footer">
@@ -34,14 +38,19 @@ export default function Navbar(props) {
               /> : <img
                 src={blankProfile}
                 alt="profile avatar"
+
               />
             }
           </div>
-          <div className="navbar_user_name">
+          {/* <div className="navbar_user_name">
             <h4>{props.user.nickname}</h4>
-          </div>
+          </div> */}
         </div>
-        <Logout handleUserSet={props.handleUserSet} />
+        <div className='line_cut'></div>
+        <div className='navbar_switches'>
+          <ThemeSwitch setDarkTheme={props.setDarkTheme}/>
+          <Logout handleUserSet={props.handleUserSet} />
+        </div>
       </div>
     </nav>
   );
@@ -87,6 +96,7 @@ const Nav = styled.nav`
       }
     }
   }
+
 `;
 
 const Brand = styled.div`
