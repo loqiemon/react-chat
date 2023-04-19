@@ -3,7 +3,7 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 import axios from 'axios';
-import RateReviewIcon from '@mui/icons-material/RateReview';
+import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
 
 import './chatlist.scss';
 import blankProfile from '../../assets/blankProfile.png';
@@ -69,7 +69,7 @@ const ChatListWithSearch = (props) => {
               Сообщения
             </h2>
             <IconButton aria-label="delete" onClick={handleCreateCommonChat}>
-              <RateReviewIcon style={props.theme === "light" ? {color: "#268b62"} : {color: "#268b62"}} />
+              <RateReviewOutlinedIcon style={props.theme === "light" ? {color: "#268b62"} : {color: "#268b62"}} />
             </IconButton>
           </div>
           <div className="chat-search-input">
@@ -95,7 +95,7 @@ const ChatListWithSearch = (props) => {
                 <div className="chatlist_item_name">{chat.chatname}</div>
                 <div className="chatlist_item_time">{chat.lastActivity}</div>
               </div>
-              <div className="chatlist_last">Последнее сообще...</div>
+              <div className="chatlist_last">Последнее сооб...</div>
               {/* <div className="descr_footer">
                 <div className="chatlist_last">Последнее сообщение...</div> */}
                 {/* Последнее сообщение... */}

@@ -84,7 +84,7 @@ const SearchUser = (props) => {
                   Добавить
                 </Button>
               </UserItem>
-            )) : <h2>Нет подходящих пользователей</h2>}</>}
+            )) : <h2 style={props.theme === "light" ? {color: "black"} : {color: "white"}} >Нет подходящих пользователей</h2>}</>}
 
           </UsersList>
         </SearchPageContainer>
@@ -98,7 +98,9 @@ export default SearchUser;
 
 const SearchUserWrapper = styled.div`
   padding-top: 60px;
+  height: 100vh;
   // background-color: #131324;
+  background-color: #343542;
   width: 94vw;
   position: relative;
   margin-left: 6vw;
@@ -167,7 +169,9 @@ const UsersList = styled.ul`
 `;
 
 const UserItem = styled.li`
-  border: 1px solid #ccc;
+  background-color: #3d3e4b;
+  // border: 1px solid #ccc;
+  display: flex;
   border-radius: 4px;
   padding: 10px;
   margin-bottom: 10px;

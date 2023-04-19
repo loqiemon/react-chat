@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
 import SearchIcon from '@mui/icons-material/Search';
-import ddddd  from '../../assets/ddddd.png'
+import ddddd from '../../assets/ddddd.png'
 
 import './ChatContainer.scss';
 import Loader from '../Loader/Loader';
@@ -35,7 +35,7 @@ export default function ChatContainer(props) {
         msg.nickname = props.myFriends.find(user => user._id === msg.writer).nickname
         msg.timestamp = new Date(msg.timestamp).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5);
         msg.message = symDecrypt(msg.message, props.symChatKey)
-        msg.time = Math.round(parseFloat(msg.timestamp.slice(3))/5)*5 
+        msg.time = Math.round(parseFloat(msg.timestamp.slice(3)) / 5) * 5
         msg.id = uuidv4()
       })
       setMessages(chatData);
@@ -49,7 +49,7 @@ export default function ChatContainer(props) {
   const sendMessage = async (msg) => {
     const encryptedMsg = symEncrypt(msg, props.symChatKey)
     const msgs = [...messages];
-    msgs.push({ fromSelf: true, message: msg, nickname: props.user.nickname, timestamp: new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5), id: uuidv4()});
+    msgs.push({ fromSelf: true, message: msg, nickname: props.user.nickname, timestamp: new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5), id: uuidv4() });
     setMessages(msgs);
     setFilteresMessages(msgs)
     props.sendMessage({ message: encryptedMsg, writer: props.user._id, timestamp: new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5) })
@@ -69,8 +69,9 @@ export default function ChatContainer(props) {
       const nick = props.myFriends.find(sender => sender._id == msg.writer).nickname
       if (isValid) {
         // setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
-        setArrivalMessage({ nickname: nick, fromSelf: false, message: symDecrypt(msg.message, props.symChatKey), id: uuidv4(), timestamp: msg.timestamp,
-          time:Math.round(parseFloat(msg.timestamp.slice(3))/5)*5 
+        setArrivalMessage({
+          nickname: nick, fromSelf: false, message: symDecrypt(msg.message, props.symChatKey), id: uuidv4(), timestamp: msg.timestamp,
+          time: Math.round(parseFloat(msg.timestamp.slice(3)) / 5) * 5
         });
       }
     }
@@ -117,54 +118,58 @@ export default function ChatContainer(props) {
   return (
     <>
       {props.chat ? <>
-        {loading ? <Loader /> : 
-        <div className={props.theme === "light" ? "chat_messages_container chat_messages_container_light" : "chat_messages_container chat_messages_container_dark"}>
-          <div className="input_div">
-            <span className="chatname">
-              {props.chat.chatname}
-            </span>
-            {searchMessageState ? <>            <input
-              type="text"
-              placeholder="Поиск..."
-              value={search}
-              onChange={handleSearchChange}
-              className="search_message"
-            /></> : null}
-            <SearchIcon style={props.theme === "light" ? { color: 'black' } : { color: 'white' }} onClick={handleSearchShow}/>
-          </div>
-          <div className="messages">
-            {filteresMessages.map((message, index) => {
-              return (
-                <div ref={scrollRef}  onClick={() => goToMessage(message.id)} id={message.id} className={message.fromSelf ? 'message sended' : 'message recieved'} key={uuidv4()} >
-                  {index > 1 ? <>
-                    <div className="message_avatar">
-                    {filteresMessages[index-1].writer !== message.writer ?
-                      <img
-                        src={props.chat.avatarImage ? `data:image/svg+xml;base64, ${props.chat.avatarImage}` : blankProfile}
-                        alt="message avatar"
-                      /> : 
-                      <div style={{width: "3rem", height: "3rem"}}></div>} 
+        {loading ?
+        
+        <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'} : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>
+        <Loader/>
+      </div>
+        
+        :
+          <div className={props.theme === "light" ? "chat_messages_container chat_messages_container_light" : "chat_messages_container chat_messages_container_dark"}>
+            <div className="input_div">
+              <span className="chatname">
+                {props.chat.chatname}
+              </span>
+              {searchMessageState ? <>            <input
+                type="text"
+                placeholder="Поиск..."
+                value={search}
+                onChange={handleSearchChange}
+                className="search_message"
+              /></> : null}
+              <SearchIcon style={props.theme === "light" ? { color: 'black' } : { color: 'white' }} onClick={handleSearchShow} />
+            </div>
+            <div className="messages">
+              {filteresMessages.map((message, index) => {
+                return (
+                  <div ref={scrollRef} onClick={() => goToMessage(message.id)} id={message.id} className={message.fromSelf ? 'message sended' : 'message recieved'} key={uuidv4()} >
+                      <>
+                      <div className="message_avatar">
+                        <img
+                          src={props.chat.avatarImage ? `data:image/svg+xml;base64, ${props.chat.avatarImage}` : blankProfile}
+                          alt="message avatar"
+                        /> 
+                      </div>
+                        <div className="message_description">
+                          <div className="message_description_header">
+                            <span className="message_nickname">{message.fromSelf ? 'Вы' : message.nickname}</span>
+                          </div>
+                          <div className="message_description_content">
+                            <span className="message_description_content_text">
+                              {message.message}
+                            </span>
+                            <div>
+                              <span className="message_time">{message.timestamp}</span>
+                            </div>
+                          </div>
+                        </div>
+                        </>
                   </div>
-                  <div className="message_description">
-                    <div className="message_description_header">
-                      {/* {filteresMessages[index-1].writer} */}
-                      <span className="message_nickname">{message.fromSelf ? 'Вы' : message.nickname}</span>
-                      <span className="message_time">{message.timestamp}</span>
-                    </div>
-                    <div className="message_description_content">
-                      <span className="message_description_content_text">
-                        {message.message}
-                      </span>
-                    </div>
-                  </div>
-                  </> : null}
-
-                </div>
-              )
-            })}
-          </div>
-          <ChatInput sendMessage={sendMessage} />
-        </div>}
+                )
+              })}
+            </div>
+            <ChatInput sendMessage={sendMessage} theme={props.theme}/>
+          </div>}
       </> : null}
     </>
   );

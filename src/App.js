@@ -98,7 +98,7 @@ function App() {
         {/* <Route path='/register' element={<Register user={user} handleUserSet={handleUserSet} />} /> */}
         <Route path='/login' element={<Login user={user} handleUserSet={setUser} checkAuth={checkAuth}/>} />
         <Route path='/setAvatar' element={<SetAvatar user={user}/>} />
-        <Route path='/searchUser' element={<SearchUser user={user} privKey={privKey} setDarkTheme={toggleTheme} theme={darkTheme}/>} />
+        <Route path='/searchUser' element={<SearchUser user={user} privKey={privKey} setDarkTheme={toggleTheme} theme={darkTheme}  handleUserSet={setUser}/>} />
         <Route path='/' element={<Chat user={user} handleUserSet={setUser} privKey={privKey} clientKeys={clientKey} loadingAuth={loadingAuth}  setDarkTheme={toggleTheme} theme={darkTheme}/>} />
       </Routes>
     </>

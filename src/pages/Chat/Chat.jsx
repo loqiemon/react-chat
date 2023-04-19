@@ -72,6 +72,7 @@ export default function Chat(props) {
       to: selectedChat.chatId,
       message: { ...message, sign: createSignature(message.message, props.privKey) }
     });
+    console.log(selectedChat.users, 'selectedChat.userss')
     socket.current.emit('update-chats', selectedChat.users)
   }
 
@@ -80,17 +81,25 @@ export default function Chat(props) {
     <>
       {
         props.user ? <>
-          <Navbar user={props.user}  setDarkTheme={props.setDarkTheme} theme={props.theme} />
+          <Navbar user={props.user}  setDarkTheme={props.setDarkTheme} theme={props.theme}  handleUserSet={props.handleUserSet} />
           <div className={props.theme === "light" ? "main light" : "main dark"} >
             <ChatListWithSearch changeChat={changeChat} user={props.user} selectedChat={selectedChat} createCommonChat={setCreateCommonChat} updateChats={updateChats} privKey={props.privKey} theme={props.theme}/>
             {/* <Loader /> */}
             {createCommonChat ? 
               <FriendsForCommonChat
                 privKey={props.privKey}
-                setCreateCommonChat={setCreateCommonChat} />    
+                theme={props.theme}
+                setCreateCommonChat={setCreateCommonChat} 
+              />    
               : selectedChat ? 
-                    loading ? 
-                        <Loader /> :
+                  loading ? 
+                    <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center' } : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>
+                      <Loader/>
+                    </div>
+                    :
+                    // <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'} : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>
+                    //   <Loader/>
+                    // </div>
                     <ChatContainer
                       chat={selectedChat}
                       sendMessage={sendMessage}
@@ -99,9 +108,10 @@ export default function Chat(props) {
                       socket={socket}
                       privKey={props.privKey}
                       theme={props.theme}
-                      myFriends={myFriends} />       
-                      : null
-                }
+                      myFriends={myFriends} 
+                    />       
+              : null
+            }
           </div>
         </> : <Loader />
       }

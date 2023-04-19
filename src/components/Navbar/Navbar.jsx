@@ -22,10 +22,10 @@ export default function Navbar(props) {
   return (
     <nav className={props.theme === "light" ? "navbar light-navbar" : "navbar dark-navbar"}>
       <div className="navbar_header">
-        <CustomLink to="/" style={{color: props.theme === "light" ? 'black' : '#ababab'}}>WebChat</CustomLink>
+        <CustomLink to="/" style={{color: props.theme === "light" ? '#f5f4f8' : '#ababab'}}>WebChat</CustomLink>
         <div className="navbar_middle">
-          <CustomLink to="/searchUser" className='navbar_middle_item'><SearchIcon style={{color: props.theme === "light" ? 'black' : '#ababab'}} /></CustomLink>
-          <CustomLink to="/" className='navbar_middle_item'><ChatIcon style={{color: props.theme === "light" ? 'black' : '#ababab'}}/></CustomLink>
+          <CustomLink to="/searchUser" className='navbar_middle_item'><SearchIcon style={{color: props.theme === "light" ? '#f5f4f8' : '#ababab'}} /></CustomLink>
+          <CustomLink to="/" className='navbar_middle_item'><ChatIcon style={{color: props.theme === "light" ? '#f5f4f8' : '#ababab'}}/></CustomLink>
         </div>
       </div>
       <div className="navbar_footer">

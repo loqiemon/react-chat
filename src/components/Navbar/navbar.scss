@@ -2,8 +2,11 @@
 
 
 .light-navbar {
-    background-color: white;
-    color: black;
+    background-color: #166e48;
+    color: #f5f4f8;
+    .line_cut {
+        background-color: #f5f4f8;
+    }  
 }
 
 
@@ -12,6 +15,9 @@
     // background-color: $navbar_background;
     // color: $navbar_text;
     color: #717372;
+    .line_cut {
+        background-color: #333;
+    }  
 }
 
 .navbar {
@@ -84,7 +90,6 @@
         margin: 0 auto;
         width: 90%;
         height: 2px;
-        background-color: #333;
     }   
   }
   

@@ -38,27 +38,27 @@ export default function ChatInput(props) {
 
 
   return (
-    <Container>
+    <Container >
       <div className="button-container">
         <div className="emoji">
           <BsEmojiSmileFill onClick={handleEmojiPickerhideShow} />
-          {showEmojiPicker &&<Picker onEmojiClick={handleEmojiClick} />}
+          {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
         </div>
         <div className="pin">
-        <div>
-          <input
-            accept="image/*"
-            style={{ display: "none" }}
-            id="upload-file"
-            type="file"
-            onChange={handleAttachFile}
-          />
-          <label htmlFor="upload-file">
-            <IconButton color="primary" component="span">
-              <AttachFileIcon/>
-            </IconButton>
-      </label>
-    </div>
+          <div>
+            <input
+              accept="image/*"
+              style={{ display: "none" }}
+              id="upload-file"
+              type="file"
+              onChange={handleAttachFile}
+            />
+            <label htmlFor="upload-file">
+              <IconButton color="primary" component="span">
+                <AttachFileIcon />
+              </IconButton>
+            </label>
+          </div>
         </div>
       </div>
       <form className="input-container" onSubmit={(event) => sendChat(event)}>
@@ -67,6 +67,7 @@ export default function ChatInput(props) {
           placeholder="Сообщение..."
           onChange={(e) => setMsg(e.target.value)}
           value={msg}
+          style={props.theme === "light" ? { color: 'black' } : { color: 'white' }}
         />
         <button type="submit">
           <IoMdSend />
@@ -143,7 +144,7 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     // gap: 2rem;
-    background-color: #ffffff34;
+    // background-color: #ffffff34;
     input {
       width: 90%;
       // height: 60%;
