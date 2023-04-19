@@ -89,6 +89,7 @@ export default function Chat(props) {
               <FriendsForCommonChat
                 privKey={props.privKey}
                 theme={props.theme}
+                user={props.user}
                 setCreateCommonChat={setCreateCommonChat} 
               />    
               : selectedChat ? 
@@ -110,7 +111,9 @@ export default function Chat(props) {
                       theme={props.theme}
                       myFriends={myFriends} 
                     />       
-              : null
+              :                     <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center' } : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>
+              {/* <Loader/> */}
+            </div>
             }
           </div>
         </> : <Loader />

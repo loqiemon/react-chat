@@ -87,11 +87,13 @@
         width: 0.2rem;
         &-thumb {
           // background-color: #ffffff39;
-          background-color: black;
+          background-color: #b4b1b1;
           width: 0.1rem;
           border-radius: 1rem;
         }
       }
+    scrollbar-color: #b4b1b1;
+    scrollbar-width: thin;
     width: 17vw;
     height: 100vh;
     // padding: 0.3rem;

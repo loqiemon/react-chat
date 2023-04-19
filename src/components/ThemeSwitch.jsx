@@ -66,7 +66,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     return (
       <FormGroup>
         <FormControlLabel
-          control={<MaterialUISwitch sx={{ m: 1 }}  onChange={changeTheme} />}
+          control={<MaterialUISwitch sx={{ m: 1 }}  onChange={changeTheme} defaultChecked={true} />}
         />
     </FormGroup>
     )

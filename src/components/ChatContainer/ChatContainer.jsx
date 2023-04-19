@@ -63,7 +63,6 @@ export default function ChatContainer(props) {
   useEffect(() => {
     props.socket.current.off("msg-receive")
     props.socket.current.on("msg-receive", async (msg) => {
-      console.log('receive')
       const decryptedPub = await getPublicKey(msg.writer)
       const isValid = verifySignature(msg.message, msg.sign, decryptedPub.publicKey)
       const nick = props.myFriends.find(sender => sender._id == msg.writer).nickname

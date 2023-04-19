@@ -22,9 +22,12 @@ const ChatListWithSearch = (props) => {
   useEffect(() => {
     setFilteredChats(chats);
     if (search.length < 1) {
+      console.log(1)
       setFilteredChats(chats);
     } else {
+      console.log(2)
       const searchedChats = chats.filter(chat => chat.chatname.toLowerCase().includes(search.toLowerCase()))
+      console.log(searchedChats)
       setFilteredChats(searchedChats)
     }
   }, [search, chats])

@@ -42,9 +42,9 @@ export default function Navbar(props) {
               />
             }
           </div>
-          {/* <div className="navbar_user_name">
+          <div className="navbar_user_name">
             <h4>{props.user.nickname}</h4>
-          </div> */}
+          </div>
         </div>
         <div className='line_cut'></div>
         <div className='navbar_switches'>

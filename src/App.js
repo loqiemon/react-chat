@@ -21,15 +21,15 @@ function App() {
   const [clientKey, setClientKeys] = useState({publicKey: '', privateKey: ''});
   const [privKey, setPrivKey] = useState(undefined);
   const [loadingAuth, setLoadingAuth] = useState(false)
-  const [darkTheme, setDarkTheme] = useState('light')
+  const [darkTheme, setDarkTheme] = useState('dark')
 
 
   useEffect(()=> {
     const theme = localStorage.getItem('theme');
     console.log(theme)
     if (!theme) {
-        localStorage.setItem('theme', 'light')
-        setDarkTheme('light')
+        localStorage.setItem('theme', 'dark')
+        setDarkTheme('dark')
     }else {
         setDarkTheme(theme)
     }

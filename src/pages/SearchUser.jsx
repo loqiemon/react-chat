@@ -58,7 +58,7 @@ const SearchUser = (props) => {
   return (
     <>
       {props.user && <Navbar user={props.user} handleUserSet={props.handleUserSet} setDarkTheme={props.setDarkTheme} theme={props.theme} />}
-      <SearchUserWrapper>
+      <SearchUserWrapper style={props.theme === "light" ? { backgroundColor: '#fafafa' } : null}>
         <SearchPageContainer>
         <h2 className='header_text' style={props.theme === "light" ? {color: "black"} : {color: "white"}} >Поиск сотрудников</h2>
           <SearchBarContainer>
@@ -67,22 +67,25 @@ const SearchUser = (props) => {
               placeholder="Введите имя..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              style={props.theme === "light" ? {backgroundColor: "#f5f5f5", color: "black"} : {backgroundColor: "#3e393d", color: "white"}}
             />
-            <SearchButton onClick={() => handleSearch()}>
+            <SearchButton onClick={() => handleSearch()} style={props.theme === "light" ? {backgroundColor: "#f5f5f5", color: "black"} : {backgroundColor: "#3e393d", color: "white"}}>
               <FaSearch />
             </SearchButton>
           </SearchBarContainer>
           <UsersList>
             {loading ? <Loader /> : <>          {searchResults.length > 0 ? searchResults.map((user) => (
-              <UserItem key={user._id}>
+              <UserItem key={user._id} style={props.theme === "light" ? { backgroundColor: '#fff', color: '#000' } : { backgroundColor: '#39373a',   color: '#fff' }}>
                 <img
                   src={user.avatarImage ? `data:image/svg+xml;base64,${user.avatarImage}` : blankProfile}
                   alt=""
                 />
-                <UserName>{user.nickname}</UserName>
-                <Button variant="contained" onClick={() => handleAddUser(user)} id={user._id}>
-                  Добавить
-                </Button>
+                <div className="flq">
+                  <UserName style={props.theme === "light" ? {color: "black"} : {color: "white"}} >{user.nickname}</UserName>
+                  <Button variant="contained" style={{color: "white", backgroundColor: '#166e48'}} onClick={() => handleAddUser(user)} id={user._id}>
+                    Добавить
+                  </Button>
+                </div>
               </UserItem>
             )) : <h2 style={props.theme === "light" ? {color: "black"} : {color: "white"}} >Нет подходящих пользователей</h2>}</>}
 
@@ -174,6 +177,7 @@ const UserItem = styled.li`
   display: flex;
   border-radius: 4px;
   padding: 10px;
+  gap: 1rem;
   margin-bottom: 10px;
   img {
     width: 90px;
@@ -181,6 +185,11 @@ const UserItem = styled.li`
   }
   button {
     width: 5.5rem;
+  }
+  .flq {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem ;
   }
 `;
 

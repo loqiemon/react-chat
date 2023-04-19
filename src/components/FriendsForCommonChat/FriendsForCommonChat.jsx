@@ -126,25 +126,25 @@ export default function FriendsForCommonChat(props) {
           {loading ? <Loader /> : (<>          <UsersList>
 
             {filteredUsers.length > 0 ? filteredUsers.map((user) => (
-              <UserItem key={user._id} style={props.theme === "light" ? { backgroundColor: '#fff', color: '#000' } : { backgroundColor: '#39373a',   color: '#fff' }}>
-                <img
-                  src={user.avatarImage ? `data:image/svg+xml;base64,${user.avatarImage}` : blankProfile}
-                  alt=""
-                />
-                <div className="descr">
-                  <UserName>{user.nickname}</UserName>
-                  <span className='user-descr'>Описание...</span>
-                </div>
-                {/* <Button variant="contained" onClick={() => handleAddUser(user)}>
-                  Добавить
-                </Button> */}
-                <Checkbox
-                  // checked={userStates[user._id]}
-                  style={props.theme === "light" ? { color: 'black' } : { color: 'white' }}
-                  onChange={(e) => handleSwitch(e, user._id)}
-                  color="primary"
-                />
-              </UserItem>
+              user._id === props.user._id ? null : <UserItem key={user._id} style={props.theme === "light" ? { backgroundColor: '#fff', color: '#000' } : { backgroundColor: '#39373a',   color: '#fff' }}>
+              <img
+                src={user.avatarImage ? `data:image/svg+xml;base64,${user.avatarImage}` : blankProfile}
+                alt=""
+              />
+              <div className="descr">
+                <UserName>{user.nickname}</UserName>
+                <span className='user-descr'>Описание...</span>
+              </div>
+              {/* <Button variant="contained" onClick={() => handleAddUser(user)}>
+                Добавить
+              </Button> */}
+              <Checkbox
+                // checked={userStates[user._id]}
+                style={props.theme === "light" ? { color: 'black' } : { color: 'white' }}
+                onChange={(e) => handleSwitch(e, user._id)}
+                color="primary"
+              />
+            </UserItem>
             )) : <h2 style={{ color: 'white' }}>Нет подходящих пользователей</h2>}
           </UsersList>
             {/* <div className="create-common-chat">

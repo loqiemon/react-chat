@@ -76,7 +76,7 @@ function Register(props) {
     return (
         <>
             <FormContainer>
-                {loading ? <Loader/> :                 <form onSubmit={(e) => handleSubmit(e)}>
+                {loading ? <Loader/> :           <form onSubmit={(e) => handleSubmit(e)}>
                     <div className="company">
                         <h1>WebChat</h1>
                     </div>
