@@ -44,13 +44,19 @@ export default function Chat(props) {
 
           // Если объект не найден, добавляем новый
           if (index === -1) {
-            return [...prevState, { chatId, messageCount: 1 }];
+            if (localStorage.getItem(chatId)) {
+              return [...prevState, { chatId, messageCount: localStorage.getItem(chatId) }];
+            }else {
+              localStorage.setItem(chatId, 1)
+              return [...prevState, { chatId, messageCount: 1 }];
+            }
           }
         
           // Если объект найден, обновляем его и возвращаем новый массив
           return prevState.map((elem, i) => {
             if (i === index) {
-              return { chatId, messageCount: elem.messageCount + 1 };
+              localStorage.setItem(chatId, +elem.messageCount + 1)
+              return { chatId, messageCount: +elem.messageCount + 1 };
             }
             return elem;
           });
@@ -67,6 +73,7 @@ export default function Chat(props) {
 
 
   const deleteNotice = async (chatId) => {
+    localStorage.removeItem(chatId)
     setNotice(prevState => prevState.filter(chat => chat.chatId !== chatId))
   }
 

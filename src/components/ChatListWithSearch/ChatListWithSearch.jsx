@@ -106,7 +106,8 @@ const ChatListWithSearch = (props) => {
                 {/* Последнее сообщение... */}
                 <div className="descr_footer_end">
                   {/* <div className="chatlist_count">5</div> */}
-                  {props.notice.find(elem => elem.chatId === chat.chatId) ? <div className="chatlist_count" style={props.theme === "light" ? {color: "#fff"} : null}>{props.notice.find(elem => elem.chatId === chat.chatId).messageCount}</div> : null}
+                  {/* {props.notice.find(elem => elem.chatId === chat.chatId) ? <div className="chatlist_count" style={props.theme === "light" ? {color: "#fff"} : null}>{props.notice.find(elem => elem.chatId === chat.chatId).messageCount}</div> : null} */}
+                  { localStorage.getItem(chat.chatId) ? <div className="chatlist_count" style={props.theme === "light" ? {color: "#fff"} : null}>{localStorage.getItem(chat.chatId)}</div> : null}
                   {/* <PushPinIcon /> */}
                 </div>
               </div>
