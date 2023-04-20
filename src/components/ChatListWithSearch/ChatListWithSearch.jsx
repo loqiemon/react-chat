@@ -54,6 +54,7 @@ const ChatListWithSearch = (props) => {
   }
 
   const handleChatClick = (chat) => {
+    props.deleteNotice(chat.chatId)
     getSetChats()
     props.createCommonChat(false)
     axios.post(addBlockRoute, {segment_id: chat.chatId, block: null})
@@ -98,15 +99,17 @@ const ChatListWithSearch = (props) => {
                 <div className="chatlist_item_name">{chat.chatname}</div>
                 <div className="chatlist_item_time">{chat.lastActivity}</div>
               </div>
-              <div className="chatlist_last">Последнее сооб...</div>
-              {/* <div className="descr_footer">
-                <div className="chatlist_last">Последнее сообщение...</div> */}
+              {/* <div className="chatlist_last">Последнее сооб...</div> */}
+    
+              <div className="descr_footer">
+                <div className="chatlist_last">Последнее сооб...</div>
                 {/* Последнее сообщение... */}
-                {/* <div className="descr_footer_end">
-                  <div className="chatlist_count">5</div>
-                  <PushPinIcon />
-                </div> */}
-              {/* </div> */}
+                <div className="descr_footer_end">
+                  {/* <div className="chatlist_count">5</div> */}
+                  {props.notice.find(elem => elem.chatId === chat.chatId) ? <div className="chatlist_count">{props.notice.find(elem => elem.chatId === chat.chatId).messageCount}</div> : null}
+                  {/* <PushPinIcon /> */}
+                </div>
+              </div>
             </div>
           </div>
           )

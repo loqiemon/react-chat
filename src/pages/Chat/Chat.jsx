@@ -23,6 +23,8 @@ export default function Chat(props) {
   const [createCommonChat, setCreateCommonChat] = useState(false)
   const [updateChats, setUpdateChats] = useState(0)
   const [myFriends, setMyFriends] = useState([])
+  const [notice, setNotice] = useState([]);
+
 
   const socket = useRef();
   const navigate = useNavigate()
@@ -34,8 +36,24 @@ export default function Chat(props) {
     } else {
       socket.current = io(host);
       socket.current.emit("add-user", props.user._id);
-      socket.current.on("update-chats", async () => {
-        setUpdateChats(prevCount => prevCount + 1)
+      socket.current.on("update-chats", async (chatId) => {
+        // debugger
+        setNotice(prevState => {
+          const index = prevState.findIndex(elem => elem.chatId === chatId);
+
+          // Если объект не найден, добавляем новый
+          if (index === -1) {
+            return [...prevState, { chatId, messageCount: 1 }];
+          }
+        
+          // Если объект найден, обновляем его и возвращаем новый массив
+          return prevState.map((elem, i) => {
+            if (i === index) {
+              return { chatId, messageCount: elem.messageCount + 1 };
+            }
+            return elem;
+          });
+        });
       });
 
       const func = async () => {
@@ -46,7 +64,10 @@ export default function Chat(props) {
     }
   }, [props.user])
 
-  
+
+  const deleteNotice = async (chatId) => {
+    setNotice(prevState => prevState.filter(chat => chat.chatId !== chatId))
+  }
 
 
   const changeChat = async (chat) => {
@@ -73,7 +94,7 @@ export default function Chat(props) {
       message: { ...message, sign: createSignature(message.message, props.privKey) }
     });
     console.log(selectedChat.users, 'selectedChat.userss')
-    socket.current.emit('update-chats', selectedChat.users)
+    socket.current.emit('update-chats', selectedChat.users, selectedChat.chatId)
   }
 
 
@@ -83,7 +104,7 @@ export default function Chat(props) {
         props.user ? <>
           <Navbar user={props.user}  setDarkTheme={props.setDarkTheme} theme={props.theme}  handleUserSet={props.handleUserSet} />
           <div className={props.theme === "light" ? "main light" : "main dark"} >
-            <ChatListWithSearch changeChat={changeChat} user={props.user} selectedChat={selectedChat} createCommonChat={setCreateCommonChat} updateChats={updateChats} privKey={props.privKey} theme={props.theme}/>
+            <ChatListWithSearch notice={notice} deleteNotice={deleteNotice} changeChat={changeChat} user={props.user} selectedChat={selectedChat} createCommonChat={setCreateCommonChat} updateChats={updateChats} privKey={props.privKey} theme={props.theme}/>
             {/* <Loader /> */}
             {createCommonChat ? 
               <FriendsForCommonChat
