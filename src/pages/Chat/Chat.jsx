@@ -38,6 +38,7 @@ export default function Chat(props) {
       socket.current.emit("add-user", props.user._id);
       socket.current.on("update-chats", async (chatId) => {
         // debugger
+        setUpdateChats(prevCount => prevCount + 1)
         setNotice(prevState => {
           const index = prevState.findIndex(elem => elem.chatId === chatId);
 
