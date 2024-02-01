@@ -11,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 import {genAsymKeys, asymDecrypt, symDecrypt, asymEncrypt} from './utils/crypto';
 import {postRequestCookie, getBlockchainPublicKey} from './utils/requests';
 import { useLocation } from 'react-router-dom';
-import './app.scss'
 
 
 function App() {

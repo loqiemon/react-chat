@@ -111,40 +111,40 @@ export default function Chat(props) {
       {
         props.user ? <>
           <Navbar user={props.user}  setDarkTheme={props.setDarkTheme} theme={props.theme}  handleUserSet={props.handleUserSet} />
-          <div className={props.theme === "light" ? "main light" : "main dark"} >
-            <ChatListWithSearch notice={notice} deleteNotice={deleteNotice} changeChat={changeChat} user={props.user} selectedChat={selectedChat} createCommonChat={setCreateCommonChat} updateChats={updateChats} privKey={props.privKey} theme={props.theme}/>
-            {/* <Loader /> */}
-            {createCommonChat ? 
-              <FriendsForCommonChat
-                privKey={props.privKey}
-                theme={props.theme}
-                user={props.user}
-                setCreateCommonChat={setCreateCommonChat} 
-              />    
-              : selectedChat ? 
-                  loading ? 
-                    <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center' } : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>
-                      <Loader/>
-                    </div>
-                    :
-                    // <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'} : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>
-                    //   <Loader/>
-                    // </div>
-                    <ChatContainer
-                      chat={selectedChat}
-                      sendMessage={sendMessage}
-                      symChatKey={symChatKey}
-                      user={props.user}
-                      socket={socket}
-                      privKey={props.privKey}
-                      theme={props.theme}
-                      myFriends={myFriends} 
-                    />       
-              :                     <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center' } : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>
-              {/* <Loader/> */}
-            </div>
-            }
-          </div>
+          {/*<div className={props.theme === "light" ? "main light" : "main dark"} >*/}
+          {/*  <ChatListWithSearch notice={notice} deleteNotice={deleteNotice} changeChat={changeChat} user={props.user} selectedChat={selectedChat} createCommonChat={setCreateCommonChat} updateChats={updateChats} privKey={props.privKey} theme={props.theme}/>*/}
+          {/*  /!* <Loader /> *!/*/}
+          {/*  {createCommonChat ? */}
+          {/*    <FriendsForCommonChat*/}
+          {/*      privKey={props.privKey}*/}
+          {/*      theme={props.theme}*/}
+          {/*      user={props.user}*/}
+          {/*      setCreateCommonChat={setCreateCommonChat} */}
+          {/*    />    */}
+          {/*    : selectedChat ? */}
+          {/*        loading ? */}
+          {/*          <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center' } : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>*/}
+          {/*            <Loader/>*/}
+          {/*          </div>*/}
+          {/*          :*/}
+          {/*          // <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'} : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>*/}
+          {/*          //   <Loader/>*/}
+          {/*          // </div>*/}
+          {/*          <ChatContainer*/}
+          {/*            chat={selectedChat}*/}
+          {/*            sendMessage={sendMessage}*/}
+          {/*            symChatKey={symChatKey}*/}
+          {/*            user={props.user}*/}
+          {/*            socket={socket}*/}
+          {/*            privKey={props.privKey}*/}
+          {/*            theme={props.theme}*/}
+          {/*            myFriends={myFriends} */}
+          {/*          />       */}
+          {/*    :                     <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center' } : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>*/}
+          {/*    /!* <Loader/> *!/*/}
+          {/*  </div>*/}
+          {/*  }*/}
+          {/*</div>*/}
         </> : <Loader />
       }
     </>
