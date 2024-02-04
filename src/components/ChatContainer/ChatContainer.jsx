@@ -1,16 +1,26 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
-import SearchIcon from '@mui/icons-material/Search';
-import ddddd from '../../assets/ddddd.png'
+import searchIcon from "../../assets/search.svg";
 
-import './ChatContainer.scss';
 import Loader from '../Loader/Loader';
 import blankProfile from '../../assets/blankProfile.png';
-import ChatInput from "../ChatInput";
+import ChatInput from "../ChatInput/ChatInput";
 import { updateChatRoute } from "../../utils/APIRoutes";
 import { getMessages, addTransaction, postRequestCookie, getSomeUsers, getPublicKey } from '../../utils/requests';
 import { createSignature, symDecrypt, symEncrypt, verifySignature } from "../../utils/crypto";
+
+import {
+  Avatar,
+  ChatName,
+  ChatSearch,
+  ChatSearchDiv,
+  ChatSearchIcon,
+  ChatSearchInput,
+  Container, Content, Description,
+  Message, MessageName,
+  Messages, MessageTime
+} from "./ChatContainer.styles";
+
 
 export default function ChatContainer(props) {
   const [search, setSearch] = useState('');
@@ -22,6 +32,8 @@ export default function ChatContainer(props) {
   const [searchMessageState, setSearchMessageState] = useState(false)
 
   const scrollRef = useRef();
+
+  const {chat} = props
 
 
   useEffect(() => {
@@ -39,7 +51,6 @@ export default function ChatContainer(props) {
         msg.id = uuidv4()
       })
       setMessages(chatData);
-      console.log(chatData)
       setFilteresMessages(chatData)
     }
     func()
@@ -55,26 +66,24 @@ export default function ChatContainer(props) {
     props.sendMessage({ message: encryptedMsg, writer: props.user._id, timestamp: new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5) })
     addTransaction(props.user._id, props.chat.chatId, msg, props.symChatKey, createSignature(encryptedMsg, props.privKey))
     postRequestCookie(updateChatRoute, { chatId: props.chat.chatId })
-
-
   };
 
 
   useEffect(() => {
-    props.socket.current.off("msg-receive")
     props.socket.current.on("msg-receive", async (msg) => {
-      const decryptedPub = await getPublicKey(msg.writer)
-      const isValid = verifySignature(msg.message, msg.sign, decryptedPub.publicKey)
-      const nick = props.myFriends.find(sender => sender._id == msg.writer).nickname
-      if (isValid) {
-        // setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
-        setArrivalMessage({
-          nickname: nick, fromSelf: false, message: symDecrypt(msg.message, props.symChatKey), id: uuidv4(), timestamp: msg.timestamp,
-          time: Math.round(parseFloat(msg.timestamp.slice(3)) / 5) * 5
-        });
-      }
-    }
+          const decryptedPub = await getPublicKey(msg.writer)
+          const isValid = verifySignature(msg.message, msg.sign, decryptedPub.publicKey)
+          const nick = props.myFriends.find(sender => sender._id == msg.writer).nickname
+          if (isValid) {
+            // setArrivalMessage({ fromSelf: false, message: symDecrypt(msg.msg, symKey), id: uuidv4()});
+            setArrivalMessage({
+              nickname: nick, fromSelf: false, message: symDecrypt(msg.message, props.symChatKey), id: uuidv4(), timestamp: msg.timestamp,
+              time: Math.round(parseFloat(msg.timestamp.slice(3)) / 5) * 5
+            });
+          }
+        }
     );
+    return _ => props.socket.current.off("msg-receive")
   }, [])
 
 
@@ -115,62 +124,55 @@ export default function ChatContainer(props) {
   }
 
   return (
-    <>
-      {props.chat ? <>
-        {loading ?
-        
-        <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'} : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>
-        <Loader/>
-      </div>
-        
-        :
-          <div className={props.theme === "light" ? "chat_messages_container chat_messages_container_light" : "chat_messages_container chat_messages_container_dark"}>
-            <div className="input_div">
-              <span className="chatname">
-                {props.chat.chatname}
-              </span>
-              {searchMessageState ? <>            <input
-                type="text"
-                placeholder="Поиск..."
-                value={search}
-                onChange={handleSearchChange}
-                className="search_message"
-              /></> : null}
-              <SearchIcon style={props.theme === "light" ? { color: 'black' } : { color: 'white' }} onClick={handleSearchShow} />
-            </div>
-            <div className="messages">
-              {filteresMessages.map((message, index) => {
-                return (
-                  <div ref={scrollRef} onClick={() => goToMessage(message.id)} id={message.id} className={message.fromSelf ? 'message sended' : 'message recieved'} key={uuidv4()} >
-                      <>
-                      <div className="message_avatar">
-                        <img
-                          src={props.chat.avatarImage ? `data:image/svg+xml;base64, ${props.chat.avatarImage}` : blankProfile}
-                          alt="message avatar"
-                        /> 
-                      </div>
-                        <div className="message_description">
-                          <div className="message_description_header">
-                            <span className="message_nickname">{message.fromSelf ? 'Вы' : message.nickname}</span>
-                          </div>
-                          <div className="message_description_content">
-                            <span className="message_description_content_text">
-                              {message.message}
-                            </span>
-                            <div>
-                              <span className="message_time">{message.timestamp}</span>
-                            </div>
-                          </div>
-                        </div>
-                        </>
-                  </div>
-                )
-              })}
-            </div>
-            <ChatInput sendMessage={sendMessage} theme={props.theme}/>
-          </div>}
-      </> : null}
-    </>
+      <>
+        {props.chat ? <>
+          {loading ?
+
+              <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'} : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>
+                <Loader/>
+              </div>
+
+              :
+              <Container>
+                <ChatSearch>
+                  <ChatName>{chat.chatname}</ChatName>
+                  <ChatSearchDiv>
+                    <ChatSearchInput
+                        placeholder="Поиск..."
+                        value={search}
+                        onChange={handleSearchChange}
+                    />
+                    <ChatSearchIcon src={searchIcon} onClick={handleSearchShow} />
+                  </ChatSearchDiv>
+                </ChatSearch>
+                <Messages>
+                  {filteresMessages.map((message, index) => {
+                    return (
+                        <Message
+                            ref={scrollRef}
+                            onClick={() => goToMessage(message.id)}
+                            id={message.id}
+                            className={message.fromSelf ? 'sended' : 'recieved'}
+                            key={uuidv4()}
+                        >
+                          <Avatar
+                              src={props.chat.avatarImage ? `data:image/svg+xml;base64, ${props.chat.avatarImage}` : blankProfile}
+                          />
+                          <Description>
+                            <MessageName>{message.fromSelf ? 'Вы' : message.nickname}</MessageName>
+                            <Content>
+                                {message.message}
+                                <MessageTime>{message.timestamp}</MessageTime>
+                            </Content>
+                          </Description>
+                        </Message>
+                    )
+                  })}
+                </Messages>
+                <ChatInput sendMessage={sendMessage} theme={props.theme}/>
+              </Container>}
+        </> : null}
+      </>
   );
 }
 

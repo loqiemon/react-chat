@@ -1,15 +1,249 @@
 import React, { useState, useEffect } from 'react';
-import PushPinIcon from '@mui/icons-material/PushPin';
-import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 import axios from 'axios';
-import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
+import RateReviewOutlinedIcon from '../../assets/create-chat.svg';
 
-import './chatlist.scss';
-import blankProfile from '../../assets/blankProfile.png';
+
 import { getChats } from '../../utils/requests';
 import { addBlockRoute } from '../../utils/APIBlochain';
 import { createSignature } from '../../utils/crypto';
+
+import {
+  Container,
+  Title,
+  HeaderText,
+  ChatSearch,
+  Header,
+  ChatItem,
+  ChatImg,
+  ChatList,
+  ChatInfo, ChatHeader, ChatName, ChatTime, ChatMessage
+} from "./ChatList.styles";
+import {Svg} from "../../shared/ui/Svg/Svg";
+import avatar from "../../assets/avatar.svg";
+
+
+const chatsss = [
+  {
+    "_id": "65bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "65bd34043592a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "65bd344504392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "65bd340454392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },  {
+    "_id": "65bd34044392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "65bd34304392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "65b2d3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+  {
+    "_id": "61bd3404392a56b1932e586d",
+    "chatId": "65bd3404392a56b1932e586a",
+    "avatarImage": "",
+    "chatname": "Алексей",
+    "lastActivity": "21:27",
+    "users": [
+      "65bce00a392a56b1932e55a9"
+    ]
+  },
+]
 
 
 const ChatListWithSearch = (props) => {
@@ -22,12 +256,9 @@ const ChatListWithSearch = (props) => {
   useEffect(() => {
     setFilteredChats(chats);
     if (search.length < 1) {
-      console.log(1)
       setFilteredChats(chats);
     } else {
-      console.log(2)
       const searchedChats = chats.filter(chat => chat.chatname.toLowerCase().includes(search.toLowerCase()))
-      console.log(searchedChats)
       setFilteredChats(searchedChats)
     }
   }, [search, chats])
@@ -63,59 +294,53 @@ const ChatListWithSearch = (props) => {
   }
 
 
+  const avatarSet = (image) => {
+    return image ? `data:image/svg+xml;base64,${image}` : avatar;
+  }
+
 
   return (
     <>
-      <div className={props.theme === "light" ? "chatlist chatlist-light" : "chatlist chatlist-dark"} >
-        <div className="chatlist_header">
-          <div className="chatlist_header_name">
-            <h2 className="chatlist_header_name_text">
-              Сообщения
-            </h2>
-            <IconButton aria-label="delete" onClick={handleCreateCommonChat}>
-              <RateReviewOutlinedIcon style={props.theme === "light" ? {color: "#268b62"} : {color: "#268b62"}} />
+      <Container className={props.classes}>
+        <Header className="chatlist_header">
+          <HeaderText>
+            <Title>Мессенджер</Title>
+            <IconButton onClick={handleCreateCommonChat}>
+              <Svg path={RateReviewOutlinedIcon} />
             </IconButton>
-          </div>
-          <div className="chat-search-input">
-            <input
-              type="text"
+          </HeaderText>
+            <ChatSearch
               placeholder="Поиск..."
               value={search}
               onChange={handleSearchChange}
             />
-          </div>
-        </div>
-        {filteredChats.map(chat => {
-          return (
-            <div className={`chatlist_item ${selectedChatId==chat.chatId ? 'selected' : ''}`} key={chat.chatId} onClick={() => handleChatClick(chat)}>
-            <div className="chatlist_item_image">
-              <img
-                src={chat.avatarImage ? `data:image/svg+xml;base64,${chat.avatarImage}` : blankProfile}
-                alt="chat avatar"
-              />
-            </div>
-            <div className="chatlist_item_descr">
-              <div className="descr_header">
-                <div className="chatlist_item_name">{chat.chatname}</div>
-                <div className="chatlist_item_time">{chat.lastActivity}</div>
-              </div>
-              {/* <div className="chatlist_last">Последнее сооб...</div> */}
-    
-              <div className="descr_footer">
-                <div className="chatlist_last">Последнее сооб...</div>
-                {/* Последнее сообщение... */}
-                <div className="descr_footer_end">
-                  {/* <div className="chatlist_count">5</div> */}
-                  {/* {props.notice.find(elem => elem.chatId === chat.chatId) ? <div className="chatlist_count" style={props.theme === "light" ? {color: "#fff"} : null}>{props.notice.find(elem => elem.chatId === chat.chatId).messageCount}</div> : null} */}
-                  { localStorage.getItem(chat.chatId) ? <div className="chatlist_count" style={props.theme === "light" ? {color: "#fff"} : null}>{localStorage.getItem(chat.chatId)}</div> : null}
-                  {/* <PushPinIcon /> */}
-                </div>
-              </div>
-            </div>
-          </div>
-          )
-        })}
-      </div>
+        </Header>
+        <ChatList>
+          {filteredChats.map(chat => {
+            // {chatsss.map(chat => {
+            return (
+                <ChatItem
+                    className={`${selectedChatId == chat.chatId ? 'selected' : ''}`}
+                    key={chat.chatId}
+                    onClick={() => handleChatClick(chat)}
+                >
+                  <ChatImg src={avatarSet(chat.avatarImage)} alt="аватар чата" />
+                  <ChatInfo>
+                    <ChatHeader>
+                      <ChatName>{chat.chatname}</ChatName>
+                      <ChatTime>{chat.lastActivity}</ChatTime>
+                    </ChatHeader>
+                    <ChatMessage>Последнее сооб...
+                      {/*<div className="descr_footer_end">*/}
+                      {/*  { localStorage.getItem(chat.chatId) ? <div className="chatlist_count" style={props.theme === "light" ? {color: "#fff"} : null}>{localStorage.getItem(chat.chatId)}</div> : null}*/}
+                      {/*</div>*/}
+                    </ChatMessage>
+                  </ChatInfo>
+                </ChatItem>
+            )
+          })}
+        </ChatList>
+      </Container>
     </>
   );
 };

@@ -13,7 +13,9 @@ import { asymDecrypt } from '../../utils/crypto';
 import { getAllFriends, postRequestCookie } from '../../utils/requests';
 import { symEncrypt, createSignature } from "../../utils/crypto";
 import FriendsForCommonChat from '../../components/FriendsForCommonChat/FriendsForCommonChat'
-import './chat.scss'
+
+
+import {Container, MainContainer} from "./Chat.styles";
 
 
 export default function Chat(props) {
@@ -101,52 +103,57 @@ export default function Chat(props) {
       to: selectedChat.chatId,
       message: { ...message, sign: createSignature(message.message, props.privKey) }
     });
-    console.log(selectedChat.users, 'selectedChat.userss')
     socket.current.emit('update-chats', selectedChat.users, selectedChat.chatId)
   }
 
 
   return (
-    <>
+    <MainContainer>
       {
         props.user ? <>
           <Navbar user={props.user}  setDarkTheme={props.setDarkTheme} theme={props.theme}  handleUserSet={props.handleUserSet} />
-          {/*<div className={props.theme === "light" ? "main light" : "main dark"} >*/}
-          {/*  <ChatListWithSearch notice={notice} deleteNotice={deleteNotice} changeChat={changeChat} user={props.user} selectedChat={selectedChat} createCommonChat={setCreateCommonChat} updateChats={updateChats} privKey={props.privKey} theme={props.theme}/>*/}
-          {/*  /!* <Loader /> *!/*/}
-          {/*  {createCommonChat ? */}
-          {/*    <FriendsForCommonChat*/}
-          {/*      privKey={props.privKey}*/}
-          {/*      theme={props.theme}*/}
-          {/*      user={props.user}*/}
-          {/*      setCreateCommonChat={setCreateCommonChat} */}
-          {/*    />    */}
-          {/*    : selectedChat ? */}
-          {/*        loading ? */}
-          {/*          <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center' } : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>*/}
-          {/*            <Loader/>*/}
-          {/*          </div>*/}
-          {/*          :*/}
-          {/*          // <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'} : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>*/}
-          {/*          //   <Loader/>*/}
-          {/*          // </div>*/}
-          {/*          <ChatContainer*/}
-          {/*            chat={selectedChat}*/}
-          {/*            sendMessage={sendMessage}*/}
-          {/*            symChatKey={symChatKey}*/}
-          {/*            user={props.user}*/}
-          {/*            socket={socket}*/}
-          {/*            privKey={props.privKey}*/}
-          {/*            theme={props.theme}*/}
-          {/*            myFriends={myFriends} */}
-          {/*          />       */}
-          {/*    :                     <div className="loader_div" style={props.theme === "light" ? { color: 'black', backgroundColor: '#fff', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center' } : { color: 'white', heigh: '100vh', width: "77vw", display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:'center'}}>*/}
-          {/*    /!* <Loader/> *!/*/}
-          {/*  </div>*/}
-          {/*  }*/}
-          {/*</div>*/}
+          <Container>
+            <ChatListWithSearch
+                notice={notice}
+                deleteNotice={deleteNotice}
+                changeChat={changeChat}
+                user={props.user}
+                selectedChat={selectedChat}
+                createCommonChat={setCreateCommonChat}
+                updateChats={updateChats}
+                privKey={props.privKey}
+                theme={props.theme}
+                classes={"hidden"}
+            />
+            {createCommonChat ?
+              <FriendsForCommonChat
+                privKey={props.privKey}
+                theme={props.theme}
+                user={props.user}
+                setCreateCommonChat={setCreateCommonChat}
+              />
+              : selectedChat ?
+                  loading ?
+                    <div >
+                      <Loader/>
+                    </div>
+                    :
+                    <ChatContainer
+                      chat={selectedChat}
+                      sendMessage={sendMessage}
+                      symChatKey={symChatKey}
+                      user={props.user}
+                      socket={socket}
+                      privKey={props.privKey}
+                      theme={props.theme}
+                      myFriends={myFriends}
+                    />
+              :<div>
+            </div>
+            }
+          </Container>
         </> : <Loader />
       }
-    </>
+    </MainContainer>
   )
 }

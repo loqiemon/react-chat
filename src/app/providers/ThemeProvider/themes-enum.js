@@ -4,21 +4,35 @@ export const Themes =  {
 }
 
 const darkTheme = {
+    dark: true,
     primary: "#2E2D2D",
     secondary: "#494949",
     text: "#DEDEDE",
     textInverted: "#fff",
     background: "#2E2D2D",
-    inputBack: '#2E2D2D'
+    inputBack: '#2E2D2D',
+
+    messengerTitle: "#FFFFFF",
+    messengerBackground: "#494949",
+
+    invertedText: '#1A1A1A',
+    messagesBack: '#2e2d2d',
 };
 
 const lightTheme = {
+    light: true,
     primary: "#338B63",
     secondary: "#eee",
     text: "#1A1A1A",
     textInverted: "#494949",
     background: "#EBEBEB",
-    inputBack: '#DEDEDE'
+    inputBack: '#DEDEDE',
+
+    messengerTitle: "#1A1A1A",
+    messengerBackground: "#FFFFFF",
+
+    invertedText: '#fff',
+    messagesBack: '#ebebeb',
 };
 
 const defaultTheme = {
@@ -37,9 +51,10 @@ const defaultTheme = {
     common: {
         greenBack: '#338B63',
         textBack: "#FFF",
-        messageBack: 'D9D9D9',
-        messageText: '000000',
+        messageBack: '#D9D9D9',
+        messageText: '#000000',
         white: '#fff',
+        a1: '#1A1A1A'
     },
     radius: {
         small: "5px",

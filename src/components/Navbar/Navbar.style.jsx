@@ -13,7 +13,13 @@ export const Nav = styled.nav`
   width: 150px;
   padding: 15px;
   background: ${({theme}) => theme.common.greenBack};
-  color: ${({theme}) => theme.common.white}
+  color: ${({theme}) => theme.common.white};
+    
+    @media (max-width: 670px) {  
+        width: 70px;
+    }
+    
+    
 `
 
 export const Header = styled.div`
@@ -51,16 +57,27 @@ export const Nickname = styled.span`
   //text-align: center;
   font-size: 25px;
   font-weight: 500;
+
+    @media (max-width: 670px) {
+        display: none;
+    }
 `
 
 export const BreakLine = styled.div`
   width: 115px;
   height: 2px;
   background: ${({theme}) => theme.common.white};
+    @media (max-width: 670px) {
+        display: none;
+    }
 `
 
 export const Switches = styled.div`
   display: flex;
   gap: 15px;
   align-items: center;
+    
+    @media (max-width: 670px) {
+        flex-direction: column;
+    }
 `

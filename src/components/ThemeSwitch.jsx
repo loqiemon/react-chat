@@ -31,7 +31,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
       },
     },
     '& .MuiSwitch-thumb': {
-      backgroundColor: theme.palette.mode === 'dark' ? '#268b62' : '#268b62',
+      backgroundColor: theme.palette.mode === 'dark' ? '#268b62' : '#2E2D2D',
       // backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c',
       width: 32,
       height: 32,
@@ -60,12 +60,14 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 
   export default function CustomizedSwitches(props) {
-      const { toggleTheme } = useTheme();
+      const { currentTheme, toggleTheme } = useTheme();
+
+      const isChecked = currentTheme === "dark";
 
     return (
       <FormGroup>
         <FormControlLabel
-          control={<MaterialUISwitch sx={{ m: 1 }}  onChange={toggleTheme} defaultChecked={true} />}
+          control={<MaterialUISwitch sx={{ m: 1 }}  onChange={toggleTheme} defaultChecked={isChecked}   />}
         />
     </FormGroup>
     )
