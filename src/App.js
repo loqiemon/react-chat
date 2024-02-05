@@ -4,7 +4,7 @@ import Register from './pages/Register';
 import SetAvatar from './pages/SetAvatar';
 import Chat from './pages/Chat/Chat';
 import Login from './pages/Login';
-import SearchUser from './pages/SearchUser';
+import SearchUser from './pages/SearchUser/SearchUser';
 import axios from "axios";
 import {checkAuthRoute, saveChatsRoute} from './utils/APIRoutes';
 import { useNavigate } from 'react-router-dom';
