@@ -17,4 +17,7 @@ export const MainContainer = styled.div`
     height: 100vh;
     display: flex;
     padding-left: 150px;
+      @media (max-width: 670px) {
+        padding-left: 70px;
+      }
 `

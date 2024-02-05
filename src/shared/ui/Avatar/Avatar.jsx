@@ -3,7 +3,7 @@ import avatar from '../../../assets/avatar.svg'
 import {Link} from "react-router-dom";
 
 const Avatar = (props) => {
-  const {user} = props;
+  const {user, width=82, height=82} = props;
 
   const isAvatar = (image) => {
       return image ? `data:image/svg+xml;base64,${image}` : avatar;
@@ -11,7 +11,7 @@ const Avatar = (props) => {
 
   return (
     <StyledLink to={"/profile"}>
-        <Img src={isAvatar(user.image)} alt="Аватар"/>
+        <Img $width={width} $height={height} src={isAvatar(user.image)} alt="Аватар" />
     </StyledLink>
   );
 };
@@ -23,7 +23,12 @@ const StyledLink = styled(Link)`
 `
 
 const Img = styled.img`
-  width: 82px;
-  height: 82px;
+  width: ${({ $width }) => $width}px;
+  height: ${({ $height }) => $height}px;
+
+  @media (max-width: 670px) {
+    width: 45px;
+    height: 45px;
+  }
 `
 

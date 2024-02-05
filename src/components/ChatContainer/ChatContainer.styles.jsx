@@ -80,8 +80,9 @@ export const Description = styled.div`
 export const Content = styled.div`
         display: flex;
         gap: 7px;
+        min-width: 75px;
 
-        padding: 10px 25px 25px 10px;
+        padding: 12px 25px 25px 12px;
         background-color: ${({theme}) => theme.common.messageBack};
         border-radius: 0 20px 20px 20px;
 `

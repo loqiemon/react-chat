@@ -96,6 +96,14 @@ export const Container = styled.div`
         width: 500px;
     }
 
+      @media (max-width: 590px) {
+        width: 80%;
+      }
+
+  @media (max-width: 380px) {
+    width: 70%;
+  }
+
     //.button-container {
 
     //  gap: 1rem;

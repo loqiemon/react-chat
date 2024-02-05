@@ -16,10 +16,15 @@ export const Nav = styled.nav`
   color: ${({theme}) => theme.common.white};
     
     @media (max-width: 670px) {  
-        width: 70px;
+      width: 70px;
+      padding: 5px;
+
+      .css-j204z7-MuiFormControlLabel-root {
+        margin-left: 0;
+        margin-right: 0;
+      }
     }
-    
-    
+  
 `
 
 export const Header = styled.div`
