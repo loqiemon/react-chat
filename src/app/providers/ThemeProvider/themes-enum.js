@@ -17,6 +17,8 @@ const darkTheme = {
 
     invertedText: '#1A1A1A',
     messagesBack: '#2e2d2d',
+
+    inputBack2: '#494949',
 };
 
 const lightTheme = {
@@ -27,6 +29,7 @@ const lightTheme = {
     textInverted: "#494949",
     background: "#EBEBEB",
     inputBack: '#DEDEDE',
+    inputBack2: '#DEDEDE',
 
     messengerTitle: "#1A1A1A",
     messengerBackground: "#FFFFFF",

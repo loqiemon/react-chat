@@ -22,7 +22,7 @@ export default function Navbar(props) {
       </Header>
       <Footer>
         <Avatar user={user}/>
-        <Nickname>{user.nickname}</Nickname>
+        <Nickname>{user?.nickname}</Nickname>
         <BreakLine/>
         <Switches>
           <ThemeSwitch/>
