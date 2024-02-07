@@ -16,6 +16,10 @@ export const Container = styled.div`
             display: none;
         }
     }
+
+    //@media (max-width: 690px) {
+    //    width: 90%;  
+    //}
 `
 
 export const Header = styled.div`

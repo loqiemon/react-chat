@@ -19,6 +19,9 @@ export default function Navbar(props) {
           <CustomLink to="/">
               <Svg path={ChatIcon}/>
           </CustomLink>
+          {/*<CustomLink to="/chats">*/}
+          {/*    <Svg path={ChatIcon}/>*/}
+          {/*</CustomLink>*/}
       </Header>
       <Footer>
         <Avatar user={user}/>

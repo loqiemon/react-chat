@@ -113,18 +113,18 @@ export default function Chat(props) {
         props.user ? <>
           <Navbar user={props.user}  setDarkTheme={props.setDarkTheme} theme={props.theme}  handleUserSet={props.handleUserSet} />
           <Container>
-            <ChatListWithSearch
-                notice={notice}
-                deleteNotice={deleteNotice}
-                changeChat={changeChat}
-                user={props.user}
-                selectedChat={selectedChat}
-                createCommonChat={setCreateCommonChat}
-                updateChats={updateChats}
-                privKey={props.privKey}
-                theme={props.theme}
-                classes={"hidden"}
-            />
+                <ChatListWithSearch
+                    notice={notice}
+                    deleteNotice={deleteNotice}
+                    changeChat={changeChat}
+                    user={props.user}
+                    selectedChat={selectedChat}
+                    createCommonChat={setCreateCommonChat}
+                    updateChats={updateChats}
+                    privKey={props.privKey}
+                    theme={props.theme}
+                    classes={selectedChat ? "hidden" : ''}
+                />
             {createCommonChat ?
               <FriendsForCommonChat
                 privKey={props.privKey}
@@ -140,6 +140,7 @@ export default function Chat(props) {
                     :
                     <ChatContainer
                       chat={selectedChat}
+                      changeChat={changeChat}
                       sendMessage={sendMessage}
                       symChatKey={symChatKey}
                       user={props.user}

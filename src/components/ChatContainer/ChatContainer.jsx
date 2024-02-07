@@ -4,19 +4,20 @@ import searchIcon from "../../assets/search.svg";
 
 import Loader from '../Loader/Loader';
 import blankProfile from '../../assets/blankProfile.png';
+import arrow from '../../assets/arrow.svg';
 import ChatInput from "../ChatInput/ChatInput";
 import { updateChatRoute } from "../../utils/APIRoutes";
 import { getMessages, addTransaction, postRequestCookie, getSomeUsers, getPublicKey } from '../../utils/requests';
 import { createSignature, symDecrypt, symEncrypt, verifySignature } from "../../utils/crypto";
 
 import {
-  Avatar,
+  Avatar, BackIcon,
   ChatName,
   ChatSearch,
   ChatSearchDiv,
   ChatSearchIcon,
   ChatSearchInput,
-  Container, Content, Description,
+  Container, Content, Description, Flex2,
   Message, MessageName,
   Messages, MessageTime
 } from "./ChatContainer.styles";
@@ -135,7 +136,10 @@ export default function ChatContainer(props) {
               :
               <Container>
                 <ChatSearch>
-                  <ChatName>{chat.chatname}</ChatName>
+                  <Flex2>
+                    <BackIcon src={arrow} onClick={_ => props.changeChat(null)}/>
+                    <ChatName>{chat.chatname}</ChatName>
+                  </Flex2>
                   <ChatSearchDiv>
                     <ChatSearchInput
                         placeholder="Поиск..."

@@ -10,7 +10,9 @@ const Avatar = (props) => {
   }
 
   return (
-    <StyledLink to={"/profile"}>
+    <StyledLink
+        // to={"/profile"}
+    >
         <Img $width={width} $height={height} src={isAvatar(user?.image)} alt="Аватар" />
     </StyledLink>
   );

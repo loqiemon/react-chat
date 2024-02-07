@@ -13,6 +13,9 @@ export const Container = styled.div`
     width: 100%;
     height: 100vh;
     padding: 10px 20px 10px 150px;
+    @media (max-width: 570px) {
+        padding: 10px 20px 10px 90px;
+    }
 `
 
 export const PageContainer = styled.div`
@@ -32,10 +35,11 @@ export const ChatSearchDiv = styled.div`
         justify-content: space-between;
         margin: 0 auto;
         margin-top: 15px;
-
-        @media (max-width: 670px) {
-            display: none;
+    
+        @media (max-width: 570px) {
+            width: 100%;
         }
+    
 `
 
 export const ChatSearchInput = styled.input`
@@ -60,6 +64,8 @@ export const UserList = styled.div`
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    
+    overflow-y: scroll;
 `
 
 export const ChatSearchIcon = styled.img`
@@ -75,6 +81,11 @@ export const UserProfile = styled.div`
     font-size: 20px;
     background-color: ${({theme}) => theme.color.inputBack2};
     margin-top: 15px;
+
+    @media (max-width: 570px) {
+        padding: 15px;
+        width: 250px;
+    }
 `
 
 export const Flex = styled.div`
@@ -82,6 +93,10 @@ export const Flex = styled.div`
     flex-direction: column;
     justify-content: space-between;
     padding: 5px 0;
+    @media (max-width: 570px) {
+        padding: 0;
+        gap: 15px;
+    }
 `
 
 export const UserProfileName = styled.span`

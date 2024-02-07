@@ -41,6 +41,17 @@ export const ChatSearchDiv = styled.div`
         }
 `
 
+export const Flex2 = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+`
+
+export const BackIcon = styled.img`
+    transform: rotate(180deg);
+    filter: ${({theme}) => theme.color.light ? 'invert(29%) sepia(41%) saturate(6%) hue-rotate(322deg) brightness(85%) contrast(90%)' : 'none'};
+`
+
 export const ChatSearchInput = styled.input`
         background: transparent;
         color: ${({theme}) => theme.color.textInverted};
@@ -92,7 +103,7 @@ export const MessageName = styled.span`
 `
 
 export const Message = styled.div`
-        max-width: 48%;
+        max-width: 90%;
         display: flex;
         gap: 10px;
 

@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import {genAsymKeys, asymDecrypt, symDecrypt, asymEncrypt} from './utils/crypto';
 import {postRequestCookie, getBlockchainPublicKey} from './utils/requests';
 import { useLocation } from 'react-router-dom';
+import {ChatList} from "./pages/ChatList/ChatList";
 
 
 function App() {
@@ -25,7 +26,6 @@ function App() {
 
   useEffect(()=> {
     const theme = localStorage.getItem('theme');
-    console.log(theme)
     if (!theme) {
         localStorage.setItem('theme', 'dark')
         setDarkTheme('dark')
@@ -98,7 +98,9 @@ function App() {
         <Route path='/login' element={<Login user={user} handleUserSet={setUser} checkAuth={checkAuth}/>} />
         <Route path='/setAvatar' element={<SetAvatar user={user}/>} />
         <Route path='/searchUser' element={<SearchUser user={user} privKey={privKey} setDarkTheme={toggleTheme} theme={darkTheme}  handleUserSet={setUser}/>} />
+        <Route path='/chats' element={<ChatList user={user} setDarkTheme={toggleTheme} handleUserSet={setUser} theme={darkTheme}  />} />
         <Route path='/' element={<Chat user={user} handleUserSet={setUser} privKey={privKey} clientKeys={clientKey} loadingAuth={loadingAuth}  setDarkTheme={toggleTheme} theme={darkTheme}/>} />
+
       </Routes>
     </>
   )
