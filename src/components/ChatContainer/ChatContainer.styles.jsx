@@ -80,6 +80,11 @@ export const Avatar = styled.img`
         height: 55px;
 `
 
+export const FileIcon = styled.img`
+   width: 55px;
+  height: 55px;
+`
+
 export const Description = styled.div`
         position: relative;
         display: flex;

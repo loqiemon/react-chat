@@ -26,7 +26,7 @@ export default function ChatInput(props) {
   const sendChat = (event) => {
     event.preventDefault();
     if (msg.length > 0) {
-      props.sendMessage(msg)
+      props.sendMessage({msg: msg, file: selectedFile})
       setMsg("");
     }
   };
@@ -35,8 +35,6 @@ export default function ChatInput(props) {
   const handleAttachFile = async (event) => {
     setSelectedFile(event.target.files[0]);
   }
-
-
 
   return (
     <Container >
@@ -48,7 +46,7 @@ export default function ChatInput(props) {
         <Pin>
           <div>
             <input
-              accept="image/*"
+              // accept="image/*"
               style={{ display: "none" }}
               id="upload-file"
               type="file"
