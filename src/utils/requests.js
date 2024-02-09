@@ -102,14 +102,14 @@ export const getMessages = async (chatId) => {
 }
 
 
-export const addTransaction = async (userId, chatId, msg, symKey, sign) => {
+export const addTransaction = async (userId, chatId, msg, symKey, sign, file='None') => {
   console.log(chatId)
   await axios.post(addTransactionRoute, {
     "segment_id": chatId,
     "writer": userId,
     "reader": chatId,
     "message": symEncrypt(msg, symKey),
-    "file": 'None',
+    "file": file,
     'eds': sign,
     "owner": false,
     "timestamp": ''

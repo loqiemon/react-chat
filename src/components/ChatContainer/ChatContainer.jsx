@@ -68,8 +68,10 @@ export default function ChatContainer(props) {
     msgs.push({ file: msg1.file, fromSelf: true, message: msg, nickname: props.user.nickname, timestamp: new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5), id: uuidv4() });
     setMessages(msgs);
     setFilteresMessages(msgs)
-    props.sendMessage({ file: msg1.file, message: encryptedMsg, writer: props.user._id, timestamp: new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5) })
-    addTransaction(props.user._id, props.chat.chatId, msg, props.symChatKey, createSignature(encryptedMsg, props.privKey))
+    const filePath = Date.now().toString()
+    const fullPath = filePath + '/' + msg1?.file.name
+    props.sendMessage({ fileName: msg1?.file.name, filePath: filePath, file: msg1.file, message: encryptedMsg, writer: props.user._id, timestamp: new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5) })
+    addTransaction(props.user._id, props.chat.chatId, msg, props.symChatKey, createSignature(encryptedMsg, props.privKey), fullPath)
     postRequestCookie(updateChatRoute, { chatId: props.chat.chatId })
   };
 
