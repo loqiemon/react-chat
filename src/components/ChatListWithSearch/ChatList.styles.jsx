@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-
+import IconButton from '@mui/material/IconButton';
 export const Container = styled.div`
     height: 100vh;
     width: 300px;
@@ -20,6 +20,12 @@ export const Container = styled.div`
     //@media (max-width: 690px) {
     //    width: 90%;  
     //}
+`
+
+export const IconButton2 = styled(IconButton)`
+    @media screen and (max-width: 990px) {
+        display: none;
+    }
 `
 
 export const Header = styled.div`

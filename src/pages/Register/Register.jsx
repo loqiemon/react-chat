@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {toast, ToastContainer} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-import {registerRoute} from '../utils/APIRoutes.js';
-import {postRequestCookie} from '../utils/requests';
-import Loader from '../components/Loader/Loader.jsx';
-import {toastOptions} from '../utils/toastOptions.js';
-
+import {registerRoute} from '../../utils/APIRoutes.js';
+import {postRequestCookie} from '../../utils/requests';
+import Loader from '../../components/Loader/Loader.jsx';
+import {toastOptions} from '../../utils/toastOptions.js';
+import {Container, Form, Link2} from "./Register.styles";
 
 function Register(props) {
     const navigate = useNavigate()
@@ -75,20 +75,22 @@ function Register(props) {
 
     return (
         <>
-            <FormContainer>
-                {loading ? <Loader/> :           <form onSubmit={(e) => handleSubmit(e)}>
-                    <div className="company">
-                        <h1>WebChat</h1>
-                    </div>
-                    <input type="text" placeholder='Username' name='username' onChange={(e) => handleChange(e)} />
-                    <input type="text" placeholder='Nickname' name='nickname' onChange={(e) => handleChange(e)} />
-                    <input type="email" placeholder='Email' name='email' onChange={(e) => handleChange(e)} />
-                    <input type="password" placeholder='Password' name='password' onChange={(e) => handleChange(e)} />
-                    <input type="password" placeholder='Confirm password' name='confirmPassword' onChange={(e) => handleChange(e)} />
-                    <button type='submit'>Зарегистрироваться</button>
-                    <span>Уже зарегистрированы? <Link to="/login">Войти</Link></span>
-                </form>}
-            </FormContainer>
+            <Container>
+                {loading ? <Loader/> :
+                    <Form onSubmit={(e) => handleSubmit(e)}>
+                        <div className="company">
+                            <h1>Создать аккаунт</h1>
+                        </div>
+                        <input type="text" placeholder='Логин' name='username' onChange={(e) => handleChange(e)} />
+                        <input type="text" placeholder='Имя' name='nickname' onChange={(e) => handleChange(e)} />
+                        <input type="email" placeholder='Почта' name='email' onChange={(e) => handleChange(e)} />
+                        <input type="password" placeholder='Пароль' name='password' onChange={(e) => handleChange(e)} />
+                        <input type="password" placeholder='Повторите пароль' name='confirmPassword' onChange={(e) => handleChange(e)} />
+                        <button type='submit'>Зарегистрироваться</button>
+                        <span>Уже зарегистрированы? <Link2 to="/login">Войти</Link2></span>
+                    </Form>
+                }
+            </Container>
             <ToastContainer />
         </>
     )

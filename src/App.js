@@ -1,9 +1,9 @@
 import React, {useState, useEffect, createContext, useContext,} from 'react'
 import {Routes, Route} from 'react-router-dom';
-import Register from './pages/Register';
+import Register from './pages/Register/Register';
 import SetAvatar from './pages/SetAvatar';
 import Chat from './pages/Chat/Chat';
-import Login from './pages/Login';
+import Login from './pages/Login/Login';
 import SearchUser from './pages/SearchUser/SearchUser';
 import axios from "axios";
 import {checkAuthRoute, saveChatsRoute} from './utils/APIRoutes';

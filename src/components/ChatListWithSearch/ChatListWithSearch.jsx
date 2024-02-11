@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import IconButton from '@mui/material/IconButton';
+
 import axios from 'axios';
 import RateReviewOutlinedIcon from '../../assets/create-chat.svg';
 
@@ -17,10 +17,12 @@ import {
   ChatItem,
   ChatImg,
   ChatList,
-  ChatInfo, ChatHeader, ChatName, ChatTime, ChatMessage
+  ChatInfo, ChatHeader, ChatName, ChatTime, ChatMessage,
+  IconButton2
 } from "./ChatList.styles";
 import {Svg} from "../../shared/ui/Svg/Svg";
 import avatar from "../../assets/avatar.svg";
+
 
 
 const ChatListWithSearch = (props) => {
@@ -82,9 +84,9 @@ const ChatListWithSearch = (props) => {
         <Header className="chatlist_header">
           <HeaderText>
             <Title>Мессенджер</Title>
-            <IconButton onClick={handleCreateCommonChat}>
+            <IconButton2 onClick={handleCreateCommonChat}>
               <Svg path={RateReviewOutlinedIcon} />
-            </IconButton>
+            </IconButton2>
           </HeaderText>
             <ChatSearch
               placeholder="Поиск..."

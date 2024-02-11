@@ -3,11 +3,12 @@ import { Link, json, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-import { loginRoute } from '../utils/APIRoutes.js';
+import { loginRoute } from '../../utils/APIRoutes.js';
 import TextField from '@mui/material/TextField';
-import {postRequestCookie} from '../utils/requests';
-import {toastOptions} from '../utils/toastOptions.js';
-import Loader from '../components/Loader/Loader.jsx';
+import {postRequestCookie} from '../../utils/requests';
+import {toastOptions} from '../../utils/toastOptions.js';
+import Loader from '../../components/Loader/Loader.jsx';
+import {Container, Form, Link2} from "./Login.styles";
 
 
 function Login(props) {
@@ -65,19 +66,19 @@ function Login(props) {
 
   return (
     <>
-      <FormContainer>
-        {loading ? <Loader/> :         <form onSubmit={(e) => handleSubmit(e)}>
-          <div className="company">
-            <h1>WebChat</h1>
-          </div>
-          {/* <TextField id="outlined-basic" label="Логин" variant="outlined" onChange={(e) => handleChange(e)} />
-                    <TextField id="outlined-basic" label="Пароль" variant="outlined" onChange={(e) => handleChange(e)} type="password" /> */}
-          <input min='3' type="text" placeholder='Username' name='username' onChange={(e) => handleChange(e)} />
-          <input type="password" placeholder='Password' name='password' onChange={(e) => handleChange(e)} />
-          <button type='submit'>Войти</button>
-          <span>Нет аккаунта? <Link to="/register">Регистрация</Link></span>
-        </form>}
-      </FormContainer>
+      <Container>
+        {loading ? <Loader/> :
+            <Form onSubmit={(e) => handleSubmit(e)}>
+              <h1>Войти</h1>
+              {/* <TextField id="outlined-basic" label="Логин" variant="outlined" onChange={(e) => handleChange(e)} />
+                        <TextField id="outlined-basic" label="Пароль" variant="outlined" onChange={(e) => handleChange(e)} type="password" /> */}
+              <input min='3' type="text" placeholder='Логин' name='username' onChange={(e) => handleChange(e)} />
+              <input type="password" placeholder='Почта' name='password' onChange={(e) => handleChange(e)} />
+              <button type='submit'>Войти</button>
+              <span>Нет аккаунта? <Link2 to="/register">Регистрация</Link2></span>
+            </Form>
+        }
+      </Container>
       <ToastContainer />
     </>
   )
@@ -85,14 +86,6 @@ function Login(props) {
 
 
 const FormContainer = styled.div`
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1rem;
-  align-items: center;
-  background-color: #131324;
   .company {
     display: flex;
     align-items: center;
@@ -105,14 +98,6 @@ const FormContainer = styled.div`
       color: white;
       text-transform: uppercase;
     }
-  }
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    background-color: #00000076;
-    border-radius: 2rem;
-    padding: 3rem 5rem;
   }
   input {
     background-color: transparent;
