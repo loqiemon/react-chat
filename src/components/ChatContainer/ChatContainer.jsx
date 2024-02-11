@@ -7,8 +7,15 @@ import Loader from '../Loader/Loader';
 import blankProfile from '../../assets/blankProfile.png';
 import arrow from '../../assets/arrow.svg';
 import ChatInput from "../ChatInput/ChatInput";
-import { updateChatRoute } from "../../utils/APIRoutes";
-import { getMessages, addTransaction, postRequestCookie, getSomeUsers, getPublicKey } from '../../utils/requests';
+import {host, updateChatRoute} from "../../utils/APIRoutes";
+import {
+  getMessages,
+  addTransaction,
+  postRequestCookie,
+  getSomeUsers,
+  getPublicKey,
+  sendFile
+} from '../../utils/requests';
 import { createSignature, symDecrypt, symEncrypt, verifySignature } from "../../utils/crypto";
 
 import {
@@ -18,8 +25,8 @@ import {
   ChatSearchDiv,
   ChatSearchIcon,
   ChatSearchInput,
-  Container, Content, Description, FileIcon, Flex2,
-  Message, MessageName,
+  Container, Content, Description, FileIcon, FileName, Flex2,
+  Message, MessageFile, MessageName,
   Messages, MessageTime
 } from "./ChatContainer.styles";
 
@@ -65,16 +72,25 @@ export default function ChatContainer(props) {
     const msg = msg1.msg
     const encryptedMsg = symEncrypt(msg, props.symChatKey)
     const msgs = [...messages];
-    msgs.push({ file: msg1.file, fromSelf: true, message: msg, nickname: props.user.nickname, timestamp: new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5), id: uuidv4() });
-    setMessages(msgs);
-    setFilteresMessages(msgs)
     const filePath = Date.now().toString()
     const fullPath = filePath + '/' + msg1?.file.name
+    msgs.push({ file: fullPath, fromSelf: true, message: msg, nickname: props.user.nickname, timestamp: new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5), id: uuidv4() });
+    setMessages(msgs);
+    setFilteresMessages(msgs)
+    console.log(msg1)
+    await sendFile({ file: msg1.file, fileName: msg1?.file.name, filePath })
     props.sendMessage({ fileName: msg1?.file.name, filePath: filePath, file: msg1.file, message: encryptedMsg, writer: props.user._id, timestamp: new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1").slice(0, 5) })
     addTransaction(props.user._id, props.chat.chatId, msg, props.symChatKey, createSignature(encryptedMsg, props.privKey), fullPath)
     postRequestCookie(updateChatRoute, { chatId: props.chat.chatId })
   };
 
+
+
+  const getFileName = (file) => {
+    const fileNameRegex = /[^/\\&\?]+\.\w{3,4}(?=([\?&].*$|$))/;
+    const matches = file.match(fileNameRegex);
+    return matches ? matches[0] : null;
+  }
 
   useEffect(() => {
     props.socket.current.on("msg-receive", async (msg) => {
@@ -171,7 +187,12 @@ export default function ChatContainer(props) {
                             <MessageName>{message.fromSelf ? 'Вы' : message.nickname}</MessageName>
                             <Content>
                                 {message.message}
-                                {message.file && <FileIcon src={fileIcon}/>}
+                                {message.file &&
+                                    <MessageFile href={`${host}/static/${message.file}`} download target="_blank" rel="noreferrer">
+                                      <FileIcon src={fileIcon}/>
+                                      <FileName>{getFileName(message.file)}</FileName>
+                                    </MessageFile>
+                                }
                                 <MessageTime>{message.timestamp}</MessageTime>
                             </Content>
                           </Description>

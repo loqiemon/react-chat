@@ -1,4 +1,11 @@
-import { getPublicKeyRoute, getMyChatsRoute, getSomeUsersRoute, getAllFriendsRoute, searchUserRoute } from "./APIRoutes"; 
+import {
+  getPublicKeyRoute,
+  getMyChatsRoute,
+  getSomeUsersRoute,
+  getAllFriendsRoute,
+  searchUserRoute,
+  addFileRoute
+} from "./APIRoutes";
 import {getShardRoute, addTransactionRoute, getBlockchainPublicKeyRoute, addSegmentRoute} from '../utils/APIBlochain';
 import { symEncrypt } from "./crypto";
 import axios from 'axios'
@@ -126,6 +133,23 @@ export const getBlockchainPublicKey = async () => {
 export const postSearchUser = async (sign, searchTerm) => {
   const response = await postRequestCookie(searchUserRoute, {'sign': sign, 'searchInput': searchTerm})
   return response;
+}
+
+export const sendFile = async (file) => {
+  let formData = new FormData();
+  formData.set('fileName', file.fileName);
+  formData.set('filePath', file.filePath);
+  formData.set('file', file.file)
+
+  console.log(file.file, file.fileName, file.filePath)
+  console.log(formData)
+
+  const response = await axios.post(addFileRoute, formData, {
+    headers: {
+      'content-type': 'multipart/form-data'
+    }
+  })
+  return response.data;
 }
 
 

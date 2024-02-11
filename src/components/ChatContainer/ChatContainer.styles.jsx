@@ -85,6 +85,10 @@ export const FileIcon = styled.img`
   height: 55px;
 `
 
+export const FileName = styled.span`
+    
+`
+
 export const Description = styled.div`
         position: relative;
         display: flex;
@@ -95,6 +99,7 @@ export const Description = styled.div`
 
 export const Content = styled.div`
         display: flex;
+        flex-direction: column;
         gap: 7px;
         min-width: 75px;
 
@@ -105,6 +110,11 @@ export const Content = styled.div`
 
 export const MessageName = styled.span`
         color: ${({theme}) => theme.color.text};
+`
+
+export const MessageFile = styled.a`
+    display: flex;
+    flex-direction: column;
 `
 
 export const Message = styled.div`
