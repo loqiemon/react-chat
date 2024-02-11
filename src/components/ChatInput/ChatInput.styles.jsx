@@ -41,6 +41,7 @@ export const Buttons = styled.div`
       display: flex;
       align-items: center;
       color: ${({ theme }) => theme.color.text};
+      position: relative;
       gap: 7px;
       .emoji {
         width: 22px;
@@ -73,6 +74,34 @@ export const Buttons = styled.div`
               }
             }
 `
+
+export const UnpinFile = styled.img`
+    
+`
+
+export const PinnedFile = styled.div`
+    background-color: ${({theme}) => theme.common.messageBack};
+    position: absolute;
+    bottom: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    padding: 10px;
+    
+    img {
+        width: 100px;
+        height: 100px;
+    }
+    
+    ${UnpinFile} {
+        width: 15px;
+        position: absolute;
+        top: -35px;
+        right: 5px;
+    }
+`
+
 export const Container = styled.div`
     width: clamp(340px, 90%, 1120px);
 

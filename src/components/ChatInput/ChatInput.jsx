@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import emojiIcon from "../../assets/emoji.svg";
 import paperClip from "../../assets/paperclip.svg";
 import sendIcon from "../../assets/send.svg";
+import file from '../../assets/file.png';
+import closeIcon from '../../assets/close-icon.svg';
 
 import Picker from "emoji-picker-react";
 import IconButton from '@mui/material/IconButton';
 
-import {Buttons, Container, Icon, Input, Pin, Form, Send} from "./ChatInput.styles";
+import {Buttons, Container, Icon, Input, Pin, Form, Send, PinnedFile, UnpinFile} from "./ChatInput.styles";
 
 
 export default function ChatInput(props) {
@@ -28,8 +30,13 @@ export default function ChatInput(props) {
     if (msg.length > 0) {
       props.sendMessage({msg: msg, file: selectedFile})
       setMsg("");
+      setSelectedFile()
     }
   };
+
+  const unpinFile = () => {
+    setSelectedFile(null)
+  }
 
 
   const handleAttachFile = async (event) => {
@@ -59,6 +66,13 @@ export default function ChatInput(props) {
             </label>
           </div>
         </Pin>
+        {selectedFile ?
+            <PinnedFile>
+              <UnpinFile src={closeIcon} onClick={unpinFile}/>
+              <img src={file}/>
+            </PinnedFile>
+            : <></>
+        }
       </Buttons>
       <Form className="input-container" onSubmit={(event) => sendChat(event)}>
         <Input
