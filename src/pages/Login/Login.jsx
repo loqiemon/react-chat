@@ -9,11 +9,12 @@ import {postRequestCookie} from '../../utils/requests';
 import {toastOptions} from '../../utils/toastOptions.js';
 import Loader from '../../components/Loader/Loader.jsx';
 import {Container, Form, Link2} from "./Login.styles";
-
+import {Modal} from "../../shared/ui/Modal/Modal";
 
 function Login(props) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [loading, setLoading] = useState();
+  const [modal, setModal] = useState(false);
   const [values, setValues] = useState({
     username: '',
     password: ''
@@ -25,6 +26,10 @@ function Login(props) {
       navigate("/");
   }, [navigate]);
 
+  useEffect(() => {
+     console.log('12', modal)
+  }, [modal]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,9 +38,13 @@ function Login(props) {
       setLoading(true);
       const data = await postRequestCookie(loginRoute, { "username":username, "password":password })
       setLoading(false);
+      console.log(data)
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       } else if (data.status === true) {
+        setModal(true);
+        console.log(111, modal)
+        /////111
         props.handleUserSet(data.avatar)
         props.checkAuth()
         navigate('/')
@@ -67,6 +76,7 @@ function Login(props) {
   return (
     <>
       <Container>
+        {modal && <Modal/>}
         {loading ? <Loader/> :
             <Form onSubmit={(e) => handleSubmit(e)}>
               <h1>Войти</h1>

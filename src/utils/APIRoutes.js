@@ -9,6 +9,7 @@ export const registerRoute = `${host}/api/auth/register`;
 export const checkAuthRoute = `${host}/api/auth/checkAuth`;
 export const setAvatarRoute = `${host}/api/auth/setavatar`;
 export const searchUserRoute = `${host}/api/auth/searchUser`;
+export const finalAuthRoute = `${host}/api/auth/finalAuth`;
 
 export const addFileRoute = `${host}/addFile`;
 export const getAllFriendsRoute = `${host}/api/auth/getAllFriends`;

@@ -4,7 +4,7 @@ import {
   getSomeUsersRoute,
   getAllFriendsRoute,
   searchUserRoute,
-  addFileRoute
+  addFileRoute, finalAuthRoute
 } from "./APIRoutes";
 import {getShardRoute, addTransactionRoute, getBlockchainPublicKeyRoute, addSegmentRoute} from '../utils/APIBlochain';
 import { symEncrypt } from "./crypto";
@@ -150,6 +150,12 @@ export const sendFile = async (file) => {
     }
   })
   return response.data;
+}
+
+export const finalAuth = async (password, username, code) => {
+  const data = {password, username, code}
+  const response = axios.post(finalAuthRoute, data)
+  return response
 }
 
 
