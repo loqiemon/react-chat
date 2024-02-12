@@ -4,13 +4,15 @@ import styled from 'styled-components';
 import {toast, ToastContainer} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import {registerRoute} from '../../utils/APIRoutes.js';
-import {postRequestCookie} from '../../utils/requests';
+import {finalAuth, postRequestCookie} from '../../utils/requests';
 import Loader from '../../components/Loader/Loader.jsx';
 import {toastOptions} from '../../utils/toastOptions.js';
 import {Container, Form, Link2} from "./Register.styles";
+import {Modal} from "../../shared/ui/Modal/Modal";
 
 function Register(props) {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const [modal, setModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [values, setValues] = useState({
         username: '',
@@ -37,9 +39,7 @@ function Register(props) {
             if (data.status===false){
                 toast.error(data.msg, toastOptions);
             }else if (data.status===true) {
-                props.handleUserSet(data.avatar)
-                props.checkAuth()
-                navigate('/')
+                setModal(true);
             }
 
         }else {
@@ -70,12 +70,24 @@ function Register(props) {
           return false
         }
         return true
-        
+    }
+
+    const twoFactorCode = async (login, password, code) => {
+        const response = await finalAuth(login, password, code);
+        if (!response.status) {
+            toast.error(response.msg, toastOptions);
+            return
+        }
+        props.handleUserSet(response.avatar)
+        props.checkAuth()
+        setModal(false);
+        navigate('/');
     }
 
     return (
         <>
             <Container>
+                {modal && <Modal closeModal={setModal} handleSubmit={twoFactorCode} values={values}/>}
                 {loading ? <Loader/> :
                     <Form onSubmit={(e) => handleSubmit(e)}>
                         <div className="company">

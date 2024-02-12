@@ -152,10 +152,14 @@ export const sendFile = async (file) => {
   return response.data;
 }
 
-export const finalAuth = async (password, username, code) => {
+export const finalAuth = async (username, password, code) => {
   const data = {password, username, code}
-  const response = axios.post(finalAuthRoute, data)
-  return response
+  try {
+    const response = await postRequestCookie(finalAuthRoute, data)
+    return response
+  } catch (e) {
+    return {status: false, msg: 'Неверный код'}
+  }
 }
 
 
